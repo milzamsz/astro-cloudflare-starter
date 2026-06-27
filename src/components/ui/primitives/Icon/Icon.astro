@@ -1,0 +1,28 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  name: string;
+  size?: number | string;
+  color?: string;
+  decorative?: boolean;
+  class?: string;
+}
+
+const {
+  name,
+  size = 20,
+  color,
+  decorative = true,
+  class: className,
+} = Astro.props as Props;
+---
+
+<Icon
+  name={name}
+  class={className}
+  size={size}
+  color={color}
+  aria-hidden={decorative ? "true" : undefined}
+  aria-label={decorative ? undefined : name}
+/>

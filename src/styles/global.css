@@ -1,0 +1,568 @@
+/**
+ * global.css — Main CSS entry point for the Astro Cloudflare starter
+ *
+ * Architecture:
+ *   1. Tailwind CSS import
+ *   2. Token imports (colors, typography, spacing)
+ *   3. Fontsource variable font imports (self-hosted, no CDN)
+ *   4. Metric-adjusted fallback @font-face rules (CLS prevention)
+ *   5. @custom-variant dark (class-based dark mode)
+ *   6. @theme {} block (maps CSS vars → Tailwind tokens)
+ *   7. Base styles (selection, scrollbar, focus, prose, code)
+ */
+
+/* ─── 1. Tailwind CSS ─── */
+@import "tailwindcss";
+
+/* ─── 2. Token imports ─── */
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+
+/* ─── 3. Fontsource variable font imports (self-hosted) ─── */
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* ─── 4. Metric-adjusted fallback @font-face rules ─── */
+
+/* Prevents layout shift (CLS) by matching the metric of the target font using Arial as base */
+
+/* Outfit Fallback — metric-adjusted Arial for headings */
+@font-face {
+  font-family: "Outfit Fallback";
+  src: local("Arial");
+  ascent-override: 103%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+  size-adjust: 107%;
+  font-display: swap;
+}
+
+/* Manrope Fallback — metric-adjusted Arial for body */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  ascent-override: 101%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+  size-adjust: 105%;
+  font-display: swap;
+}
+
+/* JetBrains Mono Fallback — metric-adjusted Courier New for code */
+@font-face {
+  font-family: "JetBrains Mono Fallback";
+  src: local("Courier New");
+  ascent-override: 102%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 112%;
+  font-display: swap;
+}
+
+/* ─── 5. @custom-variant dark (class-based dark mode) ─── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── 6. @theme {} block — maps CSS vars to Tailwind tokens ─── */
+@theme {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-surface-invert: var(--surface-invert);
+  --color-surface-invert-foreground: var(--surface-invert-foreground);
+
+  /* Font families */
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+
+  /* Border radius */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
+  /* Breakpoints (static values (must be static values, not CSS vars) */
+  --breakpoint-480: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ─── 7. Base styles ─── */
+
+/* Selection */
+::selection {
+  background-color: color-mix(in srgb, var(--primary) 25%, transparent);
+  color: var(--foreground);
+}
+
+/* Custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground);
+}
+
+/* Focus ring (accessibility) */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Skip link (visually hidden until focused) */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--spacing-4);
+  z-index: var(--z-index-toast);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Base typography */
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background-color: var(--background);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--foreground);
+}
+
+/* Prose (markdown) */
+.prose {
+  color: var(--foreground);
+  max-width: 65ch;
+  line-height: var(--leading-relaxed);
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  color: var(--primary-hover);
+}
+
+.prose img {
+  border-radius: var(--radius-lg);
+}
+
+/* Code blocks */
+pre {
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  overflow-x: auto;
+  font-size: var(--text-code-base);
+  line-height: var(--leading-relaxed);
+  border: 1px solid var(--border);
+}
+
+pre code {
+  font-family: var(--font-mono);
+  font-size: inherit;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  background: var(--muted);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+/* Inline code in prose (inside paragraphs) */
+.prose code:not(pre code) {
+  background: var(--muted);
+  padding: 0.125em 0.3em;
+  border-radius: var(--radius-sm);
+}
+
+/* List bullets */
+::marker {
+  color: var(--primary);
+}
+
+/* Container utility */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+/* ─── Background patterns (AstroDeck-style, decorative) ─── */
+
+/*
+ * .bg-grid — faint grid lines that fade toward the edges via a radial mask.
+ * Use on a positioned wrapper; pair with .bg-grid--fade for the vignette.
+ * Lines derive from --border so they track light/dark automatically.
+ */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--foreground) 7%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--foreground) 7%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+  mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+}
+
+/*
+ * .bg-glow — soft monochrome spotlight behind hero content.
+ */
+.bg-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% -10%,
+    color-mix(in srgb, var(--foreground) 8%, transparent),
+    transparent 70%
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-glow {
+    animation: bg-glow-pulse 8s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes bg-glow-pulse {
+  from {
+    opacity: 70%;
+  }
+
+  to {
+    opacity: 100%;
+  }
+}
+
+/* ─── Scroll reveal (CSS-only, progressive) ─── */
+
+/*
+ * Add `data-animate` (or `data-animate="fade"`) to reveal an element on scroll.
+ * Uses native scroll-driven animations. Gated behind @supports so browsers
+ * without support (and reduced-motion users) simply show content immediately —
+ * content is never hidden from no-JS/unsupported clients or assistive tech.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-animate] {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    [data-animate="fade"] {
+      animation-name: reveal-fade;
+    }
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0%;
+    transform: translateY(1.25rem);
+  }
+
+  to {
+    opacity: 100%;
+    transform: none;
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0%;
+  }
+
+  to {
+    opacity: 100%;
+  }
+}
+
+/* ─── Section header (shared landing pattern) ─── */
+.section-head {
+  max-width: 44rem;
+  margin: 0 auto var(--spacing-7);
+  text-align: center;
+}
+
+.section-head__eyebrow {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.section-head__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  letter-spacing: -0.01em;
+}
+
+.section-head__lead {
+  margin: 0.6rem 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+/* ─── Feature tabs (landing section, React island) ─── */
+.feature-tabs {
+  display: grid;
+  gap: var(--spacing-7);
+}
+
+.feature-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-3);
+}
+
+.feature-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  color: var(--muted-foreground);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-tabs__tab:hover {
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-tabs__tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.feature-tabs__tab.is-active {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.feature-tabs__tab:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.feature-tabs__tab-icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.feature-tabs__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.feature-tabs__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background: var(--card);
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-tabs__panel:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.feature-tabs__heading {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  letter-spacing: -0.01em;
+}
+
+.feature-tabs__description {
+  margin: 0.6rem 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+.feature-tabs__points {
+  list-style: none;
+  margin: var(--spacing-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.feature-tabs__points li {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--foreground);
+  font-size: 0.9375rem;
+}
+
+.feature-tabs__check {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--primary);
+}
+
+.feature-tabs__window {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--muted);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-tabs__window-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 60%, var(--muted));
+}
+
+.feature-tabs__window-bar span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--muted-foreground) 35%, transparent);
+}
+
+.feature-tabs__visual {
+  margin: 0;
+  padding: var(--spacing-5);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+
+@media (max-width: 48rem) {
+  .feature-tabs__panel {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,326 @@
+{
+  "name": "astro-cloudflare",
+  "description": "Machine-readable catalog of the three-tier architecture: Components -> Sections -> Pages.",
+  "tiers": ["component", "section", "page"],
+  "importAliases": {
+    "sections": "src/components/sections (barrel)",
+    "ui": "src/components/ui (barrel)"
+  },
+  "components": [
+    {
+      "name": "Button",
+      "tier": "component",
+      "path": "src/components/ui/form/Button/Button.astro",
+      "props": ["variant", "size", "href", "type", "loading", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Icon",
+      "tier": "component",
+      "path": "src/components/ui/primitives/Icon/Icon.astro",
+      "props": ["name", "size", "color", "decorative", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Badge",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Badge/Badge.astro",
+      "props": ["variant", "size", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Alert",
+      "tier": "component",
+      "path": "src/components/ui/feedback/Alert/Alert.astro",
+      "props": ["variant", "dismissible", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Card",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Card/Card.astro",
+      "props": ["hover", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Avatar",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Avatar/Avatar.astro",
+      "props": ["name", "src", "alt", "size"],
+      "i18nAware": false
+    },
+    {
+      "name": "AvatarGroup",
+      "tier": "component",
+      "path": "src/components/ui/data-display/AvatarGroup/AvatarGroup.astro",
+      "props": ["items", "max"],
+      "i18nAware": false
+    },
+    {
+      "name": "Table",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Table/Table.astro",
+      "props": ["class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Skeleton",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Skeleton/Skeleton.astro",
+      "props": ["width", "height", "rounded"],
+      "i18nAware": false
+    },
+    {
+      "name": "Pagination",
+      "tier": "component",
+      "path": "src/components/ui/data-display/Pagination/Pagination.astro",
+      "props": ["currentPage", "totalPages", "basePath", "query", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "Prose",
+      "tier": "component",
+      "path": "src/components/ui/content/Prose/Prose.astro",
+      "props": ["as", "size", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Container",
+      "tier": "component",
+      "path": "src/components/ui/layout/Container/Container.astro",
+      "props": ["size", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Section",
+      "tier": "component",
+      "path": "src/components/ui/layout/Section/Section.astro",
+      "props": ["spacing", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Grid",
+      "tier": "component",
+      "path": "src/components/ui/layout/Grid/Grid.astro",
+      "props": ["cols", "gap", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Input",
+      "tier": "component",
+      "path": "src/components/ui/form/Input/Input.astro",
+      "props": ["id", "name", "label", "type", "placeholder", "value", "helperText", "errorText", "required", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Select",
+      "tier": "component",
+      "path": "src/components/ui/form/Select/Select.astro",
+      "props": ["id", "name", "label", "options", "value", "helperText", "errorText", "required", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Textarea",
+      "tier": "component",
+      "path": "src/components/ui/form/Textarea/Textarea.astro",
+      "props": ["id", "name", "label", "rows", "placeholder", "value", "helperText", "errorText", "required", "class"],
+      "i18nAware": false
+    },
+    {
+      "name": "Checkbox",
+      "tier": "component",
+      "path": "src/components/ui/form/Checkbox/Checkbox.astro",
+      "props": ["id", "name", "label", "checked"],
+      "i18nAware": false
+    },
+    {
+      "name": "Switch",
+      "tier": "component",
+      "path": "src/components/ui/form/Switch/Switch.astro",
+      "props": ["id", "name", "label", "checked"],
+      "i18nAware": false
+    },
+    {
+      "name": "Logo",
+      "tier": "component",
+      "path": "src/components/ui/marketing/Logo/Logo.astro",
+      "props": ["href"],
+      "i18nAware": false
+    },
+    {
+      "name": "BlogCard",
+      "tier": "component",
+      "path": "src/components/blog/BlogCard.astro",
+      "props": ["post", "variant", "locale", "headingLevel"],
+      "i18nAware": true
+    },
+    {
+      "name": "ArticleHero",
+      "tier": "component",
+      "path": "src/components/blog/ArticleHero.astro",
+      "props": ["post", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "RelatedPosts",
+      "tier": "component",
+      "path": "src/components/blog/RelatedPosts.astro",
+      "props": ["currentPost", "allPosts", "limit", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "ShareButtons",
+      "tier": "component",
+      "path": "src/components/blog/ShareButtons.astro",
+      "props": ["url", "title", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "BlogImageSVG",
+      "tier": "component",
+      "path": "src/components/blog/BlogImageSVG.astro",
+      "props": ["slug", "title"],
+      "i18nAware": false
+    },
+    {
+      "name": "TagList",
+      "tier": "component",
+      "path": "src/components/blog/TagList.astro",
+      "props": ["tags", "basePath", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "TableOfContents",
+      "tier": "component",
+      "path": "src/components/blog/TableOfContents.astro",
+      "props": ["headings", "layout", "maxDepth", "minHeadings", "title", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "ServiceCard",
+      "tier": "component",
+      "path": "src/components/services/ServiceCard.astro",
+      "props": ["service", "locale", "headingLevel"],
+      "i18nAware": true
+    }
+  ],
+  "sections": [
+    {
+      "name": "Hero",
+      "tier": "section",
+      "path": "src/components/hero/Hero.astro",
+      "props": ["variant", "size", "eyebrow", "headline", "subheadline", "primaryCta", "secondaryCta", "locale"],
+      "i18nAware": true
+    },
+    {
+      "name": "FeatureTabs",
+      "tier": "section",
+      "path": "src/components/landing/FeatureTabs.tsx",
+      "props": ["tabs"],
+      "island": "react",
+      "i18nAware": true
+    },
+    {
+      "name": "StackMarquee",
+      "tier": "section",
+      "path": "src/components/landing/StackMarquee.astro",
+      "props": ["items", "pauseOnHover"],
+      "i18nAware": false
+    },
+    {
+      "name": "TechStack",
+      "tier": "section",
+      "path": "src/components/landing/TechStack.astro",
+      "props": ["items"],
+      "i18nAware": false
+    },
+    {
+      "name": "Credibility",
+      "tier": "section",
+      "path": "src/components/landing/Credibility.astro",
+      "props": ["stats", "logos"],
+      "i18nAware": true
+    },
+    {
+      "name": "LighthouseScores",
+      "tier": "section",
+      "path": "src/components/landing/LighthouseScores.astro",
+      "props": ["scores"],
+      "i18nAware": false
+    },
+    {
+      "name": "CTA",
+      "tier": "section",
+      "path": "src/components/ui/marketing/CTA/CTA.astro",
+      "props": ["eyebrow", "title", "content", "primaryText", "primaryHref", "secondaryText", "secondaryHref", "centered"],
+      "i18nAware": true
+    },
+    {
+      "name": "SocialProof",
+      "tier": "section",
+      "path": "src/components/ui/marketing/SocialProof/SocialProof.astro",
+      "props": ["title", "items"],
+      "i18nAware": true
+    },
+    {
+      "name": "FeatureGrid",
+      "tier": "section",
+      "path": "src/components/FeatureGrid.astro",
+      "props": ["title", "features", "columns"],
+      "i18nAware": true
+    },
+    {
+      "name": "FAQ",
+      "tier": "section",
+      "path": "src/components/FAQ.astro",
+      "props": ["title", "items"],
+      "i18nAware": true
+    },
+    {
+      "name": "Newsletter",
+      "tier": "section",
+      "path": "src/components/sections/Newsletter.astro",
+      "props": ["title", "description", "placeholder", "buttonLabel", "action"],
+      "i18nAware": true
+    },
+    {
+      "name": "Pricing",
+      "tier": "section",
+      "path": "src/components/sections/Pricing.astro",
+      "props": ["title", "description", "plans"],
+      "i18nAware": true
+    },
+    {
+      "name": "Team",
+      "tier": "section",
+      "path": "src/components/sections/Team.astro",
+      "props": ["title", "description", "members"],
+      "i18nAware": true
+    },
+    {
+      "name": "Comparison",
+      "tier": "section",
+      "path": "src/components/sections/Comparison.astro",
+      "props": ["title", "description", "columns", "rows"],
+      "i18nAware": true
+    },
+    {
+      "name": "LogoCloud",
+      "tier": "section",
+      "path": "src/components/sections/LogoCloud.astro",
+      "props": ["title", "logos"],
+      "i18nAware": true
+    }
+  ],
+  "pages": [
+    { "name": "Home", "path": "src/pages/index.astro", "locales": ["en"] },
+    { "name": "About", "path": "src/pages/about.astro", "locales": ["en"] },
+    { "name": "Services", "path": "src/pages/services.astro", "locales": ["en"] },
+    { "name": "Pricing", "path": "src/pages/pricing.astro", "locales": ["en"] },
+    { "name": "Contact", "path": "src/pages/contact.astro", "locales": ["en"] },
+    { "name": "Blog", "path": "src/pages/blog.astro", "locales": ["en"] },
+    { "name": "Sections showcase", "path": "src/pages/sections.astro", "locales": ["en"] },
+    { "name": "Pages overview", "path": "src/pages/pages.astro", "locales": ["en"] }
+  ]
+}
+

@@ -1,0 +1,134 @@
+---
+/**
+ * Newsletter — email capture section (static, progressively enhanced by a form action).
+ */
+export interface Props {
+  title?: string;
+  description?: string;
+  placeholder?: string;
+  buttonLabel?: string;
+  action?: string;
+}
+
+const {
+  title = "Stay in the loop",
+  description = "Get occasional updates. No spam, unsubscribe anytime.",
+  placeholder = "you@example.com",
+  buttonLabel = "Subscribe",
+  action,
+} = Astro.props as Props;
+---
+
+<section class="newsletter container">
+  <div class="newsletter__inner">
+    <div class="newsletter__copy">
+      <h2 class="newsletter__title">{title}</h2>
+      <p class="newsletter__desc">{description}</p>
+    </div>
+    <form
+      class="newsletter__form"
+      method="post"
+      action={action}
+      data-newsletter
+    >
+      <label class="newsletter__label" for="newsletter-email">Email</label>
+      <input
+        id="newsletter-email"
+        class="newsletter__input"
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        placeholder={placeholder}
+      />
+      <button class="newsletter__button" type="submit">{buttonLabel}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .newsletter {
+    padding-block: var(--space-2xl);
+  }
+
+  .newsletter__inner {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (min-width: 48rem) {
+    .newsletter__inner {
+      grid-template-columns: 1fr minmax(20rem, 28rem);
+    }
+  }
+
+  .newsletter__title {
+    margin: 0;
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    letter-spacing: -0.01em;
+  }
+
+  .newsletter__desc {
+    margin: 0.5rem 0 0;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+  }
+
+  .newsletter__form {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .newsletter__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .newsletter__input {
+    flex: 1 1 12rem;
+    min-width: 0;
+    padding: 0.7rem 0.9rem;
+    font: inherit;
+    color: var(--foreground);
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .newsletter__input:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .newsletter__button {
+    padding: 0.7rem 1.3rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .newsletter__button:hover {
+    background: var(--primary-hover);
+  }
+
+  .newsletter__button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+</style>

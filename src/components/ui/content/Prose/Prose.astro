@@ -1,0 +1,40 @@
+---
+import { cn } from "../../../../lib/cn";
+
+export interface Props {
+  as?: "div" | "section" | "article";
+  class?: string;
+  size?: "sm" | "md" | "lg";
+}
+
+const { as = "div", size = "md", class: className } = Astro.props as Props;
+const Tag = as;
+---
+
+<Tag
+  class={cn(
+    "ui-prose prose prose-gray dark:prose-invert",
+    `ui-prose--${size}`,
+    className,
+  )}
+>
+  <slot />
+</Tag>
+
+<style>
+  .ui-prose {
+    max-width: none;
+  }
+
+  .ui-prose--sm {
+    font-size: 0.9375rem;
+  }
+
+  .ui-prose--md {
+    font-size: 1rem;
+  }
+
+  .ui-prose--lg {
+    font-size: 1.0625rem;
+  }
+</style>

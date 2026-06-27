@@ -1,0 +1,127 @@
+---
+export interface Scores {
+  performance?: number;
+  accessibility?: number;
+  bestPractices?: number;
+  seo?: number;
+}
+
+export interface Props {
+  scores?: Scores;
+}
+
+const { scores = {} } = Astro.props as Props;
+const merged = {
+  performance: scores.performance ?? 100,
+  accessibility: scores.accessibility ?? 100,
+  bestPractices: scores.bestPractices ?? 100,
+  seo: scores.seo ?? 100,
+};
+
+const labels: Record<string, string> = {
+  performance: "Performance",
+  accessibility: "Accessibility",
+  bestPractices: "Best Practices",
+  seo: "SEO",
+};
+
+const scoreItems = Object.entries(merged);
+
+function scoreClass(score: number) {
+  if (score >= 90) return "is-green";
+  if (score >= 50) return "is-amber";
+  return "is-red";
+}
+---
+
+<ul class="lighthouse">
+  {
+    scoreItems.map(([label, score]) => (
+      <li class={`lighthouse__score ${scoreClass(score)}`}>
+        <div class="lighthouse__gauge">
+          <strong>{score}</strong>
+        </div>
+        <span class="lighthouse__label">{labels[label] ?? label}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .lighthouse {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .lighthouse {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .lighthouse__score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .lighthouse__score:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, currentColor 30%, var(--color-border));
+  }
+
+  .lighthouse__gauge {
+    display: grid;
+    place-items: center;
+    width: 4.75rem;
+    height: 4.75rem;
+    border-radius: var(--radius-full);
+    border: 4px solid currentColor;
+    background: color-mix(in srgb, currentColor 8%, var(--card));
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .lighthouse__score:hover .lighthouse__gauge {
+    transform: scale(1.05);
+  }
+
+  .lighthouse__gauge strong {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--foreground);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .lighthouse__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    letter-spacing: -0.01em;
+  }
+
+  .is-green {
+    color: var(--success);
+  }
+  .is-amber {
+    color: var(--warning);
+  }
+  .is-red {
+    color: var(--destructive);
+  }
+</style>

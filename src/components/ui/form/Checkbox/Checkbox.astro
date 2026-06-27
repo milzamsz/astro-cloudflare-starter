@@ -1,0 +1,24 @@
+---
+export interface Props {
+  id: string;
+  name: string;
+  label: string;
+  checked?: boolean;
+}
+
+const { id, name, label, checked = false } = Astro.props as Props;
+---
+
+<label class="ui-checkbox">
+  <input id={id} name={name} type="checkbox" checked={checked} />
+  <span>{label}</span>
+</label>
+
+<style>
+  .ui-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-text-primary);
+  }
+</style>

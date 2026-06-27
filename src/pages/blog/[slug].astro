@@ -1,0 +1,25 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import { getCollection, getEntry, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
+  return allPosts
+    .filter((p) => p.data.locale === "en" && !p.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+    }));
+}
+
+const { slug } = Astro.params as { slug: string };
+const post = await getEntry("blog", slug);
+if (!post) return new Response(null, { status: 404 });
+
+const locale = "en";
+const { Content, headings } = await render(post);
+---
+
+<BlogLayout post={post} locale={locale} headings={headings}>
+  <Content />
+</BlogLayout>

@@ -1,0 +1,38 @@
+---
+import { cn } from "../../../../lib/cn";
+
+export interface Props {
+  size?: "sm" | "md" | "lg" | "xl" | "full";
+  class?: string;
+}
+
+const { size = "lg", class: className } = Astro.props as Props;
+---
+
+<div class={cn("ui-container", `ui-container--${size}`, className)}>
+  <slot />
+</div>
+
+<style>
+  .ui-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
+  }
+
+  .ui-container--sm {
+    max-width: 40rem;
+  }
+  .ui-container--md {
+    max-width: 56rem;
+  }
+  .ui-container--lg {
+    max-width: 72rem;
+  }
+  .ui-container--xl {
+    max-width: 80rem;
+  }
+  .ui-container--full {
+    max-width: none;
+  }
+</style>

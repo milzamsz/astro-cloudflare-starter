@@ -1,0 +1,190 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Locale } from "../../lib/site-config";
+import { t } from "../../i18n/ui";
+
+export interface Props {
+  url: string;
+  title: string;
+  locale?: Locale;
+}
+
+const { url, title, locale = "en" } = Astro.props as Props;
+const shareText = encodeURIComponent(title);
+const encodedUrl = encodeURIComponent(url);
+---
+
+<div class="share-buttons" role="group" aria-label={t(locale, "blog.share")}>
+  <span class="share-buttons__label">{t(locale, "blog.share")}</span>
+
+  <button
+    type="button"
+    class="share-buttons__btn"
+    data-share-native
+    data-url={url}
+    data-title={title}
+    hidden
+  >
+    <Icon name="lucide:share-2" />
+    {t(locale, "blog.share")}
+  </button>
+
+  <a
+    class="share-buttons__btn"
+    href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${shareText}`}
+    target="_blank"
+    rel="noreferrer"
+    aria-label="Share on X"
+  >
+    <Icon name="lucide:twitter" />
+    X
+  </a>
+
+  <a
+    class="share-buttons__btn"
+    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+    target="_blank"
+    rel="noreferrer"
+    aria-label="Share on LinkedIn"
+  >
+    <Icon name="lucide:linkedin" />
+    LinkedIn
+  </a>
+
+  <button
+    type="button"
+    class="share-buttons__btn"
+    data-share-copy
+    data-url={url}
+    aria-label={t(locale, "blog.copyLink")}
+  >
+    <Icon name="lucide:copy" class="share-buttons__icon-copy" />
+    <Icon name="lucide:check" class="share-buttons__icon-check" />
+    <span data-copy-label>{t(locale, "blog.copyLink")}</span>
+  </button>
+</div>
+
+<script>
+  const copiedText = "Copied!";
+
+  document.querySelectorAll<HTMLButtonElement>("[data-share-native]").forEach(
+    (btn) => {
+      if (!navigator.share) return;
+      btn.hidden = false;
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.share({
+            title: btn.dataset.title,
+            url: btn.dataset.url,
+          });
+        } catch {
+          /* user dismissed the share sheet */
+        }
+      });
+    },
+  );
+
+  document.querySelectorAll<HTMLButtonElement>("[data-share-copy]").forEach(
+    (btn) => {
+      const label = btn.querySelector<HTMLElement>("[data-copy-label]");
+      const original = label?.textContent ?? "";
+      let timer: number | undefined;
+      btn.addEventListener("click", async () => {
+        const url = btn.dataset.url ?? window.location.href;
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = url;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        btn.classList.add("is-copied");
+        if (label) label.textContent = copiedText;
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          btn.classList.remove("is-copied");
+          if (label) label.textContent = original;
+        }, 2000);
+      });
+    },
+  );
+</script>
+
+<style>
+  .share-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .share-buttons__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-right: var(--space-xs);
+  }
+
+  .share-buttons__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    padding: 0.5rem 0.85rem;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .share-buttons__btn :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .share-buttons__btn:hover {
+    border-color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+  }
+
+  .share-buttons__btn:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+  }
+
+  /* Copy button: swap copy/check icon based on copied state. */
+  .share-buttons__icon-check {
+    display: none;
+  }
+
+  .share-buttons__btn.is-copied {
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
+  }
+
+  .share-buttons__btn.is-copied .share-buttons__icon-copy {
+    display: none;
+  }
+
+  .share-buttons__btn.is-copied .share-buttons__icon-check {
+    display: inline-block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-buttons__btn {
+      transition: none;
+    }
+  }
+</style>

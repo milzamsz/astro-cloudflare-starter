@@ -1,0 +1,74 @@
+---
+export interface Item {
+  quote: string;
+  author: string;
+  role?: string;
+  avatar?: string;
+}
+
+export interface Props {
+  title?: string;
+  items: Item[];
+}
+
+const { title, items } = Astro.props as Props;
+---
+
+<section class="ui-social-proof">
+  {title && <h2 class="ui-social-proof__title">{title}</h2>}
+  <div class="ui-social-proof__grid">
+    {
+      items.map((item) => (
+        <figure class="ui-social-proof__card">
+          <blockquote>{item.quote}</blockquote>
+          <figcaption>
+            <strong>{item.author}</strong>
+            {item.role && <span>{item.role}</span>}
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .ui-social-proof {
+    padding-block: var(--space-2xl);
+  }
+
+  .ui-social-proof__title {
+    margin: 0 0 var(--space-xl);
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  .ui-social-proof__grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .ui-social-proof__card {
+    margin: 0;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background: var(--color-bg-primary);
+  }
+
+  .ui-social-proof__card blockquote {
+    margin: 0 0 var(--space-md);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ui-social-proof__card figcaption {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .ui-social-proof__card span {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+</style>

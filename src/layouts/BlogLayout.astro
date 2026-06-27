@@ -1,0 +1,238 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import SEO from "../components/seo/SEO.astro";
+import { type Locale } from "../lib/site-config";
+import { canonicalUrl, jsonLdFAQ } from "../lib/seo";
+import { resolveRoute } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { siteConfig } from "../config/site.config";
+import {
+  ArticleHero,
+  RelatedPosts,
+  ShareButtons,
+  TableOfContents,
+} from "../components/blog/index";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+  locale: Locale;
+  headings?: Heading[];
+}
+
+const { post, locale, headings = [] } = Astro.props as Props;
+
+const publishDate = new Date(post.data.publishDate);
+const updatedDate = post.data.updatedAt
+  ? new Date(post.data.updatedAt)
+  : publishDate;
+const tags = post.data.tags ?? [];
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: publishDate.toISOString(),
+    dateModified: updatedDate.toISOString(),
+    author: {
+      "@type": "Person",
+      name: post.data.author,
+    },
+    mainEntityOfPage: canonicalUrl(locale, `/blog/${post.id}`),
+    inLanguage: locale,
+  },
+  ...(post.data.faqs?.length
+    ? [
+        jsonLdFAQ(
+          post.data.faqs.map((faq: { question: string; answer: string }) => ({
+            question: faq.question,
+            answer: faq.answer,
+          })),
+        ),
+      ]
+    : []),
+];
+
+const allPosts = await getCollection("blog");
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  locale={locale}
+  path={`/blog/${post.id}`}
+  showThemeToggle={true}
+>
+  <SEO
+    slot="seo"
+    title={post.data.title}
+    description={post.data.description}
+    locale={locale}
+    path={`/blog/${post.id}`}
+    ogImage={`/og/blog/${locale}/${post.id}`}
+    article={{
+      publishedTime: publishDate.toISOString(),
+      modifiedTime: updatedDate.toISOString(),
+      author: post.data.author,
+      tags,
+    }}
+    jsonLd={jsonLd}
+  />
+
+  <article class="blog-layout container py-12">
+    <ArticleHero post={post} locale={locale} />
+
+    {
+      siteConfig.articleFeatures.toc.enabled &&
+        siteConfig.articleFeatures.toc.layout === "inline" && (
+          <TableOfContents
+            headings={headings}
+            layout="inline"
+            maxDepth={siteConfig.articleFeatures.toc.maxDepth}
+            minHeadings={siteConfig.articleFeatures.toc.minHeadings}
+            title={t(locale, "blog.toc")}
+            locale={locale}
+          />
+        )
+    }
+
+    <div
+      class={`blog-layout__content${siteConfig.articleFeatures.toc.enabled && siteConfig.articleFeatures.toc.layout === "sidebar" ? " blog-layout__content--with-toc" : ""}`}
+    >
+      {
+        siteConfig.articleFeatures.toc.enabled &&
+          siteConfig.articleFeatures.toc.layout === "sidebar" && (
+            <aside class="blog-layout__toc blog-layout__toc--sidebar">
+              <TableOfContents
+                headings={headings}
+                layout="sidebar"
+                maxDepth={siteConfig.articleFeatures.toc.maxDepth}
+                minHeadings={siteConfig.articleFeatures.toc.minHeadings}
+                title={t(locale, "blog.toc")}
+                locale={locale}
+              />
+            </aside>
+          )
+      }
+
+      <div
+        class="blog-layout__article prose prose-gray dark:prose-invert max-w-none"
+      >
+        <slot />
+      </div>
+    </div>
+
+    <ShareButtons
+      url={canonicalUrl(locale, `/blog/${post.id}`)}
+      title={post.data.title}
+      locale={locale}
+    />
+
+    <RelatedPosts currentPost={post} allPosts={allPosts} locale={locale} />
+
+    <nav class="blog-layout__back">
+      <a href={resolveRoute(locale, "/blog")}>
+        <span aria-hidden="true">&larr;</span>
+        {t(locale, "blog.backToBlog")}
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-layout {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .blog-layout__content {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .blog-layout__content--with-toc {
+    grid-template-columns: minmax(0, 1fr) 16rem;
+  }
+
+  /*
+   * The TOC <aside> is first in the DOM (so it appears at the top on mobile),
+   * but on desktop the article must own the wide column and the TOC sits in a
+   * narrow right rail. Explicit placement makes this independent of DOM order.
+   */
+  .blog-layout__content--with-toc .blog-layout__article {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .blog-layout__content--with-toc .blog-layout__toc--sidebar {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 5.5rem;
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+  }
+
+  /* Comfortable reading measure for long-form content. */
+  .blog-layout__article {
+    max-width: 72ch;
+  }
+
+  .blog-layout__back a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .blog-layout__back a:hover {
+    border-color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-layout__back a {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .blog-layout__content--with-toc {
+      grid-template-columns: 1fr;
+    }
+
+    .blog-layout__content--with-toc .blog-layout__article,
+    .blog-layout__content--with-toc .blog-layout__toc--sidebar {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .blog-layout__content--with-toc .blog-layout__article {
+      max-width: none;
+    }
+
+    .blog-layout__content--with-toc .blog-layout__toc--sidebar {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+  }
+</style>

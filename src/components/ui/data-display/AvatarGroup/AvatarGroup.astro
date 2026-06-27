@@ -1,0 +1,43 @@
+---
+import Avatar from "../Avatar/Avatar.astro";
+
+export interface Item {
+  name: string;
+  src?: string;
+}
+
+export interface Props {
+  items: Item[];
+  max?: number;
+}
+
+const { items, max = 4 } = Astro.props as Props;
+const visible = items.slice(0, max);
+const overflow = Math.max(0, items.length - visible.length);
+---
+
+<div class="ui-avatar-group">
+  {visible.map((item) => <Avatar name={item.name} src={item.src} size="sm" />)}
+  {overflow > 0 && <span class="ui-avatar-group__overflow">+{overflow}</span>}
+</div>
+
+<style>
+  .ui-avatar-group {
+    display: inline-flex;
+    align-items: center;
+  }
+  .ui-avatar-group > * + * {
+    margin-left: -0.45rem;
+  }
+  .ui-avatar-group__overflow {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+</style>

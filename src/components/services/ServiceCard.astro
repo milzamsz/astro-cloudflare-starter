@@ -1,0 +1,204 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Card, Icon } from "../ui/index";
+import { resolveRoute } from "../../i18n/routes";
+import { type Locale } from "../../lib/site-config";
+import { t } from "../../i18n/ui";
+
+export interface Props {
+  service: CollectionEntry<"services">;
+  locale?: Locale;
+  /** Heading level for the card title; use "h2" when cards sit directly under the page h1. */
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  service,
+  locale = service.data.locale,
+  headingLevel = "h3",
+} = Astro.props as Props;
+const Heading = headingLevel;
+const href = resolveRoute(locale, `/services/${service.data.slug}`);
+
+const iconBySlug: Record<string, string> = {
+  "web-development": "lucide:code-2",
+  "cloud-deployment": "lucide:cloud",
+};
+const icon = iconBySlug[service.data.slug] ?? "lucide:layers";
+---
+
+<Card hover={true} class="service-card">
+  <div class="service-card__body">
+    <div class="service-card__head">
+      <span class="service-card__icon" aria-hidden="true">
+        <Icon name={icon} />
+      </span>
+      {
+        service.data.priceRange && (
+          <span class="service-card__price">{service.data.priceRange}</span>
+        )
+      }
+    </div>
+
+    <Heading class="service-card__title">
+      <a href={href}>{service.data.title}</a>
+    </Heading>
+    <p class="service-card__description">{service.data.description}</p>
+
+    {
+      service.data.features.length > 0 && (
+        <ul class="service-card__features">
+          {service.data.features.slice(0, 4).map((feature: string) => (
+            <li>
+              <Icon name="lucide:check" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <a class="service-card__cta" href={href}>
+      {t(locale, "services.learnMore")}
+      <span class="service-card__sr"> — {service.data.title}</span>
+      <span class="service-card__arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  </div>
+</Card>
+
+<style>
+  :global(.service-card) {
+    height: 100%;
+  }
+
+  :global(.service-card .ui-card__body) {
+    height: 100%;
+  }
+
+  .service-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    height: 100%;
+  }
+
+  .service-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
+  .service-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+
+  .service-card__icon :global(svg) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .service-card__price {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    padding: 0.3rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  .service-card__title {
+    margin: 0;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  .service-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .service-card__title a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .service-card__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .service-card__features {
+    list-style: none;
+    display: grid;
+    gap: 0.625rem;
+    margin: var(--space-xs) 0 0;
+    padding: var(--space-md) 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .service-card__features li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+  }
+
+  .service-card__features :global(svg) {
+    flex-shrink: 0;
+    width: 1.0625rem;
+    height: 1.0625rem;
+    color: var(--color-text-primary);
+  }
+
+  .service-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    margin-top: auto;
+    padding-top: var(--space-sm);
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .service-card__arrow {
+    transition: transform 0.2s ease;
+  }
+
+  :global(.service-card:hover) .service-card__arrow {
+    transform: translateX(3px);
+  }
+
+  /* Visually hidden but kept in the accessible name so the link text reads
+     "Learn more — <service>" for screen readers and the SEO link-text audit. */
+  .service-card__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card__arrow {
+      transition: none;
+    }
+  }
+</style>

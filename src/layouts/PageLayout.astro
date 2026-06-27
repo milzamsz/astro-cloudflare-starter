@@ -1,0 +1,93 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import SEO from "../components/seo/SEO.astro";
+import Breadcrumbs from "../components/seo/Breadcrumbs.astro";
+import { type Locale } from "../lib/site-config";
+
+export interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  path: string;
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const {
+  title,
+  description,
+  locale,
+  path,
+  breadcrumbs = [],
+} = Astro.props as Props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  path={path}
+  showThemeToggle={true}
+>
+  <SEO
+    slot="seo"
+    title={title}
+    description={description}
+    locale={locale}
+    path={path}
+    ogImage={`/og/page/${locale}${path}`}
+  />
+
+  <article class="page-layout container py-12">
+    {breadcrumbs.length > 0 && <Breadcrumbs crumbs={breadcrumbs} />}
+
+    <header class="page-layout__hero">
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </header>
+
+    <div class="page-layout__content">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .page-layout__breadcrumbs ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 var(--space-lg);
+    padding: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .page-layout__breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .page-layout__hero {
+    max-width: 48rem;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .page-layout__hero h1 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .page-layout__hero p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+</style>

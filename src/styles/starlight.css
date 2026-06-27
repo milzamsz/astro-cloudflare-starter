@@ -1,0 +1,151 @@
+/**
+ * Starlight (docs) theme overrides.
+ *
+ * The docs match the marketing site's monochrome OKLCH system (see
+ * system/globals/colors.md): neutral black/white accent, no hue. This file also
+ * tightens the type scale and spacing so headings don't feel oversized and the
+ * vertical gaps are calmer.
+ */
+
+/* ── Accent color (monochrome, matches the frontend) ─────────────────── */
+/* Dark theme is the :root default in Starlight; light is data-theme='light'.
+   Accent = the foreground tone so active items / links read near-black on
+   light and near-white on dark, exactly like the marketing site. */
+:root {
+  --sl-color-accent-low: #404040;
+  --sl-color-accent: #e5e5e5;
+  --sl-color-accent-high: #fafafa;
+  --sl-color-text-accent: #fafafa;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #e5e5e5;
+  --sl-color-accent: #262626;
+  --sl-color-accent-high: #0a0a0a;
+  --sl-color-text-accent: #171717;
+}
+
+/* ── Type scale (smaller, tighter headings) ──────────────────────────── */
+:root {
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.25rem;
+  --sl-text-h4: 1.0625rem;
+  --sl-text-h5: 1rem;
+  --sl-line-height: 1.65;
+  --sl-line-height-headings: 1.2;
+}
+
+@media (min-width: 50rem) {
+  :root {
+    --sl-text-h1: 2.25rem;
+    --sl-text-h2: 1.625rem;
+    --sl-text-h3: 1.3125rem;
+  }
+}
+
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  letter-spacing: -0.015em;
+  font-weight: 650;
+}
+
+/* ── Spacing (reduce the big gaps) ───────────────────────────────────── */
+/* Bring the page title closer to the top of the column. */
+.content-panel {
+  padding-block: 1rem;
+}
+
+/* The title lives in its own panel; the body + pager live in the next one,
+   separated by a hairline divider + double padding. Merge them so the title
+   sits right above its content instead of floating in a big empty band. */
+.content-panel:first-of-type {
+  padding-bottom: 0.5rem;
+}
+
+.content-panel + .content-panel {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0.25rem;
+}
+
+/* The h1 column matches the markdown column width and loses its extra gap. */
+.content-panel:first-of-type .sl-container > h1 {
+  margin-bottom: 0;
+}
+
+/* Tighten flow spacing between markdown blocks. */
+.sl-markdown-content > * + * {
+  margin-top: 0.9rem;
+}
+
+.sl-markdown-content > :first-child {
+  margin-top: 0;
+}
+
+/* Headings get clear, consistent breathing room — more above, tight below. */
+.sl-markdown-content
+  :is(h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+  margin-top: 1.75rem;
+}
+
+.sl-markdown-content
+  :is(h2, h3, h4, h5, h6):not(:where(.not-content *))
+  + * {
+  margin-top: 0.5rem;
+}
+
+/* ── Pagination (compact text + accent) ──────────────────────────────── */
+.pagination-links {
+  margin-top: 1.5rem;
+}
+
+.pagination-links a {
+  padding: 0.75rem 1rem;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* Small uppercase caption ("Previous" / "Next"). */
+.pagination-links a > span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+/* Page title — readable, not the oversized --sl-text-2xl default. */
+.pagination-links .link-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  margin-top: 0.2rem;
+  display: inline-block;
+}
+
+.pagination-links a:hover {
+  border-color: var(--sl-color-accent);
+}
+
+.pagination-links a:hover .link-title {
+  color: var(--sl-color-text-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination-links a {
+    transition: none;
+  }
+}
+
+/* ── Small polish ────────────────────────────────────────────────────── */
+/* Accent-tinted links and inline code in body content. */
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--sl-color-text-accent);
+  text-underline-offset: 0.2em;
+}
+
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+  color: var(--sl-color-accent-high);
+}

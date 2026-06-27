@@ -1,0 +1,76 @@
+---
+/**
+ * Img — Preset-driven responsive image component.
+ *
+ * Accepts only approved transformation presets. Does NOT accept arbitrary
+ * width/height/format parameters (fail closed).
+ *
+ * Examples:
+ *   <Img preset="hero" src="uploads/2026/06/photo.webp" alt="Banner" />
+ *   <Img preset="card" src="https://assets.example.com/..." alt="Card" loading="lazy" />
+ */
+import type { PresetName } from "../lib/images";
+import { presetUrl, srcset, PRESETS } from "../lib/images";
+
+export interface Props {
+  preset: PresetName;
+  src: string;
+  alt: string;
+  loading?: "lazy" | "eager";
+  class?: string;
+  /** Override asset domain base URL (defaults to "/" for relative paths). */
+  baseUrl?: string;
+  /** Optional: override the displayed aspect ratio. */
+  aspectRatio?: string;
+}
+
+const {
+  preset,
+  src,
+  alt,
+  loading = "lazy",
+  class: className,
+  baseUrl,
+  aspectRatio,
+} = Astro.props;
+
+// Fail closed: unknown preset → rendering error in dev, skip in production
+const imgUrl = presetUrl(preset, src, baseUrl);
+const imgSrcset = srcset(src, ["card", "hero", "full"], baseUrl);
+const presetDef = PRESETS[preset];
+
+if (!imgUrl) {
+  console.warn(`[Img] Unknown preset "${preset}" for src "${src}". Skipping.`);
+}
+
+const imgWidth = presetDef?.width ? `${presetDef.width}` : undefined;
+const imgHeight = presetDef?.height ? `${presetDef.height}` : undefined;
+const aspect =
+  aspectRatio ||
+  (imgWidth && imgHeight ? `${imgWidth}/${imgHeight}` : undefined);
+---
+
+{
+  imgUrl ? (
+    <img
+      src={imgUrl}
+      srcset={imgSrcset || undefined}
+      alt={alt}
+      loading={loading}
+      width={imgWidth}
+      height={imgHeight}
+      class={className}
+      style={aspect ? { aspectRatio: aspect } : undefined}
+      decoding="async"
+    />
+  ) : (
+    // Img preset "{preset}" is not defined — rendering fallback
+    <img
+      src={src}
+      alt={alt}
+      loading={loading}
+      class={className}
+      decoding="async"
+    />
+  )
+}

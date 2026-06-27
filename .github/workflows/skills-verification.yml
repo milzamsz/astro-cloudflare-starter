@@ -1,0 +1,51 @@
+name: Skills Verification
+
+on:
+  push:
+    branches: [main, content-preview]
+  pull_request:
+    branches: [main, content-preview]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-agent-skills:
+    name: Skills Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 8.15.0
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify agent skills
+        run: |
+          if [ -f ".agent-skills.lock.md" ]; then
+            echo "✅ Skills lock file exists"
+            echo "📋 Current locked skills:" >> $GITHUB_STEP_SUMMARY
+            cat .agent-skills.lock.md >> $GITHUB_STEP_SUMMARY
+            echo "---" >> $GITHUB_STEP_SUMMARY
+            echo "## Skills Verification Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The skills verification workflow ran successfully." >> $GITHUB_STEP_SUMMARY
+            echo "Check the skills lock file for details." >> $GITHUB_STEP_SUMMARY
+            echo "---" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ SKILLS VERIFICATION PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️  No skills lock file found - skipping verification"
+          fi

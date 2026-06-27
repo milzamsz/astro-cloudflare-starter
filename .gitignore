@@ -1,0 +1,54 @@
+# Node
+node_modules/
+.cache/
+.nyc_output/
+.DS_Store
+.env*
+!.env.example
+.dev.vars
+.agent-skills.lock.md
+
+# Build artifacts
+dist/
+build/
+.astro/
+.cache
+
+# Dependencies
+# pnpm-lock.yaml is intentionally committed for reproducible CI builds
+
+# Logs and reports
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+.history
+
+# Project-specific
+*.log
+*.tmp
+
+# Cloud
+.redwood
+.cloudflare
+cloudflare-pages-report.html
+.wrangler/
+
+# Dev verification artifacts
+screenshots/
+
+# Agentic Kanban (local task board — not part of the template)
+.agentkanban/
+
+# Lighthouse / audit reports
+lh-*.json
+
+# Temporary files
+*.swp
+*.swo
+*~

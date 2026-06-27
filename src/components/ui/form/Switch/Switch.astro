@@ -1,0 +1,48 @@
+---
+export interface Props {
+  id: string;
+  name: string;
+  label: string;
+  checked?: boolean;
+}
+
+const { id, name, label, checked = false } = Astro.props as Props;
+---
+
+<label class="ui-switch">
+  <input id={id} name={name} type="checkbox" checked={checked} />
+  <span class="ui-switch__track"><span class="ui-switch__thumb"></span></span>
+  <span>{label}</span>
+</label>
+
+<style>
+  .ui-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .ui-switch input {
+    position: absolute;
+    opacity: 0;
+  }
+  .ui-switch__track {
+    width: 2.75rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: var(--color-bg-tertiary);
+    padding: 0.125rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ui-switch__thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background: white;
+    transform: translateX(0);
+    transition: transform 0.2s ease;
+  }
+  .ui-switch input:checked + .ui-switch__track .ui-switch__thumb {
+    transform: translateX(1.25rem);
+  }
+</style>

@@ -1,0 +1,195 @@
+---
+import { Icon } from "astro-icon/components";
+import { siteConfig } from "../../config/site.config";
+import { footerNav } from "../../config/nav.config";
+import { t } from "../../i18n/ui";
+import { resolveRoute } from "../../i18n/routes";
+import type { Locale } from "../../lib/site-config";
+import Logo from "./Logo.astro";
+
+export interface Props {
+  currentLocale: Locale;
+}
+
+const { currentLocale } = Astro.props as Props;
+const year = new Date().getFullYear();
+
+const socialIcon = (url: string) => {
+  if (url.includes("github.com")) return "lucide:github";
+  if (url.includes("twitter.com") || url.includes("x.com"))
+    return "lucide:twitter";
+  if (url.includes("linkedin.com")) return "lucide:linkedin";
+  if (url.startsWith("mailto:")) return "lucide:mail";
+  return "lucide:link";
+};
+---
+
+<footer class="footer">
+  <div class="footer__inner container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo />
+        <p>{siteConfig.description}</p>
+      </div>
+
+      <div class="footer__column">
+        <h2>{t(currentLocale, "nav.services")}</h2>
+        <ul>
+          {
+            footerNav.product.map((item) => (
+              <li>
+                <a href={resolveRoute(currentLocale, item.href)}>
+                  {t(currentLocale, item.labelKey)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="footer__column">
+        <h2>{t(currentLocale, "nav.contact")}</h2>
+        <ul>
+          {
+            footerNav.legal.map((item) => (
+              <li>
+                <a href={resolveRoute(currentLocale, item.href)}>
+                  {t(currentLocale, item.labelKey)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      {
+        siteConfig.header.showSocialLinks && (
+          <div class="footer__column">
+            <h2>Social</h2>
+            <ul class="footer__social">
+              {siteConfig.socialLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.url}
+                    target={link.url.startsWith("http") ? "_blank" : undefined}
+                    rel="noreferrer"
+                  >
+                    <Icon name={socialIcon(link.url)} />
+                    <span>{link.label ?? link.platform}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="footer__meta">
+      <p>&copy; {year} {siteConfig.name}</p>
+      <div class="footer__legal">
+        {
+          footerNav.legal.map((item) => (
+            <a href={resolveRoute(currentLocale, item.href)}>
+              {t(currentLocale, item.labelKey)}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
+  }
+
+  .footer__inner {
+    padding-block: var(--space-2xl) var(--space-lg);
+  }
+
+  .footer__grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: 1.5fr repeat(3, minmax(0, 1fr));
+  }
+
+  .footer__brand p {
+    margin: var(--space-md) 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .footer__column h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.9375rem;
+  }
+
+  .footer__column ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .footer__column a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .footer__column a:hover,
+  .footer__social a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .footer__social li + li {
+    margin-top: 0.5rem;
+  }
+
+  .footer__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .footer__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .footer__legal {
+    display: flex;
+    gap: var(--space-lg);
+  }
+
+  .footer__legal a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (max-width: 60rem) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .footer__grid,
+    .footer__meta {
+      grid-template-columns: 1fr;
+      display: grid;
+    }
+  }
+</style>

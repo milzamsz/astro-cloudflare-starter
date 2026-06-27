@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { t } from "../i18n/ui";
+
+const locale = (Astro.currentLocale || "en") as "en";
+
+const allPages: CollectionEntry<"pages">[] = await getCollection("pages");
+const page = allPages.find(
+  (p) => p.data.slug === "terms" && p.data.locale === locale,
+);
+const rendered = page ? await render(page) : null;
+const Content = rendered?.Content;
+---
+
+<BaseLayout
+  title={page?.data.title || t(locale, "footer.terms")}
+  description={page?.data.description}
+  locale={locale}
+  path={"/terms"}
+>
+  <article class="legal-page container">
+    <header class="legal-page__head">
+      <p class="legal-page__eyebrow">Legal</p>
+      <h1>{page?.data.title}</h1>
+    </header>
+    <div class="legal-page__content">
+      {Content && <Content />}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal-page {
+    padding-block: var(--space-2xl);
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+  .legal-page__head {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .legal-page__eyebrow {
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+  }
+  .legal-page h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .legal-page__content {
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+  }
+  .legal-page__content :global(h2) {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: var(--space-xl) 0 var(--space-md);
+  }
+  .legal-page__content :global(p) {
+    margin: 0 0 var(--space-md);
+  }
+  .legal-page__content :global(ul) {
+    list-style: disc;
+    padding-left: var(--space-lg);
+    margin: 0 0 var(--space-md);
+  }
+  .legal-page__content :global(li) {
+    margin-bottom: var(--space-sm);
+  }
+  .legal-page__content :global(a) {
+    color: var(--color-brand-primary);
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import type { Locale } from "../../lib/site-config";
+import { Badge } from "../ui/index";
+
+export interface Props {
+  tags: string[];
+  basePath?: string;
+  locale?: Locale;
+}
+
+const { tags, basePath = "/blog", locale = "en" } = Astro.props as Props;
+
+function slugify(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+---
+
+{
+  tags.length > 0 && (
+    <div
+      class="blog-tags"
+      aria-label="Post tags"
+    >
+      {tags.map((tag) => (
+        <a href={`${basePath}?tag=${slugify(tag)}`}>
+          <Badge variant="outline">{tag}</Badge>
+        </a>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .blog-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .blog-tags a {
+    text-decoration: none;
+  }
+</style>

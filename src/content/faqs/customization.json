@@ -1,0 +1,7 @@
+{
+  "question": "How do I customize the site theme?",
+  "answer": "The site uses a blue palette defined in `src/styles/tokens/colors.css`. You can modify the CSS variables there for both light and dark modes. The Tailwind `@theme` block in `global.css` maps these tokens to utility classes.",
+  "category": "customization",
+  "order": 1,
+  "locale": "en"
+}

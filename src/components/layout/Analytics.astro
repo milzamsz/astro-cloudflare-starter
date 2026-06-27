@@ -1,0 +1,55 @@
+---
+import { getEntry } from "astro:content";
+
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined;
+const gtmId = import.meta.env.PUBLIC_GTM_ID as string | undefined;
+const settings = await getEntry("settings", "settings");
+const umamiUrl = settings?.data.umamiUrl;
+const umamiId = settings?.data.umamiId;
+---
+
+{
+  gaId && (
+    <>
+      <script
+        is:inline
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+      />
+      <script
+        is:inline
+        set:html={`
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "${gaId}");
+    `}
+      />
+    </>
+  )
+}
+
+{
+  gtmId && (
+    <>
+      <script
+        is:inline
+        async
+        src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
+      />
+      <script
+        is:inline
+        set:html={`
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    `}
+      />
+    </>
+  )
+}
+
+{
+  umamiUrl && umamiId && (
+    <script is:inline async defer src={umamiUrl} data-website-id={umamiId} />
+  )
+}

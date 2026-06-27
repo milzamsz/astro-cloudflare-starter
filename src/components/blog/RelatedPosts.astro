@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BlogCard from "./BlogCard.astro";
+import type { Locale } from "../../lib/site-config";
+import { t } from "../../i18n/ui";
+
+export interface Props {
+  currentPost: CollectionEntry<"blog">;
+  allPosts: CollectionEntry<"blog">[];
+  limit?: number;
+  locale?: Locale;
+}
+
+const {
+  currentPost,
+  allPosts,
+  limit = 3,
+  locale = currentPost.data.locale,
+} = Astro.props as Props;
+const currentTags = new Set(currentPost.data.tags ?? []);
+const relatedPosts = allPosts
+  .filter(
+    (entry) =>
+      entry.id !== currentPost.id &&
+      entry.data.locale === currentPost.data.locale &&
+      !entry.data.draft,
+  )
+  .map((entry) => {
+    const sharedTagCount = (entry.data.tags ?? []).filter((tag: string) =>
+      currentTags.has(tag),
+    ).length;
+    return { entry, sharedTagCount };
+  })
+  .sort(
+    (a, b) =>
+      b.sharedTagCount - a.sharedTagCount ||
+      new Date(b.entry.data.publishDate).getTime() -
+        new Date(a.entry.data.publishDate).getTime(),
+  )
+  .slice(0, limit)
+  .map((item) => item.entry);
+---
+
+{
+  relatedPosts.length > 0 && (
+    <section class="related-posts">
+      <h2 class="related-posts__title">{t(locale, "blog.relatedPosts")}</h2>
+      <div class="related-posts__grid">
+        {relatedPosts.map((entry) => (
+          <BlogCard
+            post={entry}
+            variant="grid"
+            locale={currentPost.data.locale}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .related-posts {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .related-posts__title {
+    margin: 0 0 var(--space-lg);
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    letter-spacing: -0.01em;
+  }
+
+  .related-posts__grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  }
+</style>

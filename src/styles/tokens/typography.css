@@ -1,0 +1,69 @@
+/**
+ * Typography tokens — Font families, fluid type scale, heading weights
+ * Fontsource variable fonts: Manrope (body), Outfit (headings), JetBrains Mono (code)
+ */
+
+:root {
+  /* === Font families === */
+  --font-sans:
+    "Manrope Variable", "Manrope Fallback", system-ui, -apple-system,
+    blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+  --font-heading:
+    "Outfit Variable", "Outfit Fallback", system-ui, -apple-system,
+    blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+  --font-mono:
+    "JetBrains Mono Variable", "JetBrains Mono Fallback", ui-monospace,
+    sfmono-regular, "SF Mono", menlo, consolas, "Liberation Mono", monospace;
+
+  /* === Fluid type scale (clamp: min, preferred, max) === */
+
+  /* Base: 1rem = 16px at default viewport */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); /* 12-14px */
+  --text-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem); /* 14-16px  */
+  --text-base: clamp(1rem, 0.925rem + 0.375vw, 1.125rem); /* 16-18px  */
+  --text-lg: clamp(1.125rem, 1.025rem + 0.5vw, 1.25rem); /* 18-20px  */
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem); /* 20-24px  */
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem); /* 24-32px  */
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem); /* 30-40px  */
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3rem); /* 36-48px  */
+  --text-5xl: clamp(3rem, 2.25rem + 3.75vw, 4rem); /* 48-64px  */
+
+  /* === Heading weights === */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* === Line heights === */
+  --leading-tight: 1.1;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* === Letter spacing === */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+}
+
+/* === Fluid heading scale === */
+:root {
+  --heading-h1: var(--text-5xl);
+  --heading-h2: var(--text-4xl);
+  --heading-h3: var(--text-3xl);
+  --heading-h4: var(--text-2xl);
+  --heading-h5: var(--text-xl);
+  --heading-h6: var(--text-lg);
+}
+
+/* === Code font size (slightly smaller for inline code) === */
+:root {
+  --text-code-sm: clamp(0.8125rem, 0.7625rem + 0.25vw, 0.9375rem);
+  --text-code-base: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+}

@@ -1,0 +1,198 @@
+---
+import { Avatar } from "../ui/index";
+
+export interface Stat {
+  value: string;
+  label: string;
+}
+
+export interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface Logo {
+  name: string;
+  src?: string;
+}
+
+export interface Props {
+  stats?: Stat[];
+  testimonials?: Testimonial[];
+  logos?: Logo[];
+}
+
+const { stats = [], testimonials = [], logos = [] } = Astro.props as Props;
+---
+
+<section class="credibility">
+  {
+    stats.length > 0 && (
+      <dl class="credibility__stats">
+        {stats.map((stat) => (
+          <div class="credibility__stat">
+            <dd class="credibility__stat-value">{stat.value}</dd>
+            <dt class="credibility__stat-label">{stat.label}</dt>
+          </div>
+        ))}
+      </dl>
+    )
+  }
+
+  {
+    testimonials.length > 0 && (
+      <div class="credibility__testimonials">
+        {testimonials.map((testimonial) => (
+          <figure class="credibility__testimonial">
+            <blockquote>{testimonial.quote}</blockquote>
+            <figcaption>
+              <Avatar
+                name={testimonial.author}
+                src={testimonial.avatar}
+                size="sm"
+              />
+              <div>
+                <strong>{testimonial.author}</strong>
+                <span>{testimonial.role}</span>
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    logos.length > 0 && (
+      <div class="credibility__logos">
+        {logos.map((logo) =>
+          logo.src ? (
+            <img src={logo.src} alt={logo.name} loading="lazy" />
+          ) : (
+            <span>{logo.name}</span>
+          ),
+        )}
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .credibility {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .credibility__stats {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .credibility__stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .credibility__stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .credibility__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 2.25rem 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .credibility__stat:hover {
+    border-color: var(--color-brand-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .credibility__stat-value {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--primary);
+  }
+
+  .credibility__stat-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .credibility__testimonial {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-lg);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    margin: 0;
+  }
+
+  .credibility__testimonial span {
+    color: var(--color-text-secondary);
+  }
+
+  .credibility__testimonials {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .credibility__testimonial blockquote {
+    margin: 0 0 var(--space-lg);
+    line-height: 1.7;
+  }
+
+  .credibility__testimonial figcaption {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .credibility__logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg) var(--space-xl);
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .credibility__logos img {
+    max-height: 2rem;
+    width: auto;
+  }
+
+  .credibility__logos span {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: 0.01em;
+    color: var(--color-text-secondary);
+  }
+</style>

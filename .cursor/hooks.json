@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "node .cursor/hooks/guard-conventions.mjs",
+        "matcher": "Write|TabWrite",
+        "timeout": 20
+      }
+    ]
+  }
+}

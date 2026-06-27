@@ -1,0 +1,168 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface StackItem {
+  name: string;
+  version: string;
+  icon: string;
+}
+
+export interface Props {
+  items: StackItem[];
+  pauseOnHover?: boolean;
+}
+
+const { items, pauseOnHover = true } = Astro.props as Props;
+
+function hasVersion(version: string | undefined): version is string {
+  if (!version) return false;
+  const normalized = version.trim().toLowerCase();
+  return normalized !== "" && normalized !== "n/a" && normalized !== "na";
+}
+
+// Repeat the set enough that a single "half" of the track is always wider than
+// the viewport, then duplicate that half so translateX(-50%) loops seamlessly
+// no matter how few items are configured. Only the first real set is announced.
+const REPEAT = items.length > 0 ? Math.max(2, Math.ceil(8 / items.length)) : 1;
+const half = Array.from({ length: REPEAT }, () => items).flat();
+const marqueeItems = [...half, ...half];
+---
+
+<div class={`stack-marquee${pauseOnHover ? " stack-marquee--pause" : ""}`}>
+  <ul class="stack-marquee__track">
+    {
+      marqueeItems.map((item, index) => (
+        <li
+          class={`stack-marquee__item${index >= items.length ? " stack-marquee__item--clone" : ""}`}
+          aria-hidden={index >= items.length ? "true" : undefined}
+        >
+          <Icon name={item.icon} class="stack-marquee__icon" />
+          <span class="stack-marquee__name">{item.name}</span>
+          {hasVersion(item.version) && (
+            <small class="stack-marquee__version">{item.version}</small>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .stack-marquee {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-secondary);
+    position: relative;
+  }
+
+  .stack-marquee::before,
+  .stack-marquee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .stack-marquee::before {
+    left: 0;
+    background: linear-gradient(
+      to right,
+      var(--color-bg-secondary),
+      transparent
+    );
+  }
+
+  .stack-marquee::after {
+    right: 0;
+    background: linear-gradient(
+      to left,
+      var(--color-bg-secondary),
+      transparent
+    );
+  }
+
+  .stack-marquee__track {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: max-content;
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    list-style: none;
+    animation: stack-marquee 32s linear infinite;
+  }
+
+  .stack-marquee--pause:hover .stack-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .stack-marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 2.75rem;
+    padding-inline: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-primary);
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .stack-marquee__item:hover {
+    border-color: var(--color-brand-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stack-marquee__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .stack-marquee__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
+  }
+
+  .stack-marquee__version {
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  @keyframes stack-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stack-marquee__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .stack-marquee__item--clone {
+      display: none;
+    }
+  }
+</style>

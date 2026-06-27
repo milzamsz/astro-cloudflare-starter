@@ -1,0 +1,39 @@
+---
+import { cn } from "../../../../lib/cn";
+
+export interface Props {
+  class?: string;
+  hover?: boolean;
+}
+
+const { class: className, hover = false } = Astro.props as Props;
+---
+
+<article class={cn("ui-card", hover && "ui-card--hover", className)}>
+  <slot name="header" />
+  <div class="ui-card__body">
+    <slot />
+  </div>
+  <slot name="footer" />
+</article>
+
+<style>
+  .ui-card {
+    border: 1px solid var(--color-border);
+    border-radius: 0.9rem;
+    background: var(--color-bg-primary);
+    overflow: hidden;
+  }
+  .ui-card--hover {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .ui-card--hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .ui-card__body {
+    padding: var(--space-lg);
+  }
+</style>

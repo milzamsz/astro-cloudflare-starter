@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/your-org/astro-cloudflare#readme
+    about: Read the README and SETUP guide before opening an issue.
+  - name: Discussions / Questions
+    url: https://github.com/your-org/astro-cloudflare/discussions
+    about: Ask questions and share ideas here.

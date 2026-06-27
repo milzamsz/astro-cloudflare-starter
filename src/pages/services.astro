@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { t } from "../i18n/ui";
+import Hero from "../components/Hero.astro";
+import { ServiceCard } from "../components/services/index";
+
+const locale = (Astro.currentLocale || "en") as "en";
+
+const allServices: CollectionEntry<"services">[] =
+  await getCollection("services");
+const services = allServices
+  .filter((s) => s.data.locale === locale)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title={t(locale, "nav.services")}
+  description="Modern website development services"
+  locale={locale}
+  path={"/services"}
+>
+  <Hero
+    variant="centered"
+    size="md"
+    eyebrow="Services"
+    title="Services that get you live"
+    content="From build to deploy — complete solutions for your marketing website, ready to ship on the edge."
+    locale={locale}
+  />
+
+  <section class="services-list container">
+    {
+      services.length === 0 && (
+        <p class="services-list__empty">No services available yet.</p>
+      )
+    }
+    <div class="services-list__grid">
+      {
+        services.map((service) => (
+          <ServiceCard service={service} locale={locale} headingLevel="h2" />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .services-list {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+  .services-list__empty {
+    padding: var(--space-3xl) var(--space-lg);
+    text-align: center;
+    color: var(--color-text-secondary);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-2xl);
+  }
+  .services-list__grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+</style>

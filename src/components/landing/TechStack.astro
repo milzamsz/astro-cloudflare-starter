@@ -1,0 +1,96 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface StackItem {
+  name: string;
+  version: string;
+  icon: string;
+  colorOklch: string;
+  url: string;
+}
+
+export interface Props {
+  items: StackItem[];
+}
+
+const { items } = Astro.props as Props;
+---
+
+<div class="tech-stack">
+  {
+    items.map((item) => (
+      <a
+        href={item.url}
+        class="tech-stack__item"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <span
+          class="tech-stack__icon"
+          style={`background-color: color-mix(in oklch, ${item.colorOklch} 18%, var(--color-bg-secondary));`}
+        >
+          <Icon name={item.icon} />
+        </span>
+        <div class="tech-stack__meta">
+          <strong>{item.name}</strong>
+          {item.version && <small>{item.version}</small>}
+        </div>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .tech-stack {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .tech-stack__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    color: inherit;
+    background: var(--color-bg-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tech-stack__item:hover {
+    border-color: var(--color-brand-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .tech-stack__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-lg);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .tech-stack__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .tech-stack__meta strong {
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  .tech-stack__meta small {
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

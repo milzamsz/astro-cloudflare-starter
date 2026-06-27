@@ -1,0 +1,33 @@
+---
+import { cn } from "../../../../lib/cn";
+
+export interface Props {
+  spacing?: "sm" | "md" | "lg" | "xl";
+  class?: string;
+}
+
+const { spacing = "lg", class: className } = Astro.props as Props;
+---
+
+<section class={cn("ui-section", `ui-section--${spacing}`, className)}>
+  <slot />
+</section>
+
+<style>
+  .ui-section {
+    width: 100%;
+  }
+
+  .ui-section--sm {
+    padding-block: var(--space-lg);
+  }
+  .ui-section--md {
+    padding-block: var(--space-xl);
+  }
+  .ui-section--lg {
+    padding-block: var(--space-2xl);
+  }
+  .ui-section--xl {
+    padding-block: var(--space-3xl);
+  }
+</style>

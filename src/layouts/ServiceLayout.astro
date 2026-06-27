@@ -1,0 +1,280 @@
+---
+import { type CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import SEO from "../components/seo/SEO.astro";
+import { Icon } from "../components/ui/index";
+import { type Locale } from "../lib/site-config";
+import { canonicalUrl, jsonLdService } from "../lib/seo";
+import { siteConfig } from "../config/site.config";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  service: CollectionEntry<"services">;
+  locale: Locale;
+  headings?: Heading[];
+}
+
+const { service, locale, headings = [] } = Astro.props as Props;
+const showToc =
+  siteConfig.articleFeatures.toc.enabled &&
+  siteConfig.articleFeatures.toc.layout !== "none" &&
+  headings.filter((heading: Heading) => heading.depth >= 2).length >=
+    siteConfig.articleFeatures.toc.minHeadings;
+const serviceJsonLd = jsonLdService({
+  name: service.data.title,
+  description: service.data.description,
+  locale,
+  url: canonicalUrl(locale, `/services/${service.data.slug}`),
+});
+
+const iconBySlug: Record<string, string> = {
+  "web-development": "lucide:code-2",
+  "cloud-deployment": "lucide:cloud",
+};
+const icon = iconBySlug[service.data.slug] ?? "lucide:layers";
+---
+
+<BaseLayout
+  title={service.data.title}
+  description={service.data.description}
+  locale={locale}
+  path={`/services/${service.data.slug}`}
+  showThemeToggle={true}
+>
+  <SEO
+    slot="seo"
+    title={service.data.title}
+    description={service.data.description}
+    locale={locale}
+    path={`/services/${service.data.slug}`}
+    ogImage={`/og/service/${locale}/${service.data.slug}`}
+    jsonLd={serviceJsonLd}
+  />
+
+  <article class="service-layout container py-12">
+    <header class="service-layout__hero">
+      <span class="service-layout__icon" aria-hidden="true">
+        <Icon name={icon} />
+      </span>
+      <p class="service-layout__eyebrow">Service</p>
+      <h1>{service.data.title}</h1>
+      <p class="service-layout__description">{service.data.description}</p>
+      {
+        service.data.priceRange && (
+          <span class="service-layout__price">
+            <span class="service-layout__price-label">Starting at</span>
+            {service.data.priceRange}
+          </span>
+        )
+      }
+    </header>
+
+    <div class="service-layout__main">
+      <div class="service-layout__content prose prose-gray dark:prose-invert max-w-none">
+        <slot />
+      </div>
+
+      <aside class="service-layout__aside">
+        {
+          service.data.features.length > 0 && (
+            <section
+              class="service-layout__features"
+              aria-labelledby="service-features-title"
+            >
+              <h2 id="service-features-title">What's included</h2>
+              <ul>
+                {service.data.features.map((feature: string) => (
+                  <li>
+                    <Icon name="lucide:check" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          showToc && (
+            <nav class="service-layout__toc" aria-label="Table of contents">
+              <p class="service-layout__toc-title">On this page</p>
+              <ul>
+                {headings
+                  .filter(
+                    (heading: Heading) =>
+                      heading.depth >= 2 &&
+                      heading.depth <= siteConfig.articleFeatures.toc.maxDepth,
+                  )
+                  .map((heading: Heading) => (
+                    <li>
+                      <a href={`#${heading.slug}`}>{heading.text}</a>
+                    </li>
+                  ))}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+  </article>
+
+  <slot name="cta" />
+</BaseLayout>
+
+<style>
+  .service-layout__hero {
+    display: grid;
+    gap: var(--space-md);
+    max-width: 52rem;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .service-layout__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+
+  .service-layout__icon :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .service-layout__eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+  }
+
+  .service-layout__hero h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .service-layout__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 42rem;
+  }
+
+  .service-layout__price {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
+    padding: 0.45rem 0.9rem;
+    font-weight: 700;
+  }
+
+  .service-layout__price-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+  }
+
+  /* Two-column: content + sticky aside */
+  .service-layout__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .service-layout__content {
+    min-width: 0;
+    max-width: 72ch;
+  }
+
+  .service-layout__aside {
+    position: sticky;
+    top: 5.5rem;
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .service-layout__features h2,
+  .service-layout__toc-title {
+    margin: 0 0 var(--space-md);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .service-layout__features ul,
+  .service-layout__toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .service-layout__features li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+  }
+
+  .service-layout__features :global(svg) {
+    flex-shrink: 0;
+    width: 1.0625rem;
+    height: 1.0625rem;
+    color: var(--color-text-primary);
+  }
+
+  .service-layout__toc {
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .service-layout__toc a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+
+  .service-layout__toc a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  @media (max-width: 64rem) {
+    .service-layout__main {
+      grid-template-columns: 1fr;
+    }
+
+    .service-layout__aside {
+      position: static;
+      order: -1;
+    }
+
+    .service-layout__content {
+      max-width: none;
+    }
+  }
+</style>

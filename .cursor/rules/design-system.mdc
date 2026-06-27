@@ -1,0 +1,24 @@
+---
+description: Design system & on-system conventions (colors, tokens, dark mode)
+globs:
+alwaysApply: true
+---
+
+# Stay on-system
+
+Single source of truth for design lives in `system/globals/` and the tokens in
+`src/styles/tokens/*.css` (exposed via the `@theme` block in `global.css`).
+
+- **Colors:** use semantic tokens only — `bg-primary`, `text-foreground`,
+  `var(--muted-foreground)`, etc. **Never** hardcode hex/rgb or use Tailwind palette
+  utilities like `bg-blue-500`. Palette is monochrome OKLCH; functional status colors
+  (success/warning/destructive) are the only chromatic tokens.
+- **Dark mode:** class strategy (`.dark`). Every token has light+dark values; never
+  hand-invert colors.
+- **Spacing/typography/radius/shadows:** use the scale tokens, not magic numbers.
+- **Effects:** subtle shadows + hairline borders; decorative layers are
+  `aria-hidden` and `pointer-events: none`.
+
+Before finishing UI work: run `pnpm run check:kpis` (also part of `pnpm lint`). It
+fails on hardcoded colors, deprecated imports, and a stray `tailwind.config.*`.
+See `system/globals/colors.md`, `effects.md`, `typography.md`, `spacing.md`.

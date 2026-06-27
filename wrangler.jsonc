@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schema.cloudflare.com/wrangler/2024-10-01",
+	"name": "astro-cloudflare",
+	"compatibility_date": "2026-06-24",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"pages_build_output_dir": "./dist",
+	"r2_buckets": [
+		{
+			"binding": "R2_MEDIA",
+			"bucket_name": "astro-media"
+		}
+	],
+	"vars": {
+		"PNPM_VERSION": "8.15.0"
+	}
+}

@@ -1,0 +1,95 @@
+---
+import { type Locale } from "../../lib/site-config";
+import {
+  canonicalUrl,
+  hreflangLinks,
+  ogMeta,
+  jsonLdWebSite,
+} from "../../lib/seo";
+import { siteConfig } from "../../config/site.config";
+import JsonLd from "./JsonLd.astro";
+
+export interface SEOArticle {
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  tags?: string[];
+}
+
+export interface Props {
+  title: string;
+  description?: string;
+  locale: Locale;
+  path: string;
+  ogImage?: string;
+  canonical?: string;
+  article?: SEOArticle;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const {
+  title,
+  description = siteConfig.description,
+  locale,
+  path,
+  ogImage,
+  canonical,
+  article,
+  jsonLd,
+} = Astro.props as Props;
+
+const fullTitle = title.includes(siteConfig.name)
+  ? title
+  : `${title} | ${siteConfig.name}`;
+const canonicalHref = canonical ?? canonicalUrl(locale, path);
+const links = hreflangLinks(path);
+const og = ogMeta({
+  title: fullTitle,
+  description,
+  locale,
+  path,
+  image: ogImage,
+});
+const verification = siteConfig.verification;
+const schema =
+  jsonLd ?? jsonLdWebSite({ title: fullTitle, description, locale, path });
+const schemas = Array.isArray(schema) ? schema : [schema];
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalHref} />
+
+{
+  verification.google && (
+    <meta name="google-site-verification" content={verification.google} />
+  )
+}
+{verification.bing && <meta name="msvalidate.01" content={verification.bing} />}
+
+{
+  links.map((link) => (
+    <link rel={link.rel} href={link.href} hreflang={link.hreflang} />
+  ))
+}
+
+{
+  Object.entries(og).map(([property, content]) => (
+    <meta property={property} content={content} />
+  ))
+}
+
+{
+  article?.publishedTime && (
+    <meta property="article:published_time" content={article.publishedTime} />
+  )
+}
+{
+  article?.modifiedTime && (
+    <meta property="article:modified_time" content={article.modifiedTime} />
+  )
+}
+{article?.author && <meta property="article:author" content={article.author} />}
+{article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
+
+{schemas.map((entry) => <JsonLd schema={entry} />)}

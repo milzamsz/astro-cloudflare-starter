@@ -1,0 +1,75 @@
+---
+import { Icon } from "astro-icon/components";
+import { cn } from "../../../../lib/cn";
+
+type AlertVariant = "info" | "success" | "warning" | "error";
+
+const variantClasses: Record<AlertVariant, string> = {
+  info: "ui-alert--info",
+  success: "ui-alert--success",
+  warning: "ui-alert--warning",
+  error: "ui-alert--error",
+};
+
+export interface Props {
+  variant?: AlertVariant;
+  dismissible?: boolean;
+  class?: string;
+}
+
+const { variant, dismissible = false, class: className } = Astro.props as Props;
+---
+
+<div
+  class={cn(
+    "ui-alert",
+    variant ? variantClasses[variant] : variantClasses.info,
+    className,
+  )}
+  role="alert"
+>
+  <div class="ui-alert__content">
+    <Icon name="lucide:info" />
+    <slot />
+  </div>
+  {
+    dismissible && (
+      <button type="button" class="ui-alert__close" aria-label="Dismiss alert">
+        ×
+      </button>
+    )
+  }
+</div>
+
+<style>
+  .ui-alert {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+  }
+  .ui-alert__content {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .ui-alert--info {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+  .ui-alert--success {
+    background: #ecfdf5;
+    color: #047857;
+  }
+  .ui-alert--warning {
+    background: #fffbeb;
+    color: #b45309;
+  }
+  .ui-alert--error {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+</style>

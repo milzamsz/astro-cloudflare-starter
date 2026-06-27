@@ -1,0 +1,9 @@
+{
+  "name": "Admin",
+  "bio": "Site administrator and content editor for the Astro Cloudflare starter.",
+  "avatar": "/images/author.jpg",
+  "social": {
+    "github": "milzamsz",
+    "twitter": "@yourhandle"
+  }
+}

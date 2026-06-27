@@ -1,0 +1,35 @@
+---
+import ServiceLayout from "../../layouts/ServiceLayout.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import CTA from "../../components/CTA.astro";
+
+export async function getStaticPaths() {
+  const allServices: CollectionEntry<"services">[] =
+    await getCollection("services");
+  return allServices
+    .filter((service) => service.data.locale === "en")
+    .map((service) => ({
+      params: { slug: service.data.slug },
+      props: { service, locale: service.data.locale },
+    }));
+}
+
+const { service, locale } = Astro.props as {
+  service: CollectionEntry<"services">;
+  locale: "en";
+};
+const { Content, headings } = await render(service);
+---
+
+<ServiceLayout service={service} locale={locale} headings={headings}>
+  <Content />
+  <CTA
+    slot="cta"
+    title="Interested in this service?"
+    content="Tell us about your project and we'll get back to you within one business day."
+    ctaText="Get in touch"
+    ctaHref="/contact"
+    locale={locale}
+  />
+</ServiceLayout>

@@ -1,0 +1,148 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Locale } from "../../lib/site-config";
+import { t } from "../../i18n/ui";
+
+export interface Props {
+  locale?: Locale;
+}
+
+const { locale = "en" } = Astro.props as Props;
+const labelDark = t(locale, "nav.darkMode");
+const labelLight = t(locale, "nav.lightMode");
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  aria-label={labelDark}
+  aria-pressed="false"
+  data-theme-toggle
+  data-theme="light"
+>
+  <Icon
+    name="lucide:sun"
+    class="theme-toggle__icon theme-toggle__icon--light"
+  />
+  <Icon
+    name="lucide:moon"
+    class="theme-toggle__icon theme-toggle__icon--dark"
+  />
+  <span class="theme-toggle__label" data-theme-label>{labelDark}</span>
+</button>
+
+<script is:inline define:vars={{ labelDark, labelLight }}>
+  const storageKey = "theme";
+  const root = document.documentElement;
+  const button = document.querySelector("[data-theme-toggle]");
+
+  const label = button?.querySelector("[data-theme-label]");
+
+  const syncTheme = (theme) => {
+    const isDark = theme === "dark";
+    root.classList.toggle("dark", isDark);
+    if (button) {
+      button.setAttribute("aria-pressed", String(isDark));
+      button.setAttribute("data-theme", theme);
+      button.setAttribute("aria-label", isDark ? labelLight : labelDark);
+    }
+    if (label) {
+      label.textContent = isDark ? labelLight : labelDark;
+    }
+  };
+
+  // Keep the main site and the Starlight /docs section in sync by mirroring the
+  // choice into both storage keys.
+  const starlightKey = "starlight-theme";
+
+  try {
+    const storedTheme =
+      localStorage.getItem(storageKey) || localStorage.getItem(starlightKey);
+    const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    syncTheme(
+      storedTheme === "dark" || storedTheme === "light"
+        ? storedTheme
+        : preferredTheme,
+    );
+
+    button?.addEventListener("click", () => {
+      const nextTheme = root.classList.contains("dark") ? "light" : "dark";
+      localStorage.setItem(storageKey, nextTheme);
+      localStorage.setItem(starlightKey, nextTheme);
+      syncTheme(nextTheme);
+    });
+  } catch {
+    // Ignore storage failures and preserve the bootstrap theme.
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--color-brand-primary);
+    color: var(--color-brand-primary);
+    background: var(--color-bg-secondary);
+    transform: scale(1.05);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .theme-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .theme-toggle__icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    transition: transform 0.3s ease;
+  }
+
+  .theme-toggle__icon--dark {
+    display: none;
+  }
+
+  .theme-toggle[data-theme="dark"] .theme-toggle__icon--light {
+    display: none;
+  }
+
+  .theme-toggle[data-theme="dark"] .theme-toggle__icon--dark {
+    display: inline-block;
+  }
+
+  .theme-toggle[data-theme="light"] .theme-toggle__icon--light {
+    display: inline-block;
+  }
+
+  .theme-toggle__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>

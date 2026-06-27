@@ -1,0 +1,87 @@
+---
+import { Card, Grid, Icon } from "./ui/index";
+
+export interface Feature {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface Props {
+  title?: string;
+  features: Feature[];
+  columns?: 2 | 3 | 4;
+}
+
+const { title, features, columns = 3 } = Astro.props;
+const iconMap: Record<string, string> = {
+  code: "lucide:code-2",
+  speed: "lucide:rocket",
+  globe: "lucide:globe",
+  database: "lucide:database",
+};
+---
+
+<section class="feature-grid container">
+  {title && <h2 class="feature-grid__title">{title}</h2>}
+  <Grid cols={columns}>
+    {
+      features.map((feature) => (
+        <Card hover={true} class="feature-card">
+          {feature.icon && (
+            <span class="feature-card__icon" aria-hidden="true">
+              <Icon name={iconMap[feature.icon] ?? `lucide:${feature.icon}`} />
+            </span>
+          )}
+          <h3 class="feature-card__title">{feature.title}</h3>
+          <p class="feature-card__desc">{feature.description}</p>
+        </Card>
+      ))
+    }
+  </Grid>
+</section>
+
+<style>
+  .feature-grid {
+    padding-block: var(--space-2xl);
+  }
+
+  .feature-grid__title {
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0 0 var(--space-2xl);
+  }
+
+  .feature-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: var(--space-md);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+
+  .feature-card__icon :global(svg) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .feature-card__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin: 0 0 var(--space-sm);
+  }
+
+  .feature-card__desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>

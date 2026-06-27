@@ -1,0 +1,259 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { t } from "../i18n/ui";
+import Hero from "../components/Hero.astro";
+import CTA from "../components/CTA.astro";
+import { Button, Icon } from "../components/ui/index";
+
+const locale = (Astro.currentLocale || "en") as "en";
+
+const allPages: CollectionEntry<"pages">[] = await getCollection("pages");
+const page = allPages.find(
+  (p) => p.data.slug === "pricing" && p.data.locale === locale,
+);
+
+interface PageSection {
+  type: string;
+  title?: string;
+  content?: string;
+}
+
+const sections: PageSection[] = page?.data.sections || [];
+const heroSection = sections.find((s) => s.type === "hero");
+
+interface Plan {
+  name: string;
+  price: string;
+  period?: string;
+  description: string;
+  features: string[];
+  cta: { label: string; href: string };
+  popular?: boolean;
+}
+
+const plans: Plan[] = [
+  {
+    name: "Starter",
+    price: "$0",
+    period: "/ forever",
+    description: "Everything you need to launch a personal site.",
+    features: [
+      "Static site generation",
+      "Blog & docs collections",
+      "SEO, sitemap & RSS",
+      "Community support",
+    ],
+    cta: { label: "Get started", href: "/contact" },
+  },
+  {
+    name: "Professional",
+    price: "$29",
+    period: "/ month",
+    description: "For teams that need performance and reliability.",
+    features: [
+      "Everything in Starter",
+      "Cloudflare edge deployment",
+      "R2 media integration",
+      "Priority email support",
+    ],
+    cta: { label: "Start free trial", href: "/contact" },
+    popular: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    description: "Dedicated infrastructure, SLAs, and onboarding.",
+    features: [
+      "Everything in Professional",
+      "Dedicated infrastructure",
+      "99.9% uptime SLA",
+      "Solutions engineering",
+    ],
+    cta: { label: "Contact sales", href: "/contact" },
+  },
+];
+---
+
+<BaseLayout
+  title={page?.data.title || t(locale, "nav.pricing")}
+  description={page?.data.description}
+  locale={locale}
+  path={"/pricing"}
+>
+  {
+    heroSection && (
+      <Hero
+        variant="centered"
+        size="md"
+        eyebrow="Pricing"
+        headline={heroSection.title || page?.data.title || ""}
+        subheadline={heroSection.content}
+        locale={locale}
+      />
+    )
+  }
+
+  <section class="pricing container">
+    <div class="pricing__grid">
+      {
+        plans.map((plan) => (
+          <article
+            class:list={["pricing__card", plan.popular && "pricing__card--popular"]}
+          >
+            {plan.popular && (
+              <span class="pricing__badge">Most popular</span>
+            )}
+            <h2 class="pricing__name">{plan.name}</h2>
+            <p class="pricing__price">
+              <span class="pricing__amount">{plan.price}</span>
+              {plan.period && (
+                <span class="pricing__period">{plan.period}</span>
+              )}
+            </p>
+            <p class="pricing__desc">{plan.description}</p>
+            <ul class="pricing__features">
+              {plan.features.map((feature) => (
+                <li>
+                  <Icon name="lucide:check" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              href={plan.cta.href}
+              variant={plan.popular ? "primary" : "secondary"}
+              class="pricing__cta"
+            >
+              {plan.cta.label}
+            </Button>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <CTA
+    title="Questions about pricing?"
+    content="Talk to our team and we'll help you choose the right plan."
+    ctaText="Contact us"
+    ctaHref="/contact"
+    locale={locale}
+  />
+</BaseLayout>
+
+<style>
+  .pricing {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .pricing__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .pricing__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-2xl);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-primary);
+    height: 100%;
+  }
+
+  .pricing__card--popular {
+    border-color: var(--color-text-primary);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .pricing__badge {
+    position: absolute;
+    top: 0;
+    right: var(--space-2xl);
+    transform: translateY(-50%);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .pricing__name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .pricing__price {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+  }
+
+  .pricing__amount {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .pricing__period {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+  }
+
+  .pricing__desc {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    min-height: 2.8em;
+  }
+
+  .pricing__features {
+    list-style: none;
+    margin: var(--space-sm) 0 var(--space-lg);
+    padding: var(--space-lg) 0 0;
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: var(--space-sm);
+    flex: 1;
+  }
+
+  .pricing__features li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+  }
+
+  .pricing__features :global(svg) {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--color-text-primary);
+  }
+
+  :global(.pricing__cta) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @media (max-width: 60rem) {
+    .pricing__grid {
+      grid-template-columns: 1fr;
+      max-width: 28rem;
+      margin-inline: auto;
+    }
+  }
+</style>

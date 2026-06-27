@@ -1,0 +1,112 @@
+---
+/**
+ * Team — grid of people. Uses monogram avatars (no external images) by default.
+ */
+export interface Member {
+  name: string;
+  role?: string;
+  bio?: string;
+}
+
+export interface Props {
+  title?: string;
+  description?: string;
+  members: Member[];
+}
+
+const { title, description, members } = Astro.props as Props;
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+---
+
+<section class="team container">
+  {
+    (title || description) && (
+      <header class="section-head">
+        {title && <h2 class="section-head__title">{title}</h2>}
+        {description && <p class="section-head__lead">{description}</p>}
+      </header>
+    )
+  }
+
+  <ul class="team__grid">
+    {
+      members.map((member) => (
+        <li class="team__card">
+          <span class="team__avatar" aria-hidden="true">
+            {initials(member.name)}
+          </span>
+          <p class="team__name">{member.name}</p>
+          {member.role && <p class="team__role">{member.role}</p>}
+          {member.bio && <p class="team__bio">{member.bio}</p>}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .team {
+    padding-block: var(--space-2xl);
+  }
+
+  .team__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .team__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.4rem;
+    padding: var(--space-lg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .team__avatar {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 0.4rem;
+    border-radius: var(--radius-full);
+    background: var(--secondary);
+    color: var(--foreground);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .team__name {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .team__role {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .team__bio {
+    margin: 0.4rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+</style>

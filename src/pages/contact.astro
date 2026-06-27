@@ -1,0 +1,351 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { t } from "../i18n/ui";
+import { siteConfig } from "../config/site.config";
+import Hero from "../components/Hero.astro";
+import { Button, Icon } from "../components/ui/index";
+
+const locale = (Astro.currentLocale || "en") as "en";
+
+const allPages: CollectionEntry<"pages">[] = await getCollection("pages");
+const page = allPages.find(
+  (p) => p.data.slug === "contact" && p.data.locale === locale,
+);
+
+const allSettings = await getCollection("settings");
+const settings = allSettings[0]?.data as
+  | {
+      mapLatitude?: string;
+      mapLongitude?: string;
+      orgName?: string;
+      orgEmail?: string;
+    }
+  | undefined;
+
+const lat = settings?.mapLatitude || "-6.2088";
+const lng = settings?.mapLongitude || "106.8456";
+const hasMap = Boolean(lat && lng);
+const contactEmail = settings?.orgEmail || siteConfig.email;
+
+// The interactive Google Maps embed is loaded on click (facade pattern) so its
+// third-party JS never weighs on initial load (no TBT).
+const mapEmbed = `https://maps.google.com/maps?q=${lat}%2C${lng}&z=15&hl=en&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
+
+interface PageSection {
+  type: string;
+  title?: string;
+  content?: string;
+  items?: { title?: string; description?: string; icon?: string }[];
+}
+
+const sections: PageSection[] = page?.data.sections || [];
+const heroSection = sections.find((s) => s.type === "hero");
+const featuresSection = sections.find((s) => s.type === "features");
+
+const iconByTitle: Record<string, string> = {
+  Email: "lucide:mail",
+  Office: "lucide:map-pin",
+  Social: "lucide:at-sign",
+  Phone: "lucide:phone",
+};
+
+const methods = (featuresSection?.items || []).map((item) => ({
+  title: item.title || "",
+  description: item.description || "",
+  icon: iconByTitle[item.title || ""] || "lucide:circle",
+}));
+---
+
+<BaseLayout
+  title={page?.data.title || t(locale, "nav.contact")}
+  description={page?.data.description}
+  locale={locale}
+  path={"/contact"}
+>
+  {
+    heroSection && (
+      <Hero
+        variant="centered"
+        size="md"
+        eyebrow="Contact"
+        headline={heroSection.title || page?.data.title || ""}
+        subheadline={heroSection.content}
+        locale={locale}
+      />
+    )
+  }
+
+  <section class="contact container">
+    <div class="contact__grid">
+      <div class="contact__intro">
+        <h2>Send us a message</h2>
+        <p>
+          Have a question or want to work together? Email us directly and we'll
+          get back to you within one business day.
+        </p>
+        <Button href={`mailto:${contactEmail}`} variant="primary">
+          Email {contactEmail}
+        </Button>
+
+        <ul class="contact__methods">
+          {
+            methods.map((method) => (
+              <li class="contact__method">
+                <span class="contact__method-icon" aria-hidden="true">
+                  <Icon name={method.icon} />
+                </span>
+                <span class="contact__method-body">
+                  <span class="contact__method-title">{method.title}</span>
+                  <span class="contact__method-value">
+                    {method.description}
+                  </span>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <aside class="contact__aside">
+        {
+          hasMap ? (
+            <div class="contact__map">
+              <button
+                type="button"
+                class="contact__map-facade"
+                data-map-embed={mapEmbed}
+                aria-label="Load interactive map"
+              >
+                <span class="contact__map-facade-grid" aria-hidden="true" />
+                <span class="contact__map-facade-cta">
+                  <Icon name="lucide:map-pin" />
+                  <span>View map</span>
+                </span>
+              </button>
+              <a
+                class="contact__map-link"
+                href={mapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View on Google Maps
+              </a>
+            </div>
+          ) : (
+            <div class="contact__placeholder">
+              <Icon name="lucide:map-pin" />
+              <p>Add map coordinates in settings to show a location map here.</p>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  // Swap the static facade for the real Google Maps iframe only on first click,
+  // keeping third-party JS off the critical path.
+  document.querySelectorAll("[data-map-embed]").forEach((btn) => {
+    btn.addEventListener(
+      "click",
+      () => {
+        const src = btn.getAttribute("data-map-embed");
+        if (!src) return;
+        const iframe = document.createElement("iframe");
+        iframe.src = src;
+        iframe.width = "100%";
+        iframe.height = "320";
+        iframe.loading = "lazy";
+        iframe.title = "Location map";
+        iframe.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+        iframe.setAttribute("allowfullscreen", "");
+        iframe.className = "contact__map-frame";
+        btn.replaceWith(iframe);
+      },
+      { once: true },
+    );
+  });
+</script>
+
+<style>
+  .contact {
+    padding-block: var(--space-2xl) var(--space-3xl);
+  }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .contact__intro h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    letter-spacing: -0.01em;
+  }
+
+  .contact__intro p {
+    margin: 0 0 var(--space-lg);
+    max-width: 42ch;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .contact__methods {
+    list-style: none;
+    margin: var(--space-2xl) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .contact__method {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-secondary);
+  }
+
+  .contact__method-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+
+  .contact__method-body {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  .contact__method-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+  }
+
+  .contact__method-value {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  .contact__aside {
+    position: sticky;
+    top: 5.5rem;
+  }
+
+  .contact__map :global(iframe),
+  .contact__map-frame {
+    display: block;
+    width: 100%;
+    height: 320px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+  }
+
+  .contact__map-facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 320px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-secondary);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .contact__map-facade:hover,
+  .contact__map-facade:focus-visible {
+    border-color: var(--color-text-primary);
+    box-shadow: var(--shadow-md);
+    outline: none;
+  }
+
+  /* Faint monochrome grid hinting at a map, drawn from tokens (no asset). */
+  .contact__map-facade-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--color-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+    opacity: 0.6;
+    -webkit-mask-image: radial-gradient(
+      circle at center,
+      black 35%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(circle at center, black 35%, transparent 75%);
+    pointer-events: none;
+  }
+
+  .contact__map-facade-cta {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .contact__map-facade-cta :global(svg) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .contact__map-link {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    color: var(--color-brand-primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .contact__map-link:hover {
+    text-decoration: underline;
+  }
+
+  .contact__placeholder {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-3xl) var(--space-lg);
+    text-align: center;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-2xl);
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 48rem) {
+    .contact__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact__aside {
+      position: static;
+    }
+  }
+</style>

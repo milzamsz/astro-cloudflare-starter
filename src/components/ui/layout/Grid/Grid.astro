@@ -1,0 +1,54 @@
+---
+import { cn } from "../../../../lib/cn";
+
+export interface Props {
+  cols?: 2 | 3 | 4;
+  gap?: "sm" | "md" | "lg" | "xl";
+  class?: string;
+}
+
+const { cols = 3, gap = "lg", class: className } = Astro.props as Props;
+---
+
+<div
+  class={cn("ui-grid", `ui-grid--${cols}`, `ui-grid--gap-${gap}`, className)}
+>
+  <slot />
+</div>
+
+<style>
+  .ui-grid {
+    display: grid;
+  }
+
+  .ui-grid--gap-sm {
+    gap: var(--space-sm);
+  }
+  .ui-grid--gap-md {
+    gap: var(--space-md);
+  }
+  .ui-grid--gap-lg {
+    gap: var(--space-lg);
+  }
+  .ui-grid--gap-xl {
+    gap: var(--space-xl);
+  }
+
+  .ui-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ui-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ui-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 48rem) {
+    .ui-grid--2,
+    .ui-grid--3,
+    .ui-grid--4 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

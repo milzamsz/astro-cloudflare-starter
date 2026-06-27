@@ -1,0 +1,32 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+---
+
+<div class={["ui-table", className].filter(Boolean).join(" ")}>
+  <slot />
+</div>
+
+<style>
+  .ui-table {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 0.9rem;
+  }
+  .ui-table :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ui-table :global(th),
+  .ui-table :global(td) {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+  }
+  .ui-table :global(thead) {
+    background: var(--color-bg-secondary);
+  }
+</style>

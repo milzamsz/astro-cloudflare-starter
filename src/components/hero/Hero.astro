@@ -1,0 +1,194 @@
+---
+import { type Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+import { Button } from "../ui/index";
+import { heroVariantClasses, type HeroVariant } from "./hero.variants";
+
+export interface Cta {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  variant?: HeroVariant;
+  size?: "sm" | "md" | "lg";
+  eyebrow?: string;
+  headline?: string;
+  title?: string;
+  subheadline?: string;
+  content?: string;
+  primaryCta?: Cta;
+  secondaryCta?: Cta;
+  ctaText?: string;
+  ctaHref?: string;
+  locale?: Locale;
+}
+
+const props = Astro.props as Props;
+const variant = props.variant ?? "centered";
+const headline = props.headline ?? props.title ?? "";
+const subheadline = props.subheadline ?? props.content;
+const locale = props.locale ?? "en";
+const primaryCta =
+  props.primaryCta ??
+  (props.ctaText && props.ctaHref
+    ? { label: props.ctaText, href: props.ctaHref }
+    : undefined);
+const hasImageSlot = Astro.slots.has("image");
+---
+
+<div class="hero-wrap">
+  <span class="bg-grid" aria-hidden="true"></span>
+  <span class="bg-glow" aria-hidden="true"></span>
+  <section class={`${heroVariantClasses[variant]} container`}>
+    <div class="hero__content">
+    {props.eyebrow && <p class="hero__eyebrow">{props.eyebrow}</p>}
+    {
+      headline && (
+        <h1 class={`hero__headline hero__headline--${props.size ?? "lg"}`}>
+          {headline}
+        </h1>
+      )
+    }
+    {subheadline && <p class="hero__subheadline">{subheadline}</p>}
+    {
+      (primaryCta || props.secondaryCta) && (
+        <div class="hero__actions">
+          {primaryCta && (
+            <Button href={resolveRoute(locale, primaryCta.href)}>
+              {primaryCta.label}
+            </Button>
+          )}
+          {props.secondaryCta && (
+            <Button
+              href={resolveRoute(locale, props.secondaryCta.href)}
+              variant="secondary"
+            >
+              {props.secondaryCta.label}
+            </Button>
+          )}
+        </div>
+      )
+    }
+  </div>
+
+  {
+    (hasImageSlot || variant === "split") && (
+      <div class="hero__media">
+        <slot name="image" />
+      </div>
+    )
+  }
+  </section>
+</div>
+
+<style>
+  .hero-wrap {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .hero {
+    display: grid;
+    gap: var(--space-xl);
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  }
+
+  .hero--centered {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero--centered .hero__content {
+    max-width: 52rem;
+    justify-items: center;
+  }
+
+  .hero--split {
+    grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+    align-items: center;
+  }
+
+  .hero--minimal {
+    padding-block: var(--space-lg);
+  }
+
+  .hero__content {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+    background: color-mix(in srgb, var(--primary) 6%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 700;
+    width: fit-content;
+  }
+
+  .hero__headline {
+    margin: 0;
+    max-width: 22ch;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .hero--centered .hero__headline {
+    margin-inline: auto;
+  }
+
+  .hero__headline--sm {
+    font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+  }
+
+  .hero__headline--md {
+    font-size: clamp(2rem, 3.6vw, 2.75rem);
+  }
+
+  .hero__headline--lg {
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+  }
+
+  .hero__subheadline {
+    margin: 0;
+    max-width: 38rem;
+    color: var(--muted-foreground);
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+    line-height: 1.6;
+  }
+
+  .hero--centered .hero__subheadline {
+    margin-inline: auto;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .hero--centered .hero__actions {
+    justify-content: center;
+  }
+
+  .hero__media {
+    display: grid;
+    align-items: center;
+  }
+
+  @media (max-width: 48rem) {
+    .hero--split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

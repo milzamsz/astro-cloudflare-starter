@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { t } from "../i18n/ui";
+import Hero from "../components/Hero.astro";
+import FeatureGrid from "../components/FeatureGrid.astro";
+import CTA from "../components/CTA.astro";
+
+const locale = (Astro.currentLocale || "en") as "en";
+
+const allPages: CollectionEntry<"pages">[] = await getCollection("pages");
+const page = allPages.find(
+  (p) => p.data.slug === "about" && p.data.locale === locale,
+);
+
+interface PageSection {
+  type: string;
+  title?: string;
+  content?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  items?: { title?: string; description?: string; icon?: string }[];
+}
+
+const sections: PageSection[] = page?.data.sections || [];
+const heroSection = sections.find((s) => s.type === "hero");
+const featuresSection = sections.find((s) => s.type === "features");
+const ctaSection = sections.find((s) => s.type === "cta");
+const featureItems = featuresSection?.items || [];
+const featureColumns = featureItems.length % 2 === 0 ? 2 : 3;
+---
+
+<BaseLayout
+  title={page?.data.title || t(locale, "nav.about")}
+  description={page?.data.description}
+  locale={locale}
+  path={"/about"}
+>
+  {
+    heroSection && (
+      <Hero
+        variant="centered"
+        size="md"
+        eyebrow="About"
+        title={heroSection.title || page?.data.title || ""}
+        content={heroSection.content}
+        locale={locale}
+      />
+    )
+  }
+  {
+    featuresSection && (
+      <FeatureGrid
+        title={featuresSection.title}
+        columns={featureColumns}
+        features={featureItems.map((i) => ({
+          title: i.title || "",
+          description: i.description || "",
+          icon: i.icon,
+        }))}
+      />
+    )
+  }
+  {
+    ctaSection && (
+      <CTA
+        title={ctaSection.title || ""}
+        content={ctaSection.content}
+        ctaText={ctaSection.ctaText}
+        ctaHref={ctaSection.ctaHref}
+        locale={locale}
+      />
+    )
+  }
+</BaseLayout>

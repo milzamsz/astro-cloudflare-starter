@@ -1,0 +1,123 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * Comparison — feature matrix table. Cell values may be boolean (✓/—) or text.
+ */
+export interface Row {
+  label: string;
+  values: (boolean | string)[];
+}
+
+export interface Props {
+  title?: string;
+  description?: string;
+  columns: string[];
+  rows: Row[];
+}
+
+const { title, description, columns, rows } = Astro.props as Props;
+---
+
+<section class="comparison container">
+  {
+    (title || description) && (
+      <header class="section-head">
+        {title && <h2 class="section-head__title">{title}</h2>}
+        {description && <p class="section-head__lead">{description}</p>}
+      </header>
+    )
+  }
+
+  <div class="comparison__scroll">
+    <table class="comparison__table">
+      <thead>
+        <tr>
+          <th scope="col" class="comparison__rowhead">Feature</th>
+          {columns.map((col) => <th scope="col">{col}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row" class="comparison__rowhead">
+                {row.label}
+              </th>
+              {row.values.map((value) => (
+                <td>
+                  {typeof value === "boolean" ? (
+                    value ? (
+                      <Icon
+                        name="lucide:check"
+                        class="comparison__yes"
+                        title="Yes"
+                      />
+                    ) : (
+                      <span class="comparison__no" aria-label="No">
+                        —
+                      </span>
+                    )
+                  ) : (
+                    value
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .comparison {
+    padding-block: var(--space-2xl);
+  }
+
+  .comparison__scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+  }
+
+  .comparison__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 32rem;
+  }
+
+  .comparison__table th,
+  .comparison__table td {
+    padding: 0.85rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparison__table thead th {
+    background: var(--secondary);
+    font-size: 0.9rem;
+  }
+
+  .comparison__rowhead {
+    text-align: left;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .comparison__table tbody tr:last-child th,
+  .comparison__table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .comparison__yes {
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--success);
+  }
+
+  .comparison__no {
+    color: var(--muted-foreground);
+  }
+</style>

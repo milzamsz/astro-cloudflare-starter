@@ -1,0 +1,61 @@
+---
+/**
+ * Starlight SiteTitle override — mirrors the marketing header brand
+ * (monogram mark + site name) so the docs and site share one identity.
+ * Reads the name from src/config/site.config.ts and stays monochrome via
+ * Starlight's own theme tokens (works in light + dark).
+ */
+import { siteConfig } from "../../config/site.config";
+
+const name = siteConfig.name;
+const initial = name.trim().charAt(0).toUpperCase();
+---
+
+<a href="/" class="site-brand" aria-label={name}>
+  <span class="site-brand__mark" aria-hidden="true">{initial}</span>
+  <span class="site-brand__name">{name}</span>
+</a>
+
+<style>
+  .site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: var(--sl-color-white);
+    line-height: 1;
+  }
+
+  .site-brand:focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 3px;
+    border-radius: 0.4rem;
+  }
+
+  .site-brand__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.5rem;
+    background: var(--sl-color-white);
+    color: var(--sl-color-bg);
+    font-weight: 800;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+
+  .site-brand__name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* Keep just the monogram on very small screens, like the marketing header. */
+  @media (max-width: 30rem) {
+    .site-brand__name {
+      display: none;
+    }
+  }
+</style>

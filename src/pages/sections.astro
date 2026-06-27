@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionsShowcase from "../components/showcase/SectionsShowcase.astro";
+
+const locale = (Astro.currentLocale || "en") as "en";
+---
+
+<BaseLayout
+  title="Sections"
+  description="A gallery of ready-to-use, token-driven sections."
+  locale={locale}
+  path={"/sections"}
+>
+  <div class="container">
+    <SectionsShowcase locale={locale} />
+  </div>
+</BaseLayout>

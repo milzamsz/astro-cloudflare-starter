@@ -1,0 +1,41 @@
+---
+import { cn } from "../../../../lib/cn";
+
+type BadgeVariant = "default" | "outline" | "secondary" | "destructive";
+type BadgeSize = "sm" | "md";
+
+const variantClasses: Record<BadgeVariant, string> = {
+  default:
+    "bg-[color:var(--color-bg-tertiary)] text-[color:var(--color-text-primary)]",
+  outline:
+    "border border-[color:var(--color-border)] text-[color:var(--color-text-primary)]",
+  secondary:
+    "bg-[color:var(--color-brand-secondary)]/10 text-[color:var(--color-brand-primary)]",
+  destructive:
+    "bg-[color:var(--destructive)] text-[color:var(--destructive-foreground)]",
+};
+
+const sizeClasses: Record<BadgeSize, string> = {
+  sm: "px-2 py-0.5 text-xs",
+  md: "px-3 py-1 text-sm",
+};
+
+export interface Props {
+  variant?: BadgeVariant;
+  size?: BadgeSize;
+  class?: string;
+}
+
+const { variant, size, class: className } = Astro.props as Props;
+---
+
+<span
+  class={cn(
+    "inline-flex items-center rounded-full font-medium",
+    variant ? variantClasses[variant] : variantClasses.default,
+    size ? sizeClasses[size] : sizeClasses.md,
+    className,
+  )}
+>
+  <slot />
+</span>

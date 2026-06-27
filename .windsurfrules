@@ -1,0 +1,19 @@
+# Windsurf rules
+
+AI-operable Astro starter. Stay on-system; do not improvise design/architecture.
+
+Read first: system/globals/ (design KB), src/registry.json.
+
+Rules:
+- Design tokens only. No hardcoded hex/rgb, no Tailwind palette utilities
+  (bg-blue-500). Use semantic tokens (bg-primary, text-foreground,
+  var(--muted-foreground)). Palette is monochrome OKLCH.
+- Dark mode via the .dark class; never hand-invert colors.
+- Three tiers: Components -> Sections (src/components/sections) -> Pages.
+- i18n: English default + Indonesian /id/. Every route exists in both
+  src/pages/x.astro and src/pages/[locale]/x.astro.
+- Preserve Git-based Markdown content, Cloudflare Pages, SEO (OG, JSON-LD,
+  sitemap, RSS, robots, llms.txt), Pagefind, Starlight docs.
+- Static Astro by default; React islands only when interaction requires it.
+
+Verify: run `pnpm lint` (includes `pnpm check:kpis`) and `pnpm build` before done.

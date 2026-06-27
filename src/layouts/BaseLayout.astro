@@ -1,0 +1,147 @@
+---
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import SearchModal from "../components/layout/SearchModal.astro";
+import SEO from "../components/seo/SEO.astro";
+import Analytics from "../components/layout/Analytics.astro";
+import { SITE_CONFIG, type Locale } from "../lib/site-config";
+import { t } from "../i18n/ui";
+import "../styles/global.css";
+// Preload the Latin subset of the heading + body variable fonts so the real
+// fonts are ready before first paint — eliminates the swap reflow (CLS).
+import outfitLatin from "@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2?url";
+import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
+
+export interface Props {
+  title: string;
+  description?: string;
+  locale?: Locale;
+  path?: string;
+  ogImage?: string;
+  showHeader?: boolean;
+  showFooter?: boolean;
+  showThemeToggle?: boolean;
+}
+
+// For i18n routing, prefer path from Astro.currentRoute
+const { currentLocale, ...restProps } = Astro.props as Props & {
+  currentLocale?: Locale;
+};
+
+const {
+  title,
+  description = SITE_CONFIG.description,
+  locale = currentLocale || SITE_CONFIG.defaultLocale,
+  path = "/",
+  ogImage,
+  showHeader = true,
+  showFooter = true,
+  showThemeToggle = true,
+} = restProps;
+
+function defaultOgImage(routePath: string) {
+  if (routePath === "/") return `/og/home/${locale}`;
+  if (routePath === "/blog") return `/og/blog-list/${locale}`;
+  if (routePath.startsWith("/blog/"))
+    return `/og/blog/${locale}/${routePath.replace(/^\/blog\//, "")}`;
+  if (routePath === "/services") return `/og/services-list/${locale}`;
+  if (routePath.startsWith("/services/"))
+    return `/og/service/${locale}/${routePath.replace(/^\/services\//, "")}`;
+  return `/og/page/${locale}${routePath}`;
+}
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Preload primary fonts (Latin) to prevent layout shift from font swap -->
+    <link
+      rel="preload"
+      href={outfitLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href={manropeLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+
+    <!-- Dark mode bootstrap (prevents FOUC) -->
+    <script is:inline>
+      function applyTheme() {
+        try {
+          // Honor the main-site key first, then Starlight's key (so a choice made
+          // in the /docs section carries over), then the OS preference.
+          const stored =
+            localStorage.getItem("theme") ||
+            localStorage.getItem("starlight-theme");
+          if (stored === "dark") {
+            document.documentElement.classList.add("dark");
+            return;
+          }
+          if (
+            (!stored || stored === "auto") &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          console.warn("dark mode:", e);
+        }
+      }
+      applyTheme();
+    </script>
+
+    {
+      Astro.slots.has("seo") ? (
+        <slot name="seo" />
+      ) : (
+        <SEO
+          title={title}
+          description={description}
+          locale={locale}
+          path={path}
+          ogImage={ogImage ?? defaultOgImage(path)}
+        />
+      )
+    }
+
+    <!-- Security headers stub — enforced at edge / server level -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a href="#main-content" class="skip-link">
+      {t(locale, "aria.skipToContent")}
+    </a>
+
+    {
+      showHeader && (
+        <Header
+          currentLocale={locale}
+          currentPath={path}
+          showThemeToggle={showThemeToggle}
+        />
+      )
+    }
+
+    <SearchModal locale={locale} />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    {Astro.slots.has("analytics") ? <slot name="analytics" /> : <Analytics />}
+
+    {showFooter && <Footer currentLocale={locale} />}
+  </body>
+</html>

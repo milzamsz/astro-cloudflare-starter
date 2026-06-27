@@ -1,0 +1,159 @@
+/**
+ * Color tokens — Semantic design tokens for light and dark modes
+ * Monochrome OKLCH palette (neutral, AstroDeck-style):
+ *   near-black foreground on white in light mode, inverted in dark mode.
+ * Chroma is 0 for surfaces/primary so the UI stays calm and never goes
+ * "off-system"; functional status colors keep just enough chroma to read.
+ * These map to Tailwind via @theme block in global.css.
+ */
+
+:root {
+  /* === Core surfaces === */
+  --background: oklch(1 0 0deg);
+  --foreground: oklch(0.145 0 0deg);
+  --card: oklch(1 0 0deg);
+  --card-foreground: oklch(0.145 0 0deg);
+  --popover: oklch(1 0 0deg);
+  --popover-foreground: oklch(0.145 0 0deg);
+
+  /* === Primary — neutral (near-black) === */
+  --primary: oklch(0.205 0 0deg);
+  --primary-foreground: oklch(0.985 0 0deg);
+  --primary-hover: oklch(0.27 0 0deg);
+  --primary-active: oklch(0.32 0 0deg);
+  --primary-muted: oklch(0.97 0 0deg);
+
+  /* === Secondary === */
+  --secondary: oklch(0.97 0 0deg);
+  --secondary-foreground: oklch(0.205 0 0deg);
+  --secondary-hover: oklch(0.94 0 0deg);
+
+  /* === Accent === */
+  --accent: oklch(0.97 0 0deg);
+  --accent-foreground: oklch(0.205 0 0deg);
+  --accent-hover: oklch(0.94 0 0deg);
+
+  /* === Muted === */
+  --muted: oklch(0.97 0 0deg);
+
+  /* 0.50 keeps secondary text >= WCAG AA (>=4.5:1) on both white and muted bg */
+  --muted-foreground: oklch(0.5 0 0deg);
+
+  /* === Border & Ring === */
+  --border: oklch(0.922 0 0deg);
+  --ring: oklch(0.45 0 0deg);
+  --ring-offset: oklch(1 0 0deg);
+
+  /* === Semantic (functional status — kept chromatic) === */
+  --destructive: oklch(0.577 0.245 27.325deg);
+  --destructive-foreground: oklch(0.985 0 0deg);
+  --success: oklch(0.62 0.16 150deg);
+  --success-foreground: oklch(0.985 0 0deg);
+  --warning: oklch(0.75 0.16 75deg);
+  --warning-foreground: oklch(0.205 0 0deg);
+  --info: oklch(0.45 0 0deg);
+  --info-foreground: oklch(0.985 0 0deg);
+
+  /* === Surface invert (for dark sections on light bg) === */
+  --surface-invert: oklch(0.205 0 0deg);
+  --surface-invert-foreground: oklch(0.985 0 0deg);
+  --surface-invert-border: oklch(0.32 0 0deg);
+}
+
+.dark {
+  /* === Core surfaces === */
+  --background: oklch(0.145 0 0deg);
+  --foreground: oklch(0.985 0 0deg);
+  --card: oklch(0.205 0 0deg);
+  --card-foreground: oklch(0.985 0 0deg);
+  --popover: oklch(0.205 0 0deg);
+  --popover-foreground: oklch(0.985 0 0deg);
+
+  /* === Primary — neutral (near-white) === */
+  --primary: oklch(0.985 0 0deg);
+  --primary-foreground: oklch(0.205 0 0deg);
+  --primary-hover: oklch(0.9 0 0deg);
+  --primary-active: oklch(0.82 0 0deg);
+  --primary-muted: oklch(0.269 0 0deg);
+
+  /* === Secondary === */
+  --secondary: oklch(0.269 0 0deg);
+  --secondary-foreground: oklch(0.985 0 0deg);
+  --secondary-hover: oklch(0.32 0 0deg);
+
+  /* === Accent === */
+  --accent: oklch(0.269 0 0deg);
+  --accent-foreground: oklch(0.985 0 0deg);
+  --accent-hover: oklch(0.32 0 0deg);
+
+  /* === Muted === */
+  --muted: oklch(0.269 0 0deg);
+
+  /* 0.74 keeps secondary text >= WCAG AA (>=4.5:1) on dark muted bg */
+  --muted-foreground: oklch(0.74 0 0deg);
+
+  /* === Border & Ring === */
+  --border: oklch(0.32 0 0deg);
+  --ring: oklch(0.6 0 0deg);
+  --ring-offset: oklch(0.145 0 0deg);
+
+  /* === Semantic (functional status — kept chromatic) === */
+  --destructive: oklch(0.704 0.191 22.216deg);
+  --destructive-foreground: oklch(0.985 0 0deg);
+  --success: oklch(0.7 0.15 150deg);
+  --success-foreground: oklch(0.145 0 0deg);
+  --warning: oklch(0.8 0.15 80deg);
+  --warning-foreground: oklch(0.145 0 0deg);
+  --info: oklch(0.708 0 0deg);
+  --info-foreground: oklch(0.145 0 0deg);
+
+  /* === Surface invert (for light sections on dark bg) === */
+  --surface-invert: oklch(0.985 0 0deg);
+  --surface-invert-foreground: oklch(0.205 0 0deg);
+  --surface-invert-border: oklch(0.85 0 0deg);
+}
+
+/* === Radius === */
+:root {
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+}
+
+/**
+ * === Legacy color aliases (compatibility bridge) ===
+ * The component layer references an earlier token scheme that was never
+ * migrated. These aliases map the old names onto the current semantic tokens.
+ * Because custom properties resolve at use-time, a single :root definition
+ * automatically tracks light/dark (the semantic tokens swap under .dark).
+ */
+:root {
+  --color-bg-primary: var(--background);
+  --color-bg-secondary: var(--secondary);
+  --color-bg-tertiary: var(--accent);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-brand-primary: var(--primary);
+  --color-brand-secondary: var(--info);
+  --color-border: var(--border);
+}
+
+/* === Shadow scale (subtle, dark-mode aware) === */
+:root {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 8%), 0 2px 4px -2px rgb(0 0 0 / 5%);
+  --shadow-lg:
+    0 12px 28px -6px rgb(0 0 0 / 12%), 0 4px 8px -4px rgb(0 0 0 / 6%);
+}
+
+.dark {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 40%);
+  --shadow-md:
+    0 4px 12px -2px rgb(0 0 0 / 50%), 0 2px 4px -2px rgb(0 0 0 / 40%);
+  --shadow-lg:
+    0 12px 28px -6px rgb(0 0 0 / 60%), 0 4px 8px -4px rgb(0 0 0 / 45%);
+}

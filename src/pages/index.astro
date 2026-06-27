@@ -1,0 +1,164 @@
+---
+import MarketingLayout from "../layouts/MarketingLayout.astro";
+import Hero from "../components/Hero.astro";
+import FAQ from "../components/FAQ.astro";
+import CTA from "../components/CTA.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import {
+  FeatureTabs,
+  StackMarquee,
+  Credibility,
+  LighthouseScores,
+} from "../components/landing/index";
+import { t } from "../i18n/ui";
+
+const stackEntries = (await getCollection("stack"))
+  .sort(
+    (a: CollectionEntry<"stack">, b: CollectionEntry<"stack">) =>
+      a.data.order - b.data.order,
+  )
+  .map((entry: CollectionEntry<"stack">) => entry.data);
+
+const locale = (Astro.currentLocale || "en") as "en";
+const tabs = [
+  {
+    id: "performance",
+    icon: "zap",
+    heading: "Performance",
+    description:
+      "A lightweight, static-first stack that ships minimal JavaScript and renders from Cloudflare's edge network.",
+    points: [
+      "Static-first rendering by default",
+      "Zero-JS islands architecture",
+      "Edge delivery with smart caching",
+    ],
+    visual: "$ npm run build\n✓ 25 pages built in 6.4s\n→ Deployed to the edge",
+  },
+  {
+    id: "content",
+    icon: "pen-line",
+    heading: "Content",
+    description:
+      "Author in Markdown with a Git-based workflow. Blog, docs, and services are type-safe content collections.",
+    points: [
+      "Type-safe Markdown collections",
+      "Versioned and reviewed in Git",
+      "Blog, docs, and service pages",
+    ],
+    visual:
+      "src/content/\n├─ blog/\n├─ docs/\n├─ services/\n└─ pages/",
+  },
+  {
+    id: "growth",
+    icon: "trending-up",
+    heading: "Growth",
+    description:
+      "Everything search engines and social platforms need is generated for you on every build.",
+    points: [
+      "Sitemap, RSS, and robots.txt",
+      "Canonical URLs and JSON-LD",
+      "Dynamic Open Graph images",
+    ],
+    visual:
+      "<meta property=\"og:image\" ... />\n<link rel=\"canonical\" ... />\n<script type=\"application/ld+json\">",
+  },
+];
+---
+
+<MarketingLayout
+  title={t(locale, "nav.home")}
+  description="A boilerplate for fast marketing websites."
+  locale={locale}
+  path="/"
+>
+  <Hero
+    variant="centered"
+    eyebrow="Marketing Starter"
+    headline={t(locale, "hero.title")}
+    subheadline={t(locale, "hero.subtitle")}
+    primaryCta={{ label: t(locale, "hero.cta"), href: "/services" }}
+    secondaryCta={{ label: "Read the blog", href: "/blog" }}
+    locale={locale}
+  />
+
+  <section class="container py-16">
+    <header class="section-head">
+      <p class="section-head__eyebrow">Why this stack</p>
+      <h2 class="section-head__title">Built for performance and scale</h2>
+      <p class="section-head__lead">
+        Everything you need to ship a fast marketing site.
+      </p>
+    </header>
+    <FeatureTabs client:visible tabs={tabs} />
+  </section>
+
+  <section class="container py-10">
+    <header class="section-head">
+      <h2 class="section-head__title">Powered by a modern stack</h2>
+    </header>
+    <StackMarquee items={stackEntries} />
+  </section>
+
+  <section class="container py-16">
+    <Credibility
+      stats={[
+        { value: "55+", label: "Pages" },
+        { value: "100%", label: "Static-first" },
+        { value: "A11y", label: "WCAG AA" },
+      ]}
+      logos={[
+        { name: "Astro", src: undefined },
+        { name: "Cloudflare", src: undefined },
+        { name: "Tailwind", src: undefined },
+      ]}
+    />
+  </section>
+
+  <section class="container py-16">
+    <header class="section-head">
+      <h2 class="section-head__title">Perfect Lighthouse scores</h2>
+      <p class="section-head__lead">
+        Target scores, verified with Lighthouse — optimized out of the box for
+        performance, accessibility, and SEO.
+      </p>
+    </header>
+    <LighthouseScores />
+  </section>
+
+  <FAQ
+    title="Frequently asked questions"
+    items={[
+      {
+        question: "Is this multilanguage-ready?",
+        answer:
+          "Yes. The i18n engine is wired up and ships English-first, so adding more locales is a matter of dropping in translations and content.",
+      },
+      {
+        question: "Is SEO handled out of the box?",
+        answer:
+          "Meta tags, canonical URLs, sitemap, RSS, JSON-LD, and dynamic OG images are all connected by default.",
+      },
+      {
+        question: "Where does it deploy?",
+        answer:
+          "It's built for Cloudflare Pages with optional R2 media storage, but the static output runs on any modern host.",
+      },
+      {
+        question: "How do I manage content?",
+        answer:
+          "Content lives in Markdown collections (blog, docs, services, pages) that are versioned and reviewed in Git.",
+      },
+    ]}
+  />
+
+  <CTA
+    eyebrow="Get started"
+    title="Ready to build your site?"
+    content="Explore the services or dive into the docs — the whole stack is ready to go."
+    ctaText="Explore services"
+    ctaHref="/services"
+    secondaryText="Read the docs"
+    secondaryHref="/docs"
+    locale={locale}
+  />
+</MarketingLayout>

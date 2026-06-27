@@ -1,0 +1,82 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * LogoCloud — static, evenly spaced row/grid of partner or tech logos.
+ * Each logo may render an icon (astro-icon name) and/or a text label.
+ */
+export interface Logo {
+  name: string;
+  icon?: string;
+}
+
+export interface Props {
+  title?: string;
+  logos: Logo[];
+}
+
+const { title, logos } = Astro.props as Props;
+---
+
+<section class="logo-cloud container">
+  {title && <p class="logo-cloud__title">{title}</p>}
+  <ul class="logo-cloud__grid">
+    {
+      logos.map((logo) => (
+        <li class="logo-cloud__item">
+          {logo.icon && <Icon name={logo.icon} class="logo-cloud__icon" />}
+          <span class="logo-cloud__name">{logo.name}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .logo-cloud {
+    padding-block: var(--space-2xl);
+  }
+
+  .logo-cloud__title {
+    margin: 0 0 var(--space-lg);
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .logo-cloud__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-lg) var(--space-2xl);
+  }
+
+  .logo-cloud__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .logo-cloud__item:hover {
+    color: var(--foreground);
+  }
+
+  .logo-cloud__icon {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  .logo-cloud__name {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+</style>

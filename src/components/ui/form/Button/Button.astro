@@ -1,0 +1,60 @@
+---
+import { cn } from "../../../../lib/cn";
+
+type ButtonVariant = "primary" | "secondary" | "ghost" | "destructive" | "link";
+type ButtonSize = "sm" | "md" | "lg";
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary:
+    "bg-primary text-primary-foreground hover:opacity-90 shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]",
+  secondary:
+    "bg-secondary text-secondary-foreground hover:bg-muted border border-border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]",
+  ghost:
+    "bg-transparent text-foreground hover:bg-muted transition-colors duration-200",
+  destructive:
+    "bg-destructive text-destructive-foreground hover:opacity-90 shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]",
+  link: "bg-transparent p-0 text-primary underline-offset-4 hover:underline",
+};
+
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: "h-9 px-4 text-xs font-semibold tracking-wide uppercase",
+  md: "h-11 px-6 text-sm font-semibold",
+  lg: "h-13 px-8 text-base font-semibold",
+};
+
+export interface Props {
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  loading?: boolean;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  class?: string;
+}
+
+const {
+  href,
+  type = "button",
+  loading = false,
+  variant,
+  size,
+  class: className,
+} = Astro.props as Props;
+const classes = cn(
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--color-brand-primary)] disabled:opacity-50 disabled:pointer-events-none",
+  variant ? variantClasses[variant] : variantClasses.primary,
+  size ? sizeClasses[size] : sizeClasses.md,
+  className,
+);
+---
+
+{
+  href ? (
+    <a href={href} class={classes} aria-busy={loading ? "true" : undefined}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={loading}>
+      <slot />
+    </button>
+  )
+}

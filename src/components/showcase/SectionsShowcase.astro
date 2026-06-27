@@ -1,0 +1,263 @@
+---
+import type { Locale } from "../../lib/site-config";
+import {
+  Hero,
+  FeatureTabs,
+  StackMarquee,
+  Credibility,
+  LighthouseScores,
+  CTA,
+  SocialProof,
+  FeatureGrid,
+  FAQ,
+  Newsletter,
+  Pricing,
+  Team,
+  Comparison,
+  LogoCloud,
+} from "../sections";
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+
+const tx = {
+  intro:
+    "A gallery of ready-to-use sections. Every block uses the same design tokens and supports dark mode.",
+};
+
+const featureTabs = [
+  {
+    id: "speed",
+    icon: "zap",
+    heading: "Fast from the start",
+    description: "Static-first with islands. Rendered at the edge.",
+    visual: "edge.render()",
+  },
+  {
+    id: "content",
+    icon: "pen-line",
+    heading: "Git-based content",
+    description: "Edit Markdown in Git, deploy on merge.",
+    visual: "content.commit()",
+  },
+  {
+    id: "growth",
+    icon: "trending-up",
+    heading: "Built to grow",
+    description: "OG images, sitemap, RSS, and i18n included.",
+    visual: "seo.score(100)",
+  },
+];
+
+const stack = [
+  { name: "Astro", version: "7.x", icon: "simple-icons:astro" },
+  { name: "Tailwind CSS", version: "4.x", icon: "simple-icons:tailwindcss" },
+  { name: "Cloudflare", version: "", icon: "simple-icons:cloudflare" },
+  { name: "TypeScript", version: "5.x", icon: "simple-icons:typescript" },
+];
+
+const stats = [
+  { value: "100", label: "Lighthouse" },
+  { value: "16+", label: "Sections" },
+  { value: "A11y", label: "WCAG AA" },
+];
+
+const features = [
+  {
+    title: "Components",
+    description: "Token-driven UI library.",
+    icon: "code",
+  },
+  {
+    title: "Performance",
+    description: "Edge rendering.",
+    icon: "speed",
+  },
+  {
+    title: "Global",
+    description: "i18n built in.",
+    icon: "globe",
+  },
+];
+
+const plans = [
+  {
+    name: "Starter",
+    price: "$0",
+    period: "forever",
+    description: "For personal projects.",
+    features: ["All sections", "Dark mode", "MIT"],
+    cta: { label: "Get started", href: "#" },
+  },
+  {
+    name: "Pro",
+    price: "$29",
+    period: "mo",
+    description: "For teams.",
+    features: ["Everything in Starter", "Priority support", "Premium components"],
+    cta: { label: "Try Pro", href: "#" },
+    featured: true,
+  },
+];
+
+const team = [
+  { name: "Ada Lovelace", role: "Engineer" },
+  { name: "Alan Turing", role: "Designer" },
+  { name: "Grace Hopper", role: "Product" },
+];
+
+const comparisonColumns = ["Starter", "Pro"];
+const comparisonRows = [
+  { label: "Sections", values: [true, true] },
+  { label: "Dark mode", values: [true, true] },
+  {
+    label: "Priority support",
+    values: [false, true],
+  },
+];
+
+const logos = [
+  { name: "Astro", icon: "simple-icons:astro" },
+  { name: "Tailwind", icon: "simple-icons:tailwindcss" },
+  { name: "Cloudflare", icon: "simple-icons:cloudflare" },
+  { name: "TypeScript", icon: "simple-icons:typescript" },
+];
+
+const testimonials = [
+  {
+    quote: "The best foundation for AI-assisted sites.",
+    author: "Jane Doe",
+    role: "CTO, Acme",
+  },
+  {
+    quote: "The design system keeps AI on-system.",
+    author: "John Roe",
+    role: "Founder, Beta",
+  },
+];
+
+const faqs = [
+  {
+    question: "Is it free?",
+    answer: "Yes, MIT licensed.",
+  },
+  {
+    question: "Does it support i18n?",
+    answer: "Yes, the i18n engine is ready for more locales.",
+  },
+];
+
+const blocks = [
+  { name: "Hero", node: 0 },
+  { name: "FeatureTabs", node: 1 },
+  { name: "LogoCloud", node: 2 },
+  { name: "Credibility (Stats)", node: 3 },
+  { name: "StackMarquee", node: 4 },
+  { name: "Pricing", node: 5 },
+  { name: "Comparison", node: 6 },
+  { name: "Team", node: 7 },
+  { name: "SocialProof", node: 8 },
+  { name: "FeatureGrid", node: 9 },
+  { name: "LighthouseScores", node: 10 },
+  { name: "Newsletter", node: 11 },
+  { name: "FAQ", node: 12 },
+  { name: "CTA", node: 13 },
+];
+---
+
+<div class="showcase">
+  <header class="section-head">
+    <p class="section-head__eyebrow">Sections</p>
+    <h1 class="section-head__title">Sections Gallery</h1>
+    <p class="section-head__lead">{tx.intro}</p>
+  </header>
+
+  {
+    blocks.map((block) => (
+      <section class="showcase__item">
+        <p class="showcase__label">{block.name}</p>
+        <div class="showcase__demo">
+          {block.node === 0 && (
+            <Hero
+              variant="centered"
+              size="sm"
+              eyebrow="Hero"
+              headline="A headline that lands"
+              subheadline="A concise, clear supporting line."
+              primaryCta={{ label: "Get started", href: "/" }}
+              secondaryCta={{ label: "GitHub", href: "/" }}
+              locale={locale}
+            />
+          )}
+          {block.node === 1 && <FeatureTabs client:visible tabs={featureTabs} />}
+          {block.node === 2 && (
+            <LogoCloud title="Trusted by" logos={logos} />
+          )}
+          {block.node === 3 && <Credibility stats={stats} />}
+          {block.node === 4 && <StackMarquee items={stack} />}
+          {block.node === 5 && (
+            <Pricing
+              title="Pricing"
+              description="Simple and transparent."
+              plans={plans}
+            />
+          )}
+          {block.node === 6 && (
+            <Comparison
+              title="Compare plans"
+              columns={comparisonColumns}
+              rows={comparisonRows}
+            />
+          )}
+          {block.node === 7 && (
+            <Team title="Team" members={team} />
+          )}
+          {block.node === 8 && (
+            <SocialProof
+              title="What people say"
+              items={testimonials}
+            />
+          )}
+          {block.node === 9 && (
+            <FeatureGrid title="Features" features={features} />
+          )}
+          {block.node === 10 && <LighthouseScores />}
+          {block.node === 11 && <Newsletter />}
+          {block.node === 12 && (
+            <FAQ title="FAQ" items={faqs} />
+          )}
+          {block.node === 13 && (
+            <CTA
+              title="Ready to build?"
+              content="Start from a clean foundation."
+              primaryText="Get started"
+              primaryHref="/"
+            />
+          )}
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .showcase {
+    padding-block: var(--space-2xl);
+  }
+
+  .showcase__item {
+    margin-block: var(--space-2xl);
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-lg);
+  }
+
+  .showcase__label {
+    margin: 0 0 var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+  }
+</style>

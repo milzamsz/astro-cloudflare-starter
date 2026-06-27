@@ -1,0 +1,194 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Plan {
+  name: string;
+  price: string;
+  period?: string;
+  description?: string;
+  features: string[];
+  cta?: { label: string; href: string };
+  featured?: boolean;
+}
+
+export interface Props {
+  title?: string;
+  description?: string;
+  plans: Plan[];
+}
+
+const { title, description, plans } = Astro.props as Props;
+---
+
+<section class="pricing container">
+  {
+    (title || description) && (
+      <header class="section-head">
+        {title && <h2 class="section-head__title">{title}</h2>}
+        {description && <p class="section-head__lead">{description}</p>}
+      </header>
+    )
+  }
+
+  <div class="pricing__grid">
+    {
+      plans.map((plan) => (
+        <article
+          class={`pricing__card${plan.featured ? " pricing__card--featured" : ""}`}
+        >
+          {plan.featured && <span class="pricing__badge">Most popular</span>}
+          <h3 class="pricing__name">{plan.name}</h3>
+          <p class="pricing__price">
+            <span class="pricing__amount">{plan.price}</span>
+            {plan.period && <span class="pricing__period">/{plan.period}</span>}
+          </p>
+          {plan.description && (
+            <p class="pricing__desc">{plan.description}</p>
+          )}
+          <ul class="pricing__features">
+            {plan.features.map((feature) => (
+              <li class="pricing__feature">
+                <Icon name="lucide:check" class="pricing__check" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+          {plan.cta && (
+            <a
+              class={`pricing__cta${plan.featured ? " pricing__cta--primary" : ""}`}
+              href={plan.cta.href}
+            >
+              {plan.cta.label}
+            </a>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .pricing {
+    padding-block: var(--space-2xl);
+  }
+
+  .pricing__grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    align-items: start;
+  }
+
+  .pricing__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pricing__card--featured {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .pricing__badge {
+    position: absolute;
+    top: -0.7rem;
+    left: clamp(1.5rem, 3vw, 2rem);
+    padding: 0.2rem 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border-radius: var(--radius-full);
+  }
+
+  .pricing__name {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .pricing__price {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .pricing__amount {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .pricing__period {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+  }
+
+  .pricing__desc {
+    margin: 0;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+  }
+
+  .pricing__features {
+    list-style: none;
+    margin: 0.25rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .pricing__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: var(--foreground);
+    font-size: 0.95rem;
+  }
+
+  .pricing__check {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--success);
+  }
+
+  .pricing__cta {
+    margin-top: auto;
+    text-align: center;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--foreground);
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s ease;
+  }
+
+  .pricing__cta--primary {
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .pricing__cta:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .pricing__cta:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+</style>

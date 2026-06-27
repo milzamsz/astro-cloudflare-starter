@@ -1,0 +1,80 @@
+---
+import JsonLd from "./JsonLd.astro";
+
+export interface Crumb {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props as Props;
+const visibleCrumbs = [{ label: "Home", href: "/" }, ...crumbs];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: visibleCrumbs.map((crumb, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: crumb.label,
+    item: crumb.href,
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ol class="breadcrumbs__list">
+    {
+      visibleCrumbs.map((crumb, index) => (
+        <li class="breadcrumbs__item">
+          {index === 0 ? (
+            <a href={crumb.href} class="breadcrumbs__home">
+              {crumb.label}
+            </a>
+          ) : index === visibleCrumbs.length - 1 ? (
+            <span aria-current="page">{crumb.label}</span>
+          ) : (
+            <>
+              <span class="breadcrumbs__separator" aria-hidden="true">
+                /
+              </span>
+              <a href={crumb.href}>{crumb.label}</a>
+            </>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<JsonLd schema={jsonLd} />
+
+<style>
+  .breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .breadcrumbs__home,
+  .breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .breadcrumbs__separator {
+    margin-right: 0.5rem;
+  }
+</style>

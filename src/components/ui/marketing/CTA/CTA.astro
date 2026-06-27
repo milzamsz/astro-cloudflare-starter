@@ -1,0 +1,173 @@
+---
+import Button from "../../form/Button/Button.astro";
+import Section from "../../layout/Section/Section.astro";
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  content?: string;
+  primaryText?: string;
+  primaryHref?: string;
+  secondaryText?: string;
+  secondaryHref?: string;
+  centered?: boolean;
+}
+
+const {
+  eyebrow,
+  title,
+  content,
+  primaryText,
+  primaryHref,
+  secondaryText,
+  secondaryHref,
+  centered = true,
+} = Astro.props as Props;
+---
+
+<Section spacing="xl" class="ui-cta">
+  <div class:list={["ui-cta__inner", centered && "ui-cta__inner--centered"]}>
+    <span class="ui-cta__texture" aria-hidden="true"></span>
+    <div class="ui-cta__body">
+      {eyebrow && <p class="ui-cta__eyebrow">{eyebrow}</p>}
+      <h2>{title}</h2>
+      {content && <p class="ui-cta__lead">{content}</p>}
+      {
+        (primaryText || secondaryText) && (
+          <div class="ui-cta__actions">
+            {primaryText && primaryHref && (
+              <Button href={primaryHref} variant="primary">
+                {primaryText}
+              </Button>
+            )}
+            {secondaryText && secondaryHref && (
+              <Button href={secondaryHref} variant="secondary">
+                {secondaryText}
+              </Button>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .ui-cta {
+    container-type: inline-block;
+  }
+
+  .ui-cta__inner {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    max-width: 60rem;
+    margin-inline: auto;
+    border-radius: var(--radius-2xl);
+    padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3.5rem);
+    background: var(--surface-invert);
+    border: 1px solid var(--surface-invert-border);
+    box-shadow: var(--shadow-lg);
+    color: var(--surface-invert-foreground);
+  }
+
+  /* Subtle on-system monochrome texture: dot grid + soft corner glow. */
+  .ui-cta__texture {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(
+        circle at 85% 15%,
+        color-mix(in srgb, var(--surface-invert-foreground) 14%, transparent),
+        transparent 45%
+      ),
+      radial-gradient(
+        color-mix(in srgb, var(--surface-invert-foreground) 12%, transparent)
+          1px,
+        transparent 1px
+      );
+    background-size:
+      100% 100%,
+      22px 22px;
+  }
+
+  .ui-cta__body {
+    position: relative;
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: start;
+  }
+
+  .ui-cta__inner--centered .ui-cta__body {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .ui-cta__eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--surface-invert-foreground) 70%, transparent);
+  }
+
+  .ui-cta__inner h2 {
+    margin: 0;
+    color: var(--surface-invert-foreground);
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  .ui-cta__lead {
+    margin: 0.25rem 0 0;
+    max-width: 46ch;
+    color: color-mix(in srgb, var(--surface-invert-foreground) 80%, transparent);
+    line-height: 1.65;
+    font-size: 1.0625rem;
+  }
+
+  .ui-cta__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
+    justify-content: flex-start;
+  }
+
+  .ui-cta__inner--centered .ui-cta__actions {
+    justify-content: center;
+  }
+
+  /* Primary action: solid, inverted against the inverted surface. */
+  .ui-cta__actions :global(a) {
+    background: var(--surface-invert-foreground);
+    color: var(--surface-invert);
+    border-color: transparent;
+  }
+
+  /* Secondary action: outline on the inverted surface. */
+  .ui-cta__actions :global(a:not(:first-child)) {
+    background: transparent;
+    color: var(--surface-invert-foreground);
+    border: 1px solid
+      color-mix(in srgb, var(--surface-invert-foreground) 40%, transparent);
+  }
+
+  .ui-cta__actions :global(a:hover) {
+    opacity: 0.9;
+  }
+
+  .ui-cta__actions :global(a:not(:first-child):hover) {
+    opacity: 1;
+    background: color-mix(
+      in srgb,
+      var(--surface-invert-foreground) 12%,
+      transparent
+    );
+  }
+</style>

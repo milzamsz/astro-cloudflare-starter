@@ -1,0 +1,94 @@
+---
+import type { Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+
+const pages: { label: string; href: string; desc: string }[] = [
+  { label: "Home", href: "/", desc: "Primary landing page." },
+  { label: "About", href: "/about", desc: "Company & team." },
+  { label: "Services", href: "/services", desc: "Service offerings." },
+  { label: "Pricing", href: "/pricing", desc: "Pricing plans." },
+  { label: "Blog", href: "/blog", desc: "Articles & updates." },
+  { label: "Contact", href: "/contact", desc: "Contact details." },
+  { label: "Docs", href: "/docs", desc: "Documentation." },
+  { label: "Sections", href: "/sections", desc: "Sections gallery." },
+];
+---
+
+<div class="pages-overview">
+  <header class="section-head">
+    <p class="section-head__eyebrow">Pages</p>
+    <h1 class="section-head__title">Pages Overview</h1>
+    <p class="section-head__lead">
+      Every page in the starter, ready to customize.
+    </p>
+  </header>
+
+  <ul class="pages-overview__grid">
+    {
+      pages.map((page) => (
+        <li>
+          <a class="pages-overview__card" href={resolveRoute(locale, page.href)}>
+            <span class="pages-overview__name">{page.label}</span>
+            <span class="pages-overview__desc">{page.desc}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .pages-overview {
+    padding-block: var(--space-2xl);
+  }
+
+  .pages-overview__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .pages-overview__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    height: 100%;
+    padding: var(--space-lg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .pages-overview__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  }
+
+  .pages-overview__card:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .pages-overview__name {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  .pages-overview__desc {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+  }
+</style>

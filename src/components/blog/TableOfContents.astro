@@ -1,0 +1,191 @@
+---
+import { siteConfig } from "../../config/site.config";
+import { t } from "../../i18n/ui";
+import type { Locale } from "../../lib/site-config";
+
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  headings: Heading[];
+  layout?: "inline" | "sidebar";
+  maxDepth?: number;
+  minHeadings?: number;
+  title?: string;
+  locale?: Locale;
+}
+
+const {
+  headings,
+  layout = siteConfig.articleFeatures.toc.layout === "sidebar"
+    ? "sidebar"
+    : "inline",
+  maxDepth = siteConfig.articleFeatures.toc.maxDepth,
+  minHeadings = siteConfig.articleFeatures.toc.minHeadings,
+  title,
+  locale = "en",
+} = Astro.props as Props;
+
+const visibleHeadings = headings.filter(
+  (heading) => heading.depth >= 2 && heading.depth <= maxDepth,
+);
+const show = visibleHeadings.length >= minHeadings;
+---
+
+{
+  show && (
+    <nav class={`toc toc--${layout}`} aria-label="Table of contents">
+      {layout === "inline" ? (
+        <details open>
+          <summary>{title ?? t(locale, "blog.toc")}</summary>
+          <ul>
+            {visibleHeadings.map((heading) => (
+              <li class={`toc__item toc__item--depth-${heading.depth}`}>
+                <a href={`#${heading.slug}`} data-heading={heading.slug}>
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : (
+        <>
+          <p class="toc__title">{title ?? t(locale, "blog.toc")}</p>
+          <ul>
+            {visibleHeadings.map((heading) => (
+              <li class={`toc__item toc__item--depth-${heading.depth}`}>
+                <a href={`#${heading.slug}`} data-heading={heading.slug}>
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </nav>
+  )
+}
+
+<script>
+  const headings = [
+    ...document.querySelectorAll<HTMLElement>("[data-heading]"),
+  ];
+  const links = new Map(
+    headings.map((link) => [link.getAttribute("data-heading"), link]),
+  );
+  const sections = [
+    ...document.querySelectorAll<HTMLElement>(
+      "h2[id], h3[id], h4[id], h5[id], h6[id]",
+    ),
+  ];
+
+  if (headings.length && sections.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = links.get(entry.target.id);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            headings.forEach((heading) =>
+              heading.classList.remove("is-active"),
+            );
+            link.classList.add("is-active");
+          }
+        });
+      },
+      { rootMargin: "0px 0px -60% 0px", threshold: 0.1 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>
+
+<style>
+  /* Inline variant: collapsible card placed above the article. */
+  .toc--inline {
+    border: 1px solid var(--color-border);
+    border-radius: 0.9rem;
+    background: var(--color-bg-secondary);
+  }
+
+  .toc--inline details {
+    padding: var(--space-lg);
+  }
+
+  /* Sidebar variant: light right-rail, no heavy card. */
+  .toc--sidebar {
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .toc summary,
+  .toc__title {
+    font-weight: 700;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .toc__title {
+    margin: 0 0 0.85rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .toc__item--depth-3 {
+    padding-left: 1rem;
+  }
+
+  .toc__item--depth-4,
+  .toc__item--depth-5,
+  .toc__item--depth-6 {
+    padding-left: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .toc a {
+    display: block;
+    padding: 0.2rem 0;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color 0.15s ease;
+  }
+
+  .toc a:hover {
+    color: var(--color-text-primary);
+  }
+
+  .toc--sidebar a {
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    padding-left: 0.75rem;
+  }
+
+  .toc a.is-active {
+    color: var(--color-text-primary);
+    font-weight: 700;
+  }
+
+  .toc--sidebar a.is-active {
+    border-left-color: var(--color-text-primary);
+  }
+
+  .toc a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

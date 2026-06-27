@@ -1,0 +1,15 @@
+# Site Settings
+# Edit this file in Git.
+name: "Astro Cloudflare"
+description: "Marketing, blog, and docs starter — multilanguage-ready."
+url: "https://astro-cloudflare.pages.dev"
+defaultLocale: en
+analyticsProvider: none
+gtmId: ""
+umamiUrl: ""
+umamiId: ""
+mapLatitude: "-7.4941954"
+mapLongitude: "110.8065028"
+orgName: ""
+orgEmail: ""
+socialLinks: []
