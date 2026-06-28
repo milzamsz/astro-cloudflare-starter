@@ -2,7 +2,7 @@
 # Edit this file in Git.
 name: "Astro Cloudflare"
 description: "Marketing, blog, and docs starter — multilanguage-ready."
-url: "https://astro-cloudflare.pages.dev"
+url: "https://astro-cloudflare-starter.pages.dev"
 defaultLocale: en
 analyticsProvider: none
 gtmId: ""

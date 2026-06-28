@@ -72,4 +72,4 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 - Check `SETUP.md` for environment setup and deployment
 - Read the in-app docs at `/docs`
-- Open a [discussion](https://github.com/your-org/astro-cloudflare/discussions)
+- Open a [discussion](https://github.com/milzamsz/astro-cloudflare-starter/discussions)

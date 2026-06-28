@@ -14,7 +14,7 @@ A production-ready marketing + blog + docs site built with **Astro 7** and **Clo
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-org/astro-cloudflare.git
+git clone https://github.com/milzamsz/astro-cloudflare-starter.git
 cd astro-cloudflare
 pnpm install
 pnpm dev

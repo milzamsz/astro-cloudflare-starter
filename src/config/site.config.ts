@@ -91,7 +91,7 @@ export interface SiteConfig {
 export const siteConfig: SiteConfig = {
   /* Core configuration — single source of truth for canonical/OG/sitemap/llms.txt.
    * Replace with your production domain when forking this template. */
-  url: "https://astro-cloudflare.pages.dev",
+  url: "https://astro-cloudflare-starter.pages.dev",
   name: "Astro Cloudflare",
   description:
     "Marketing, blog, and docs starter built with Astro and Cloudflare Pages — multilanguage-ready",

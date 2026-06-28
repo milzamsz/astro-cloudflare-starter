@@ -4,7 +4,7 @@
 export type Locale = "en";
 
 export const SITE_CONFIG = {
-  url: "https://astro-cloudflare.pages.dev",
+  url: "https://astro-cloudflare-starter.pages.dev",
   /** Default locale for fallback. */
   defaultLocale: "en" as const,
   /** Supported locales. */
