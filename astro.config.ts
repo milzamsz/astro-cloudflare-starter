@@ -141,6 +141,7 @@ export default defineConfig({
             { label: "Content Management", slug: "docs/guides/content-management" },
             { label: "Internationalization", slug: "docs/guides/internationalization" },
             { label: "Customization", slug: "docs/guides/customization" },
+            { label: "AI-assisted development", slug: "docs/guides/ai-assisted-development" },
           ],
         },
         {
