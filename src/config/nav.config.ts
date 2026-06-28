@@ -45,9 +45,8 @@ export const footerNav = {
       href: "https://github.com/milzamsz/astro-cloudflare-starter",
       labelKey: "footer.github",
     },
-    { href: "https://twitter.com/yourhandle", labelKey: "footer.twitter" },
     {
-      href: "https://linkedin.com/in/yourprofile",
+      href: "https://www.linkedin.com/in/milzamsz/",
       labelKey: "footer.linkedin",
     },
   ] as const,

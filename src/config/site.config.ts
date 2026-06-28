@@ -95,8 +95,8 @@ export const siteConfig: SiteConfig = {
   name: "Astro Cloudflare",
   description:
     "Marketing, blog, and docs starter built with Astro and Cloudflare Pages — multilanguage-ready",
-  author: "Your Name",
-  email: "your.email@example.com",
+  author: "Milzam",
+  email: "milzamsz@gmail.com",
   authorImage: "/images/author.jpg",
 
   /* Social links */
@@ -107,22 +107,16 @@ export const siteConfig: SiteConfig = {
       label: "GitHub",
     },
     {
-      platform: "twitter",
-      url: "https://twitter.com/yourhandle",
-      label: "Twitter",
-    },
-    {
       platform: "linkedin",
-      url: "https://linkedin.com/in/yourprofile",
+      url: "https://www.linkedin.com/in/milzamsz/",
       label: "LinkedIn",
     },
-    { platform: "email", url: "mailto:your.email@example.com", label: "Email" },
+    { platform: "email", url: "mailto:milzamsz@gmail.com", label: "Email" },
   ],
 
   /* Header settings */
   header: {
     showSocialLinks: true,
-    twitter: "@yourhandle",
   },
 
   /* Search engine verification */

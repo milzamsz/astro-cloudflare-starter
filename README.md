@@ -35,7 +35,7 @@ After clicking **Use this template**, update these:
 - [ ] Content in `src/content/` (blog, services, pages, docs, settings).
 - [ ] `LICENSE` copyright holder and `CHANGELOG.md`.
 
-> Tip: search for `your-org`, `Your Name`, `your.email@example.com`, and `yourhandle` to find placeholders.
+> Tip: update `src/config/site.config.ts` (name, author, email, social links, URL) to make this template yours.
 
 ## Documentation
 
