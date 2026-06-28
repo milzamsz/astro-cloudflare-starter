@@ -103,7 +103,7 @@ export const siteConfig: SiteConfig = {
   socialLinks: [
     {
       platform: "github",
-      url: "https://github.com/your-org/astro-cloudflare",
+      url: "https://github.com/milzamsz/astro-cloudflare-starter",
       label: "GitHub",
     },
     {

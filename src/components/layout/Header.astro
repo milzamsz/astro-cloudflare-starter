@@ -4,6 +4,7 @@ import type { Locale } from "../../lib/site-config";
 import { t } from "../../i18n/ui";
 import { resolveRoute, detectLocale, stripLocale } from "../../i18n/routes";
 import { mainNav } from "../../config/nav.config";
+import { siteConfig } from "../../config/site.config";
 import Logo from "./Logo.astro";
 import LanguageSwitcher from "./LanguageSwitcher.astro";
 import ThemeToggle from "./ThemeToggle.astro";
@@ -28,6 +29,10 @@ const navLinks = mainNav.map((item) => ({
   href: resolveRoute(effectiveLocale, item.href),
   active: contentPath === item.href,
 }));
+
+const githubUrl = siteConfig.socialLinks.find(
+  (link) => link.platform === "github",
+)?.url;
 ---
 
 <header class="header" data-header>
@@ -75,6 +80,23 @@ const navLinks = mainNav.map((item) => ({
     </nav>
 
     <div class="header__actions">
+      {
+        githubUrl && (
+          <a
+            href={githubUrl}
+            class="header__icon-button header__github"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View source on GitHub"
+          >
+            <Icon
+              name="simple-icons:github"
+              class="header__icon"
+              aria-hidden="true"
+            />
+          </a>
+        )
+      }
       <button
         type="button"
         class="header__icon-button header__search"
@@ -310,6 +332,11 @@ const navLinks = mainNav.map((item) => ({
 
   .header__search {
     padding-inline: 0.75rem;
+  }
+
+  .header__github {
+    width: 2.5rem;
+    padding-inline: 0;
   }
 
   .header__icon {
