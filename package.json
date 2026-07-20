@@ -39,7 +39,7 @@
     "@fontsource-variable/manrope": "^5.2.8",
     "@fontsource-variable/outfit": "^5.2.8",
     "@iconify-json/lucide": "^1.2.117",
-    "@iconify-json/simple-icons": "^1.2.90",
+    "@iconify-json/simple-icons": "^1.2.91",
     "@tailwindcss/vite": "^4.3.2",
     "astro": "^7.0.9",
     "astro-icon": "^1.1.5",
