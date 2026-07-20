@@ -36,7 +36,7 @@
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/outfit": "^5.2.8",
     "@iconify-json/lucide": "^1.2.117",
     "@iconify-json/simple-icons": "^1.2.90",
