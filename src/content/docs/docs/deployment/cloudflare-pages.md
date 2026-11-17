@@ -30,7 +30,7 @@ Pull requests get automatic preview deployments, so you can review changes befor
 pnpm build
 
 # Deploy via wrangler (devDependency)
-pnpm cf:deploy --project-name=astro-cloudflare --branch=main
+pnpm cf:deploy --project-name=astro-cloudflare-starter --branch=main
 
 # Preview the production build with Pages Functions locally
 pnpm cf:dev
@@ -47,7 +47,7 @@ Set these in your Cloudflare Pages dashboard or GitHub repository:
 | --- | --- | --- |
 | `CF_API_TOKEN` | GitHub secret | Cloudflare API token (only for `release.yml` deploys) |
 | `CF_ACCOUNT_ID` | GitHub secret | Your Cloudflare account ID |
-| `CF_PAGES_PROJECT` | GitHub variable | Pages project name (default `astro-cloudflare`) |
+| `CF_PAGES_PROJECT` | GitHub variable | Pages project name (default `astro-cloudflare-starter`) |
 | `PNPM_VERSION` | `wrangler.jsonc` `vars` | `12.21.0` — must match `packageManager` |
 | `SITE_URL` | GitHub variable + Pages env var | Canonical URL of your site |
 | `CLEANUP_SECRET` | Pages secret (+ GitHub secret for the schedule) | Bearer token for the R2 cleanup endpoint |

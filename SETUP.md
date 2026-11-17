@@ -58,11 +58,28 @@ from `vars.PNPM_VERSION` (it ignores `packageManager`). Pages applies the
 for all builds once it's merged to `main`. Renovate keeps it in sync with
 `packageManager`.
 
+#### Troubleshooting: every Git build fails right after a pnpm upgrade
+
+Pages applies the Wrangler config (including `vars.PNPM_VERSION`) from the **last
+successful deployment**, for all preview builds. If that deployment carried an
+old `PNPM_VERSION`, Git builds install with the old pnpm, fail at install, and so
+never deploy the new value — a deadlock. Break it once with a direct upload, which
+deploys a locally built `dist/` together with the current `wrangler.jsonc`:
+
+```bash
+pnpm install && pnpm build
+pnpm exec wrangler login
+pnpm exec wrangler pages deploy dist --project-name=astro-cloudflare-starter --branch=<your-branch>
+```
+
+Then retry the failed Git deployment in the dashboard. Use `--branch=main` to
+update the production config (this also publishes that build to production).
+
 ### Option B — Wrangler CLI
 
 ```bash
 pnpm build
-pnpm cf:deploy --project-name=astro-cloudflare --branch=main
+pnpm cf:deploy --project-name=astro-cloudflare-starter --branch=main
 ```
 
 ### Option C — Tag releases from GitHub Actions

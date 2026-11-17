@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "astro-cloudflare",
+	"name": "astro-cloudflare-starter",
 	"compatibility_date": "2026-11-01",
 	"compatibility_flags": ["nodejs_compat"],
 	"pages_build_output_dir": "./dist",
