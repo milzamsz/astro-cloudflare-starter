@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { t } from "../i18n/ui";
-import Hero from "../components/Hero.astro";
+import Hero from "../components/sections/Hero.astro";
 import { ServiceCard } from "../components/services/index";
 
 const locale = (Astro.currentLocale || "en") as "en";
