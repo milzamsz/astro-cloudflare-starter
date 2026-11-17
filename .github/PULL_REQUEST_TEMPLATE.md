@@ -16,8 +16,9 @@
 
 - [ ] `pnpm lint` passes
 - [ ] `pnpm build` succeeds
-- [ ] `pnpm test` passes (if applicable)
-- [ ] Verified in both locales (en / id) where relevant
+- [ ] `pnpm test` passes
+- [ ] `pnpm test:e2e` passes (UI changes; includes the CSP checks)
+- [ ] Verified in every configured locale (`src/config/i18n.config.ts`) and in dark mode
 - [ ] No hardcoded colors — design tokens only
 - [ ] Docs updated if behavior changed
 

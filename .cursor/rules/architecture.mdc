@@ -11,9 +11,14 @@ alwaysApply: true
 sections; compose sections from components. Register new sections in
 `src/components/sections/index.ts` and `src/registry.json`.
 
-**i18n:** English is the default locale (no prefix); Indonesian is under `/id/`.
-Every route must exist in **both** `src/pages/x.astro` and
-`src/pages/[locale]/x.astro`. Use `t(locale, key)` and `resolveRoute(locale, path)`.
+**i18n:** English is the default locale (no prefix). Locales are defined only in
+`src/config/i18n.config.ts`. Use `t(locale, key)` and `resolveRoute(locale, path)`.
+When a second locale is added, every route must also exist in
+`src/pages/[locale]/x.astro` (see the Internationalization guide).
+
+**Security:** the CSP is hash-based. No inline event handlers; avoid `is:inline`
+scripts (pre-paint ones register their hash via `src/lib/csp.ts`); add third-party
+origins only in `src/config/csp.config.ts`.
 
 **Preserve (never break):** Git-based Markdown content collections, Cloudflare
 Pages (+ optional R2), SEO (OG images, JSON-LD, sitemap, RSS, robots, llms.txt),
@@ -23,5 +28,6 @@ Pagefind search, Starlight docs.
 `<script>` or custom element (e.g. `landing/FeatureTabs.astro`). Add a framework
 island only when truly required, with the narrowest `client:*` directive.
 
-**Verify:** `pnpm build` and `pnpm lint` (includes `check:kpis`) must pass; add both
-locales when adding routes; check accessibility (`system/globals/accessibility.md`).
+**Verify:** `pnpm build`, `pnpm lint` (includes `check:kpis`) and `pnpm test` must
+pass (`pnpm test:e2e` for UI changes); check accessibility
+(`system/globals/accessibility.md`).

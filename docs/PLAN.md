@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved — in progress |
+| **Status** | Implemented — see §10 for results and deviations |
 | **Date** | 2026-11-17 |
 | **Branch** | `claude/charming-cerf-pn50o6` |
 | **Delivery** | One PR, one commit per phase, each phase green on `pnpm build` · `pnpm lint` · `pnpm test` |
@@ -301,3 +301,38 @@ Each phase = one commit. After each: `pnpm build && pnpm lint && pnpm test` (and
    runtime deps, minors/majors and action digests are manual.
 5. **Screenshots** — **move to `docs/assets/` as WebP** and reference them from the README.
 6. **Ordering** — the two broken CI jobs (Dependency Review checkout, trufflehog `--fail`) are fixed first.
+
+---
+
+## 10. Implementation notes (done)
+
+All phases are implemented on this branch (one commit per phase; 8 and 9 share a
+commit). Final state: `pnpm build` (26 pages; the branded 404 replaces Starlight's), `pnpm lint`
+(0 errors, 0 KPI warnings, 0 `astro check` hints), 57 unit tests, 33 Playwright
+tests, Lighthouse 100/100/100/100 on all audited URLs.
+
+**Deviations from the plan, and why**
+
+- **TypeScript 7 strategy:** pnpm overrides don't apply to *peer* dependencies, so
+  instead `typescript` is an alias of `@typescript/typescript6` (every tool gets the
+  classic API) and TS 7 is installed as `typescript-native` (its `tsc` bin; the compat
+  package's bin is `tsc6`, so they don't collide). `.astro` imports in `.ts` files get
+  a fallback declaration (`src/types/astro-modules.d.ts`).
+- **`schema-dts` kept** (type-only devDependency) — `src/lib/schema.ts` uses it.
+- **Contact map is Google Maps**, not OpenStreetMap; the CSP allows the Google Maps
+  frame origins and the docs were corrected.
+- **CSP:** Starlight, expressive-code and Shiki set CSS variables in `style=""`, so
+  `style-src-attr 'unsafe-inline'` is required; `<style>` elements and all scripts
+  are hash-locked. Starlight's own `is:inline` scripts are hashed post-build by
+  `src/integrations/csp-inline-script-hashes.ts`. Astro prints a generic
+  "Shiki + CSP" warning at build — expected with this setup.
+- **Playwright:** Astro 7.4 auto-backgrounds `astro preview` when it detects an AI
+  agent; the web server uses `--ignore-lock`. Five e2e specs were stale against the
+  current site (contact form → mailto page, hidden native-share button, language
+  switcher with one locale) and were rewritten.
+- **Extra fixes found along the way:** tag helpers read the wrong field (tag counts
+  and filtering were empty); the R2 cleanup read its manifest from R2 (never
+  uploaded) and would have treated every object as orphaned; dependency-review
+  config used mutually exclusive license options.
+- **Not done here (separate task suggested):** the blog's `?tag=` / `?page=` links
+  can't work on a fully static build; real tag/page routes are needed.

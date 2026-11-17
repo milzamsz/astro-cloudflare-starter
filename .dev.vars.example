@@ -1,8 +1,9 @@
 # Local dev secrets for Cloudflare Pages Functions (wrangler).
-# Copy to .dev.vars (gitignored). Only the R2 cleanup worker needs a secret.
+# Copy to .dev.vars (gitignored). Only the R2 cleanup function needs a secret.
 
 # Required to invoke the R2 cleanup endpoint locally.
-CLEANUP_SECRET=dev-cleanup-secret-change-me
+# Any local value; send it as `Authorization: Bearer <value>`.
+CLEANUP_SECRET=
 
 # Optional cleanup tuning
 # CLEANUP_MODE=dry-run

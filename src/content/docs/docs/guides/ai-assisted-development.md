@@ -45,9 +45,10 @@ sections; build sections from components.
   hex/rgb, no raw Tailwind palette utilities (`bg-blue-500`). Use semantic tokens
   like `bg-primary`, `text-foreground`, `var(--muted-foreground)`.
 - **Dark mode stays working.** Class strategy; never hand-invert colors.
-- **Preserve cross-cutting features.** i18n (English default, locale routing ready
-  under `src/pages/[locale]/`), Cloudflare Pages deployment, SEO/OG/RSS/sitemap,
-  Pagefind search, and the Starlight docs.
+- **Preserve cross-cutting features.** i18n (English default; locales defined in
+  `src/config/i18n.config.ts`, routing ready for `src/pages/[locale]/`), the strict
+  hash-based CSP, Cloudflare Pages deployment, SEO/OG/RSS/sitemap, Pagefind search,
+  and the Starlight docs.
 - **Content lives in collections.** Blog, services, pages, FAQs, and stack are
   file-based content collections under `src/content/` — see
   [Content Management](/docs/guides/content-management/). Don't hardcode copy that
