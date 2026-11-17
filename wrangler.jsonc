@@ -11,10 +11,8 @@
 			"binding": "R2_MEDIA",
 			"bucket_name": "astro-media"
 		}
-	],
-	// Cloudflare Pages build image picks the pnpm version from this variable.
-	// Keep in sync with "packageManager" in package.json.
-	"vars": {
-		"PNPM_VERSION": "12.21.0"
-	}
+	]
+	// Note: `vars` here are runtime bindings for Pages Functions only. The build
+	// image's pnpm version must be set as a build environment variable in the
+	// Pages dashboard: PNPM_VERSION=12.21.0 (see SETUP.md).
 }

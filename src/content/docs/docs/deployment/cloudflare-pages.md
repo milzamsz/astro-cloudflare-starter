@@ -9,8 +9,10 @@ sidebar:
 
 Connect the repository in the Cloudflare dashboard (Workers & Pages → Create →
 Pages) with build command `pnpm build` and output directory `dist`. Cloudflare
-then builds every push. The build image reads Node from `.node-version` and pnpm
-from the `PNPM_VERSION` variable in `wrangler.jsonc`.
+then builds every push. The build image reads Node from `.node-version`; set
+`PNPM_VERSION=12.21.0` as a **build environment variable** in the Pages project
+settings (Production and Preview). The default pnpm 10 can't read the pnpm 12
+lockfile, and `vars` in `wrangler.jsonc` only reach Pages Functions at runtime.
 
 GitHub Actions (`ci.yml`) independently runs lint, type checks, unit tests, a
 build, Playwright e2e/CSP tests, Lighthouse budgets and security scans on every
@@ -45,6 +47,7 @@ Set these in your Cloudflare Pages dashboard or GitHub repository:
 | `CF_API_TOKEN` | GitHub secret | Cloudflare API token (only for `release.yml` deploys) |
 | `CF_ACCOUNT_ID` | GitHub secret | Your Cloudflare account ID |
 | `CF_PAGES_PROJECT` | GitHub variable | Pages project name (default `astro-cloudflare`) |
+| `PNPM_VERSION` | Pages build env var | `12.21.0` — must match `packageManager` |
 | `SITE_URL` | GitHub variable + Pages env var | Canonical URL of your site |
 | `CLEANUP_SECRET` | Pages secret (+ GitHub secret for the schedule) | Bearer token for the R2 cleanup endpoint |
 | `CLEANUP_ENABLED` | GitHub variable | `true` turns on the weekly cleanup workflow |

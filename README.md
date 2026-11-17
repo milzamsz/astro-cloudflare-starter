@@ -90,7 +90,8 @@ Edit files and open a pull request — Cloudflare Pages rebuilds on merge.
 
 ## Deployment
 
-Connect the repo to Cloudflare Pages (build command `pnpm build`, output `dist`), or
+Connect the repo to Cloudflare Pages (build command `pnpm build`, output `dist`,
+build env var `PNPM_VERSION=12.21.0`), or
 deploy manually with `pnpm cf:deploy --project-name=<name>`. See [SETUP.md](SETUP.md).
 
 ## License

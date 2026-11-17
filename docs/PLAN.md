@@ -334,5 +334,12 @@ tests, Lighthouse 100/100/100/100 on all audited URLs.
   and filtering were empty); the R2 cleanup read its manifest from R2 (never
   uploaded) and would have treated every object as orphaned; dependency-review
   config used mutually exclusive license options.
+- **Cloudflare Pages build:** reproduced locally — the build image's default
+  pnpm 10.11 can't self-switch to pnpm 12 (`ERR_PNPM_IGNORED_BUILDS`) and can't
+  read the pnpm 12 lockfile. `vars` in `wrangler.jsonc` don't reach the build, so
+  `PNPM_VERSION=12.21.0` must be set as a Pages build env var in the dashboard
+  (documented in SETUP.md); the repo can't set it.
+- **Dependency Review:** GHSA-fc5q-39xc-vjpf (picomatch ReDoS, no patched release,
+  already on `main`) needs an owner decision to accept or wait.
 - **Not done here (separate task suggested):** the blog's `?tag=` / `?page=` links
   can't work on a fully static build; real tag/page routes are needed.
