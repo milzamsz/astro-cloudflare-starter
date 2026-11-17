@@ -22,8 +22,17 @@ test.describe("blog listing + detail", () => {
     test.setTimeout(60_000);
     await page.goto("/blog/welcome", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator(".share-buttons button").first()).toBeVisible({
+    // The native-share button is progressive enhancement: it stays `hidden`
+    // unless navigator.share exists (not in desktop Chromium). The X/LinkedIn
+    // links and the copy-link button are always shown.
+    const shareButtons = page.locator(".share-buttons");
+    await expect(shareButtons.locator("[data-share-copy]")).toBeVisible({
       timeout: 30_000,
     });
+    await expect(shareButtons.locator("a.share-buttons__btn")).toHaveCount(2);
+    const hasNativeShare = await page.evaluate(() => "share" in navigator);
+    const nativeShare = shareButtons.locator("[data-share-native]");
+    if (hasNativeShare) await expect(nativeShare).toBeVisible();
+    else await expect(nativeShare).toBeHidden();
   });
 });
