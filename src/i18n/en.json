@@ -70,5 +70,8 @@
   "pagination.prev": "Previous",
   "pagination.next": "Next",
   "pagination.page": "Page",
-  "pagination.of": "of"
+  "pagination.of": "of",
+  "notFound.title": "Page not found",
+  "notFound.description": "This page doesn't exist or has moved. Try the search, or head back to the homepage.",
+  "notFound.home": "Back to homepage"
 }

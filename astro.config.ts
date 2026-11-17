@@ -116,6 +116,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: siteConfig.name,
+      // The site ships its own branded 404 (src/pages/404.astro).
+      disable404Route: true,
       customCss: ["./src/styles/starlight.css"],
       components: {
         SiteTitle: "./src/components/docs/SiteTitle.astro",

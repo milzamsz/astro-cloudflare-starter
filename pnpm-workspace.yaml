@@ -1,0 +1,11 @@
+# pnpm settings (pnpm 10+ reads these from here instead of package.json/.npmrc)
+packages:
+  - .
+
+# pnpm blocks dependency lifecycle scripts by default. Allow only the ones the
+# toolchain needs (esbuild/workerd download platform binaries; sharp is prebuilt).
+allowBuilds:
+  esbuild: true
+  workerd: true
+  sharp: false
+
