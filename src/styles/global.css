@@ -485,6 +485,10 @@ code {
   box-shadow: var(--shadow-sm);
 }
 
+.feature-tabs__panel[hidden] {
+  display: none;
+}
+
 .feature-tabs__panel:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;

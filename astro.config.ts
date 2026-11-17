@@ -2,7 +2,6 @@ import { defineConfig, envField } from "astro/config";
 import starlight from "@astrojs/starlight";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import icon from "astro-icon";
 import { siteConfig } from "./src/config/site.config";
@@ -70,7 +69,6 @@ export default defineConfig({
         locales: i18nConfig.localeTags,
       },
     }),
-    react(),
     icon(),
   ],
   env: {

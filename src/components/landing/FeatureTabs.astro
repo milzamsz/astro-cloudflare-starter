@@ -1,0 +1,144 @@
+---
+/**
+ * FeatureTabs — accessible tabs (WAI-ARIA tabs pattern), no framework runtime.
+ *
+ * All panels are rendered at build time; the first is visible without JS.
+ * A tiny custom element adds selection + keyboard support:
+ * ←/→ cycle, Home/End jump, focus follows selection (automatic activation).
+ */
+import Icon from "../ui/primitives/Icon/Icon.astro";
+import { slugify } from "../../lib/utils";
+
+export interface FeatureTab {
+  id: string;
+  /** Lucide icon name without prefix, e.g. "zap" */
+  icon: string;
+  heading: string;
+  description: string;
+  points?: string[];
+  /** Plain-text snippet shown in the faux terminal window */
+  visual: string;
+}
+
+export interface Props {
+  tabs: FeatureTab[];
+  /** Accessible name of the tab list */
+  label?: string;
+}
+
+const { tabs, label = "Features" } = Astro.props as Props;
+// Ids are scoped by the label, so two tab sets on one page need different labels.
+const uid = `ft-${slugify(label)}`;
+---
+
+{
+  tabs.length > 0 && (
+    <feature-tabs class="feature-tabs">
+      <div class="feature-tabs__list" role="tablist" aria-label={label}>
+        {tabs.map((tab, index) => (
+          <button
+            id={`${uid}-tab-${tab.id}`}
+            type="button"
+            role="tab"
+            aria-selected={index === 0 ? "true" : "false"}
+            aria-controls={`${uid}-panel-${tab.id}`}
+            tabindex={index === 0 ? 0 : -1}
+            class:list={["feature-tabs__tab", { "is-active": index === 0 }]}
+          >
+            <span class="feature-tabs__tab-icon">
+              <Icon name={`lucide:${tab.icon}`} class="feature-tabs__icon" />
+            </span>
+            <span class="feature-tabs__tab-label">{tab.heading}</span>
+          </button>
+        ))}
+      </div>
+
+      {tabs.map((tab, index) => (
+        <div
+          id={`${uid}-panel-${tab.id}`}
+          role="tabpanel"
+          aria-labelledby={`${uid}-tab-${tab.id}`}
+          class="feature-tabs__panel"
+          tabindex="0"
+          hidden={index !== 0}
+        >
+          <div class="feature-tabs__content">
+            <h3 class="feature-tabs__heading">{tab.heading}</h3>
+            <p class="feature-tabs__description">{tab.description}</p>
+            {tab.points && tab.points.length > 0 && (
+              <ul class="feature-tabs__points">
+                {tab.points.map((point) => (
+                  <li>
+                    <Icon name="lucide:check" class="feature-tabs__check" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div class="feature-tabs__window" aria-hidden="true">
+            <div class="feature-tabs__window-bar">
+              <span />
+              <span />
+              <span />
+            </div>
+            <pre class="feature-tabs__visual">{tab.visual}</pre>
+          </div>
+        </div>
+      ))}
+    </feature-tabs>
+  )
+}
+
+<script>
+  class FeatureTabsElement extends HTMLElement {
+    connectedCallback() {
+      const tabs = [...this.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+      const panels = tabs.map((tab) =>
+        this.querySelector<HTMLElement>(`#${tab.getAttribute("aria-controls")}`),
+      );
+
+      const select = (index: number, focus: boolean) => {
+        tabs.forEach((tab, i) => {
+          const selected = i === index;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          tab.classList.toggle("is-active", selected);
+          const panel = panels[i];
+          if (panel) panel.hidden = !selected;
+        });
+        if (focus) tabs[index]?.focus();
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => select(index, false));
+      });
+
+      this.querySelector('[role="tablist"]')?.addEventListener("keydown", (event) => {
+        const { key } = event as KeyboardEvent;
+        const current = tabs.indexOf(document.activeElement as HTMLButtonElement);
+        if (current === -1) return;
+
+        const last = tabs.length - 1;
+        const next =
+          key === "ArrowRight"
+            ? (current + 1) % tabs.length
+            : key === "ArrowLeft"
+              ? (current - 1 + tabs.length) % tabs.length
+              : key === "Home"
+                ? 0
+                : key === "End"
+                  ? last
+                  : -1;
+        if (next === -1) return;
+
+        event.preventDefault();
+        select(next, true);
+      });
+    }
+  }
+
+  if (!customElements.get("feature-tabs")) {
+    customElements.define("feature-tabs", FeatureTabsElement);
+  }
+</script>

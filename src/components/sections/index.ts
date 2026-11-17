@@ -10,7 +10,7 @@
 
 // Existing blocks (re-exported in place; no file moves)
 export { default as Hero } from "../hero/Hero.astro";
-export { default as FeatureTabs } from "../landing/FeatureTabs";
+export { default as FeatureTabs } from "../landing/FeatureTabs.astro";
 export { default as StackMarquee } from "../landing/StackMarquee.astro";
 export { default as TechStack } from "../landing/TechStack.astro";
 export { default as Credibility } from "../landing/Credibility.astro";

@@ -5,9 +5,7 @@
       "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "skipLibCheck": true
   },
   "include": [".astro/types.d.ts", "src/**/*"],
   "exclude": ["dist"]

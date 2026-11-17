@@ -215,9 +215,8 @@
     {
       "name": "FeatureTabs",
       "tier": "section",
-      "path": "src/components/landing/FeatureTabs.tsx",
-      "props": ["tabs"],
-      "island": "react",
+      "path": "src/components/landing/FeatureTabs.astro",
+      "props": ["tabs", "label"],
       "i18nAware": true
     },
     {
