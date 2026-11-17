@@ -11,8 +11,12 @@
 			"binding": "R2_MEDIA",
 			"bucket_name": "astro-media"
 		}
-	]
-	// Note: `vars` here are runtime bindings for Pages Functions only. The build
-	// image's pnpm version must be set as a build environment variable in the
-	// Pages dashboard: PNPM_VERSION=12.21.0 (see SETUP.md).
+	],
+	// With a Wrangler config, Pages manages the project's environment variables
+	// from this file (the dashboard only allows secrets). The build image reads
+	// PNPM_VERSION to pick pnpm, so keep it in sync with "packageManager".
+	// Pages uses the production branch's copy, so a change applies once merged.
+	"vars": {
+		"PNPM_VERSION": "12.21.0"
+	}
 }

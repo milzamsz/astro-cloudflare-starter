@@ -336,9 +336,10 @@ tests, Lighthouse 100/100/100/100 on all audited URLs.
   config used mutually exclusive license options.
 - **Cloudflare Pages build:** reproduced locally — the build image's default
   pnpm 10.11 can't self-switch to pnpm 12 (`ERR_PNPM_IGNORED_BUILDS`) and can't
-  read the pnpm 12 lockfile. `vars` in `wrangler.jsonc` don't reach the build, so
-  `PNPM_VERSION=12.21.0` must be set as a Pages build env var in the dashboard
-  (documented in SETUP.md); the repo can't set it.
+  read the pnpm 12 lockfile. With a Wrangler config, Pages takes its variables from
+  the **production branch's** `wrangler.jsonc` (`main` still had
+  `PNPM_VERSION=8.15.0`), so preview builds of this branch ran pnpm 8.15. The var is
+  set to `12.21.0` here and takes effect once merged.
 - **Dependency Review:** GHSA-fc5q-39xc-vjpf (picomatch ReDoS, no patched release,
   already on `main`) was accepted by the owner via `allow-ghsas`; remove it once fixed.
 - **Not done here (separate task suggested):** the blog's `?tag=` / `?page=` links

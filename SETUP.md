@@ -42,20 +42,21 @@ Playwright needs a browser: `pnpm exec playwright install chromium` (or point
 3. Build settings:
    - Build command: `pnpm build`
    - Output directory: `dist`
-4. Add environment variables (Settings → Environment variables), for both
-   Production and Preview:
-   - `PNPM_VERSION` = `12.21.0` — **required**. The build image defaults to pnpm 10,
-     which can't read the pnpm 12 lockfile or switch itself to pnpm 12. Keep it in
-     sync with `packageManager` in `package.json`.
+4. Environment variables: because the repo has a `wrangler.jsonc`, Pages manages
+   plain variables from its `vars` (the dashboard only accepts secrets).
+   `vars.PNPM_VERSION` = `12.21.0` is **required** — the build image otherwise uses
+   an older pnpm that can't read the pnpm 12 lockfile. Add other build-time values
+   there too:
    - `SITE_URL` = your production URL
    - Optional analytics: `PUBLIC_GA_MEASUREMENT_ID`, `PUBLIC_GTM_ID`
      (the CSP automatically allows Google's origins when these are set)
 5. Every push to `main` deploys to production; pull requests get preview URLs.
 
-The build image reads the Node version from `.node-version`. It does **not** read
-`packageManager` or `vars` in `wrangler.jsonc` for the build, so `PNPM_VERSION`
-must be set in the dashboard. When Renovate bumps `packageManager`, update it there
-too (or deploy with Option B/C, which use the repo's pnpm).
+The build image reads the Node version from `.node-version` and the pnpm version
+from `vars.PNPM_VERSION` (it ignores `packageManager`). Pages applies the
+**production branch's** `wrangler.jsonc`, so a `PNPM_VERSION` change takes effect
+for all builds once it's merged to `main`. Renovate keeps it in sync with
+`packageManager`.
 
 ### Option B — Wrangler CLI
 

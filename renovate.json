@@ -123,5 +123,19 @@
       "automergeType": "pr",
       "platformAutomerge": true
     }
+  ],
+  "customManagers": [
+    {
+      "description": "Keep the Cloudflare Pages build pnpm version in sync with packageManager",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^wrangler\\.jsonc$/"
+      ],
+      "matchStrings": [
+        "\"PNPM_VERSION\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
+    }
   ]
 }
