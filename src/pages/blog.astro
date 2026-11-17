@@ -4,6 +4,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { t } from "../i18n/ui";
 import { resolveRoute } from "../i18n/routes";
 import { siteConfig } from "../config/site.config";
+import { slugifyTag as slugify } from "../lib/tags";
 import { BlogCard } from "../components/blog/index";
 import Pagination from "../components/ui/data-display/Pagination/Pagination.astro";
 
@@ -11,13 +12,6 @@ const locale = (Astro.currentLocale || "en") as "en";
 const searchParams = Astro.url.searchParams;
 const currentTag = searchParams.get("tag") ?? "";
 const currentPage = Math.max(1, Number(searchParams.get("page") || "1"));
-const slugify = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 
 const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
 const posts = allPosts

@@ -96,6 +96,7 @@ const SKIP_PATTERNS = [
   '.git',
   'dist',
   '.wrangler',
+  '.astro', // generated types (icon hashes trip the token patterns)
   'pnpm-lock.yaml',
   'CHANGELOG.md', // May contain example values in docs
 ];

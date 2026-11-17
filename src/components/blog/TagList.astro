@@ -1,5 +1,8 @@
 ---
 import type { Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+import { t } from "../../i18n/ui";
+import { slugifyTag } from "../../lib/tags";
 import { Badge } from "../ui/index";
 
 export interface Props {
@@ -9,25 +12,17 @@ export interface Props {
 }
 
 const { tags, basePath = "/blog", locale = "en" } = Astro.props as Props;
-
-function slugify(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+const href = (tag: string) => `${resolveRoute(locale, basePath)}?tag=${slugifyTag(tag)}`;
 ---
 
 {
   tags.length > 0 && (
     <div
       class="blog-tags"
-      aria-label="Post tags"
+      aria-label={t(locale, "blog.tags")}
     >
       {tags.map((tag) => (
-        <a href={`${basePath}?tag=${slugify(tag)}`}>
+        <a href={href(tag)}>
           <Badge variant="outline">{tag}</Badge>
         </a>
       ))}
