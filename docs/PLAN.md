@@ -340,6 +340,6 @@ tests, Lighthouse 100/100/100/100 on all audited URLs.
   `PNPM_VERSION=12.21.0` must be set as a Pages build env var in the dashboard
   (documented in SETUP.md); the repo can't set it.
 - **Dependency Review:** GHSA-fc5q-39xc-vjpf (picomatch ReDoS, no patched release,
-  already on `main`) needs an owner decision to accept or wait.
+  already on `main`) was accepted by the owner via `allow-ghsas`; remove it once fixed.
 - **Not done here (separate task suggested):** the blog's `?tag=` / `?page=` links
   can't work on a fully static build; real tag/page routes are needed.

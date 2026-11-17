@@ -7,6 +7,15 @@
 # Severity threshold for failing the build: low | moderate | high | critical
 fail-on-severity: moderate
 
+# Advisories accepted by the repo owner. Keep each one justified and remove it
+# as soon as a patched version exists.
+allow-ghsas:
+  # picomatch ReDoS via repeated extglobs: affects every release up to 4.0.7 and
+  # has no fix yet (main already shipped 4.0.5). Build-time only (Astro/Vite/
+  # Stylelint/Vitest glob matching on patterns in this repo); not in dist/ and
+  # never given untrusted input. Accepted 2026-11-17.
+  - GHSA-fc5q-39xc-vjpf
+
 # Permissive / attribution licenses found in the Astro + Tailwind toolchain.
 allow-licenses:
   - MIT
