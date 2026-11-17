@@ -11,8 +11,10 @@ export interface Props {
 const { currentLocale, currentPath } = Astro.props as Props;
 // Only render when there is another locale to switch to. The switcher
 // reappears automatically once SITE_CONFIG.locales has more than one entry.
-const targetLocale = SITE_CONFIG.locales.find(
-  (locale) => locale !== currentLocale,
+// The explicit `boolean` return stops TS from inferring a type predicate,
+// which narrows targetLocale to `never` while only one locale exists.
+const targetLocale: Locale | undefined = SITE_CONFIG.locales.find(
+  (locale): boolean => locale !== currentLocale,
 );
 const href = targetLocale ? getEquivalentPath(currentPath, targetLocale) : "#";
 ---
