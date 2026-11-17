@@ -100,7 +100,8 @@ jobs:
           path: ./
           base: ${{ github.base_ref }}
           head: ${{ github.head_ref }}
-          extra_args: --only-verified --fail
+          # The action already passes --fail; repeating it makes trufflehog exit with an error.
+          extra_args: --only-verified
 
   dependency-review:
     name: Dependency Review
@@ -109,6 +110,10 @@ jobs:
       contents: read
     if: github.event_name == 'pull_request'
     steps:
+      # Needed so the action can read .github/dependency-review-config.yml.
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Dependency Review
         uses: actions/dependency-review-action@v5
         with:
