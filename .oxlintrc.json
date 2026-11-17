@@ -20,7 +20,7 @@
   },
   "overrides": [
     {
-      "files": ["scripts/**", "functions/**", ".cursor/**", "astro.config.ts", "playwright.config.ts"],
+      "files": ["scripts/**", "functions/**", ".cursor/**", "src/test/**", "src/integrations/**", "astro.config.ts", "playwright.config.ts"],
       "rules": { "no-console": "off" }
     }
   ]

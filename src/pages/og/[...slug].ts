@@ -59,7 +59,7 @@ function svgTemplate({
 </svg>`;
 }
 
-function resolveMeta(kind: OgKind, locale: string, slug: string[]) {
+function resolveMeta(kind: OgKind, slug: string[]) {
   if (kind === "home") {
     return {
       title: siteConfig.name,
@@ -216,7 +216,7 @@ export async function GET({
 }: {
   props: { kind: OgKind; locale: string; slug: string[] };
 }) {
-  const meta = resolveMeta(props.kind, props.locale, props.slug);
+  const meta = resolveMeta(props.kind, props.slug);
   return new Response(
     svgTemplate({
       kind: props.kind,

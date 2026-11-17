@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/lighthouserc",
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "url": ["/", "/blog/", "/blog/welcome/", "/docs/", "/contact/"],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --headless=new"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 1, "aggregationMethod": "median-run" }],
+        "categories:seo": ["error", { "minScore": 1, "aggregationMethod": "median-run" }],
+        "categories:performance": ["warn", { "minScore": 0.95, "aggregationMethod": "median-run" }],
+        "categories:best-practices": ["warn", { "minScore": 0.95, "aggregationMethod": "median-run" }]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci/reports"
+    }
+  }
+}
