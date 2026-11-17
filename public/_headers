@@ -1,20 +1,24 @@
-# CSP + Security Headers for Cloudflare Pages
-# See: https://developers.cloudflare.com/pages/platform/headers/
+# Security headers for Cloudflare Pages
+# See: https://developers.cloudflare.com/pages/configuration/headers/
 #
-# - default-src 'self': allow same-origin resources
-# - script-src: self + inline (Astro hydration) + Google Tag Manager (optional analytics)
-# - style-src: self + inline (Tailwind generates inline styles)
-# - frame-src: Google Maps embed on the contact page
-# - connect-src: self + Google Analytics (optional)
-# - img-src: self, data:, and HTTPS images (R2 media)
-# - font-src: self + data: (bundled fonts)
-# - object-src 'none', base-uri 'self', form-action 'self', frame-ancestors 'none'
+# The main Content-Security-Policy (script-src / style-src with SHA-256 hashes,
+# img/font/connect/frame sources) is generated per page by Astro
+# (`security.csp` in astro.config.ts, sources in src/config/csp.config.ts) and
+# emitted as a <meta http-equiv="content-security-policy"> tag.
+#
+# The header below only carries directives a <meta> tag cannot set
+# (frame-ancestors) plus a few hardening defaults. Browsers enforce both
+# policies, so the header must not add script-src/style-src restrictions.
 
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline'; frame-src 'self' https://www.google.com https://maps.google.com; connect-src 'self' www.google-analytics.com; img-src 'self' data: https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';
+  Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
+
+# Fingerprinted build assets never change.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

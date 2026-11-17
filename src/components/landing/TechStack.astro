@@ -27,7 +27,7 @@ const { items } = Astro.props as Props;
       >
         <span
           class="tech-stack__icon"
-          style={`background-color: color-mix(in oklch, ${item.colorOklch} 18%, var(--color-bg-secondary));`}
+          style={{ "--tech-color": item.colorOklch }}
         >
           <Icon name={item.icon} />
         </span>
@@ -68,6 +68,7 @@ const { items } = Astro.props as Props;
   }
 
   .tech-stack__icon {
+    background-color: color-mix(in oklch, var(--tech-color) 18%, var(--color-bg-secondary));
     display: inline-grid;
     place-items: center;
     width: 2.75rem;

@@ -6,6 +6,8 @@ import mdx from "@astrojs/mdx";
 import icon from "astro-icon";
 import { siteConfig } from "./src/config/site.config";
 import { i18nConfig } from "./src/config/i18n.config";
+import { cspSources } from "./src/config/csp.config";
+import cspInlineScriptHashes from "./src/integrations/csp-inline-script-hashes";
 
 export default defineConfig({
   site: siteConfig.url,
@@ -70,6 +72,8 @@ export default defineConfig({
       },
     }),
     icon(),
+    // Starlight renders a few is:inline bootstraps that Astro's CSP doesn't hash.
+    cspInlineScriptHashes({ paths: ["/docs/"] }),
   ],
   env: {
     schema: {
@@ -99,5 +103,23 @@ export default defineConfig({
   },
   security: {
     checkOrigin: true,
+    // Hash-based CSP: Astro emits a <meta http-equiv="content-security-policy">
+    // per page with SHA-256 hashes of every inline script/style it renders.
+    // Header-only directives (frame-ancestors, …) stay in public/_headers.
+    csp: {
+      algorithm: "SHA-256",
+      directives: cspSources.directives,
+      scriptDirective: { resources: cspSources.scriptSources },
+      styleDirective: {
+        resources: [
+          { resource: "'self'", kind: "element" },
+          // Inline style *attributes* only: Starlight, expressive-code and
+          // Shiki set CSS variables via style="". <style> elements stay
+          // hash-locked. (Astro still prints a generic "Shiki + CSP" warning
+          // at build; it's expected with this setup.)
+          { resource: "'unsafe-inline'", kind: "attribute" },
+        ],
+      },
+    },
   },
 });

@@ -59,8 +59,8 @@ const aspect =
       loading={loading}
       width={imgWidth}
       height={imgHeight}
-      class={className}
-      style={aspect ? { aspectRatio: aspect } : undefined}
+      class:list={[className, aspect && "img--aspect"]}
+      style={aspect ? { "--img-aspect": aspect } : undefined}
       decoding="async"
     />
   ) : (
@@ -74,3 +74,9 @@ const aspect =
     />
   )
 }
+
+<style>
+  .img--aspect {
+    aspect-ratio: var(--img-aspect);
+  }
+</style>

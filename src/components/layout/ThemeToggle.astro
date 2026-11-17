@@ -19,6 +19,8 @@ const labelLight = t(locale, "nav.lightMode");
   aria-pressed="false"
   data-theme-toggle
   data-theme="light"
+  data-label-dark={labelDark}
+  data-label-light={labelLight}
 >
   <Icon
     name="lucide:sun"
@@ -31,14 +33,18 @@ const labelLight = t(locale, "nav.lightMode");
   <span class="theme-toggle__label" data-theme-label>{labelDark}</span>
 </button>
 
-<script is:inline define:vars={{ labelDark, labelLight }}>
+<script>
   const storageKey = "theme";
+  // Keep the main site and the Starlight /docs section in sync by mirroring the
+  // choice into both storage keys.
+  const starlightKey = "starlight-theme";
   const root = document.documentElement;
-  const button = document.querySelector("[data-theme-toggle]");
+  const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const label = button?.querySelector<HTMLElement>("[data-theme-label]");
+  const labelDark = button?.dataset.labelDark ?? "";
+  const labelLight = button?.dataset.labelLight ?? "";
 
-  const label = button?.querySelector("[data-theme-label]");
-
-  const syncTheme = (theme) => {
+  const syncTheme = (theme: "dark" | "light") => {
     const isDark = theme === "dark";
     root.classList.toggle("dark", isDark);
     if (button) {
@@ -51,22 +57,12 @@ const labelLight = t(locale, "nav.lightMode");
     }
   };
 
-  // Keep the main site and the Starlight /docs section in sync by mirroring the
-  // choice into both storage keys.
-  const starlightKey = "starlight-theme";
-
   try {
-    const storedTheme =
-      localStorage.getItem(storageKey) || localStorage.getItem(starlightKey);
-    const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
+    const storedTheme = localStorage.getItem(storageKey) || localStorage.getItem(starlightKey);
+    const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
-    syncTheme(
-      storedTheme === "dark" || storedTheme === "light"
-        ? storedTheme
-        : preferredTheme,
-    );
+    syncTheme(storedTheme === "dark" || storedTheme === "light" ? storedTheme : preferredTheme);
 
     button?.addEventListener("click", () => {
       const nextTheme = root.classList.contains("dark") ? "light" : "dark";

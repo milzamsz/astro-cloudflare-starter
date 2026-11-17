@@ -164,13 +164,13 @@ const githubUrl = siteConfig.socialLinks.find(
   </div>
 </header>
 
-<script is:inline>
-  const header = document.querySelector("[data-header]");
-  const menuToggle = document.querySelector("[data-menu-toggle]");
-  const menuPanel = document.querySelector("[data-menu-panel]");
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const menuToggle = document.querySelector<HTMLElement>("[data-menu-toggle]");
+  const menuPanel = document.querySelector<HTMLElement>("[data-menu-panel]");
 
   if (header && menuToggle && menuPanel) {
-    const syncMenu = (open) => {
+    const syncMenu = (open: boolean) => {
       menuToggle.setAttribute("aria-expanded", String(open));
       menuPanel.hidden = !open;
     };

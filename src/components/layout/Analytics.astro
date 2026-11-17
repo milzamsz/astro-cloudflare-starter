@@ -6,8 +6,8 @@
  *   PUBLIC_GTM_ID            → Google Tag Manager
  *   settings.yml umamiUrl + umamiId → Umami
  *
- * The inline bootstraps use `define:vars`, so their content is fixed at build
- * time and Astro's CSP can hash them.
+ * Bootstraps are processed scripts (hashed by Astro's CSP); the third-party
+ * hosts are allowed in src/config/csp.config.ts only when configured.
  */
 import { getEntry } from "astro:content";
 
@@ -29,15 +29,15 @@ const umamiId = settings?.data.umamiId;
 }
 {
   gaId && (
-    <script is:inline define:vars={{ gaId }}>
+    <script>
       window.dataLayer = window.dataLayer || [];
       window.gtag = function gtag() {
         // gtag.js only accepts the real `arguments` object, not an array.
         // eslint-disable-next-line prefer-rest-params
-        window.dataLayer.push(arguments);
+        window.dataLayer!.push(arguments);
       };
       window.gtag("js", new Date());
-      window.gtag("config", gaId);
+      window.gtag("config", import.meta.env.PUBLIC_GA_MEASUREMENT_ID);
     </script>
   )
 }
@@ -52,7 +52,7 @@ const umamiId = settings?.data.umamiId;
 }
 {
   gtmId && (
-    <script is:inline>
+    <script>
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
     </script>

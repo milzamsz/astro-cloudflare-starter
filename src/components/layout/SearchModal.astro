@@ -43,14 +43,14 @@ const { locale = "en" } = Astro.props as Props;
   </div>
 </dialog>
 
-<script is:inline>
-  const dialog = document.getElementById("search-modal");
+<script>
+  const dialog = document.getElementById("search-modal") as HTMLDialogElement | null;
   const triggers = document.querySelectorAll("[data-search-trigger]");
   const closeButton = dialog?.querySelector("[data-search-close]");
   // The mount point only exists in production builds (Pagefind index).
   const pagefindMount = dialog?.querySelector("[data-pagefind-ui]");
-  let pagefindUI = null;
-  let pagefindLoading = null;
+  let pagefindUI: unknown = null;
+  let pagefindLoading: Promise<void> | null = null;
 
   // Load the Pagefind UI bundle + styles on demand, the first time search is
   // opened, so they never weigh on initial page load (TBT / unused JS).

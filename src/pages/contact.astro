@@ -146,7 +146,7 @@ const methods = (featuresSection?.items || []).map((item) => ({
   </section>
 </BaseLayout>
 
-<script is:inline>
+<script>
   // Swap the static facade for the real Google Maps iframe only on first click,
   // keeping third-party JS off the critical path.
   document.querySelectorAll("[data-map-embed]").forEach((btn) => {
