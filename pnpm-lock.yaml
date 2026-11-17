@@ -107,8 +107,8 @@ devDependencies:
     specifier: ^10.1.8
     version: 10.1.8(eslint@10.7.0)
   eslint-plugin-astro:
-    specifier: ^3.0.0
-    version: 3.0.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@typescript-eslint/parser@8.64.0)(eslint@10.7.0)
+    specifier: ^3.2.1
+    version: 3.2.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@typescript-eslint/parser@8.64.0)(eslint@10.7.0)(typescript-eslint@8.64.0)
   globals:
     specifier: ^17.7.0
     version: 17.7.0
@@ -1737,6 +1737,11 @@ packages:
     dev: true
     optional: true
 
+  /@pkgr/core@0.3.6:
+    resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    dev: true
+
   /@playwright/test@1.61.1:
     resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
     engines: {node: '>=18'}
@@ -3310,17 +3315,23 @@ packages:
       eslint: 10.7.0
     dev: true
 
-  /eslint-plugin-astro@3.0.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@typescript-eslint/parser@8.64.0)(eslint@10.7.0):
-    resolution: {integrity: sha512-wQv7uFZHuxN6QY1ynS9SJ0Wg41XE772rw0x9LSB4gzMixFYwSzMIXteUPLGdtaMI6ktZ227xFNnPw24HTwLJEg==}
+  /eslint-plugin-astro@3.2.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@typescript-eslint/parser@8.64.0)(eslint@10.7.0)(typescript-eslint@8.64.0):
+    resolution: {integrity: sha512-IgU7LIkpEg0r6bQGwc3Ck5jHgkUk3rOrEfRhUxDtMx/M0GD3SG/turMtvwj989KRR12Wt1l89faZ5ynjvVL7hg==}
     engines: {node: ^22.22.3 || ^24.16.0 || >=26.3.0}
     peerDependencies:
       '@typescript-eslint/parser': '>=8.61.0'
       eslint: '>=10.0.0'
       eslint-plugin-jsx-a11y: '>=6.10.2'
+      eslint-plugin-jsx-a11y-x: '>=0.2.0'
+      typescript-eslint: '>=8.61.0'
     peerDependenciesMeta:
       '@typescript-eslint/parser':
         optional: true
       eslint-plugin-jsx-a11y:
+        optional: true
+      eslint-plugin-jsx-a11y-x:
+        optional: true
+      typescript-eslint:
         optional: true
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@10.7.0)
@@ -3333,6 +3344,8 @@ packages:
       globals: 17.7.0
       postcss: 8.5.19
       postcss-selector-parser: 7.1.4
+      synckit: 0.11.13
+      typescript-eslint: 8.64.0(eslint@10.7.0)(typescript@6.0.3)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -6137,6 +6150,13 @@ packages:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.6.0
+
+  /synckit@0.11.13:
+    resolution: {integrity: sha512-eNRKgb3z66Yp3D2CixVujOUvXLFUTij/zVnV8KRyvFdQwpz7I5DS8UfRkTeLzb64u+dkzDSdelE24izu+zSSUg==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    dependencies:
+      '@pkgr/core': 0.3.6
+    dev: true
 
   /table@6.9.0:
     resolution: {integrity: sha512-9kY+CygyYM6j02t5YFHbNz2FN5QmYGv9zAjVp4lCDjlCw7amdckXlEt/bjMhUIfj4ThGRE4gCUH5+yGnNuPo5A==}
