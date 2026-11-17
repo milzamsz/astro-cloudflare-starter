@@ -16,7 +16,7 @@ function shouldIncludeDrafts() {
 }
 
 function sortPosts(posts: BlogPost[]) {
-  return [...posts].sort(
+  return posts.toSorted(
     (a, b) =>
       new Date(b.data.publishDate).getTime() -
       new Date(a.data.publishDate).getTime(),
@@ -65,7 +65,7 @@ export async function getRelatedPosts(
       return { post, shared };
     })
     .filter(({ shared }) => shared > 0)
-    .sort(
+    .toSorted(
       (a, b) =>
         b.shared - a.shared ||
         new Date(b.post.data.publishDate).getTime() -

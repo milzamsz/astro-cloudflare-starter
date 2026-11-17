@@ -22,7 +22,7 @@ const slugify = (value: string) =>
 const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
 const posts = allPosts
   .filter((p) => p.data.locale === locale && !p.data.draft)
-  .sort(
+  .toSorted(
     (a, b) =>
       new Date(b.data.publishDate).getTime() -
       new Date(a.data.publishDate).getTime(),
@@ -48,7 +48,7 @@ const pagePosts = gridPosts.slice(
 );
 const allTags = [
   ...new Set(posts.flatMap((post) => post.data.tags || [])),
-].sort((a, b) => a.localeCompare(b));
+].toSorted((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout

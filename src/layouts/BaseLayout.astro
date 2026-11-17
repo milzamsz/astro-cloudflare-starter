@@ -93,8 +93,8 @@ function defaultOgImage(routePath: string) {
           ) {
             document.documentElement.classList.add("dark");
           }
-        } catch (e) {
-          console.warn("dark mode:", e);
+        } catch {
+          // Storage can be blocked (privacy mode); keep the default theme.
         }
       }
       applyTheme();

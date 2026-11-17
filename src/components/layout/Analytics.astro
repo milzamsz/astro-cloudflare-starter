@@ -1,4 +1,14 @@
 ---
+/**
+ * Optional analytics loaders. Nothing renders unless the matching env var /
+ * setting is present:
+ *   PUBLIC_GA_MEASUREMENT_ID → Google Analytics 4 (gtag.js)
+ *   PUBLIC_GTM_ID            → Google Tag Manager
+ *   settings.yml umamiUrl + umamiId → Umami
+ *
+ * The inline bootstraps use `define:vars`, so their content is fixed at build
+ * time and Astro's CSP can hash them.
+ */
 import { getEntry } from "astro:content";
 
 const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined;
@@ -10,46 +20,46 @@ const umamiId = settings?.data.umamiId;
 
 {
   gaId && (
-    <>
-      <script
-        is:inline
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-      />
-      <script
-        is:inline
-        set:html={`
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { window.dataLayer.push(arguments); }
-      gtag("js", new Date());
-      gtag("config", "${gaId}");
-    `}
-      />
-    </>
+    <script
+      is:inline
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+    ></script>
   )
 }
-
+{
+  gaId && (
+    <script is:inline define:vars={{ gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        // gtag.js only accepts the real `arguments` object, not an array.
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer.push(arguments);
+      };
+      window.gtag("js", new Date());
+      window.gtag("config", gaId);
+    </script>
+  )
+}
 {
   gtmId && (
-    <>
-      <script
-        is:inline
-        async
-        src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
-      />
-      <script
-        is:inline
-        set:html={`
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-    `}
-      />
-    </>
+    <script
+      is:inline
+      async
+      src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
+    ></script>
   )
 }
-
+{
+  gtmId && (
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    </script>
+  )
+}
 {
   umamiUrl && umamiId && (
-    <script is:inline async defer src={umamiUrl} data-website-id={umamiId} />
+    <script is:inline async defer src={umamiUrl} data-website-id={umamiId}></script>
   )
 }

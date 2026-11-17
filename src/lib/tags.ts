@@ -22,7 +22,7 @@ export function countTags(entries: Taggable[]) {
 export function sortTagsByCount(tagCounts: Record<string, number>) {
   return Object.entries(tagCounts)
     .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+    .toSorted((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 }
 
 export function slugifyTag(tag: string) {

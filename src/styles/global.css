@@ -556,11 +556,11 @@ code {
   font-size: var(--text-code-sm);
   line-height: 1.7;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   overflow-x: auto;
 }
 
-@media (max-width: 48rem) {
+@media (width <= 48rem) {
   .feature-tabs__panel {
     grid-template-columns: 1fr;
     align-items: stretch;

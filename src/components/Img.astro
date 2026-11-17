@@ -34,13 +34,13 @@ const {
   aspectRatio,
 } = Astro.props;
 
-// Fail closed: unknown preset → rendering error in dev, skip in production
+// Fail closed: unknown preset → error in dev, render nothing in production
 const imgUrl = presetUrl(preset, src, baseUrl);
 const imgSrcset = srcset(src, ["card", "hero", "full"], baseUrl);
 const presetDef = PRESETS[preset];
 
-if (!imgUrl) {
-  console.warn(`[Img] Unknown preset "${preset}" for src "${src}". Skipping.`);
+if (!imgUrl && import.meta.env.DEV) {
+  throw new Error(`[Img] Unknown preset "${preset}" for src "${src}".`);
 }
 
 const imgWidth = presetDef?.width ? `${presetDef.width}` : undefined;

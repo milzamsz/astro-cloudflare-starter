@@ -13,7 +13,7 @@ import {
 import { t } from "../i18n/ui";
 
 const stackEntries = (await getCollection("stack"))
-  .sort(
+  .toSorted(
     (a: CollectionEntry<"stack">, b: CollectionEntry<"stack">) =>
       a.data.order - b.data.order,
   )

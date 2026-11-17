@@ -7,7 +7,7 @@ import type { Locale } from "./site-config";
 export type ServiceEntry = CollectionEntry<"services">;
 
 function sortServices(services: ServiceEntry[]) {
-  return [...services].sort(
+  return services.toSorted(
     (a, b) =>
       a.data.order - b.data.order || a.data.title.localeCompare(b.data.title),
   );
