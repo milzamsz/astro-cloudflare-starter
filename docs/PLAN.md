@@ -51,6 +51,12 @@
 10. **CSP**: `script-src 'unsafe-inline'`; `frame-src` allows Google Maps but the contact page uses OpenStreetMap.
 11. **CI gaps**: `check:kpis`, `validate:secrets`, unit tests and Playwright are never run in CI;
     `trufflehog@main` unpinned; `skills-verification.yml` only `cat`s a file that doesn't exist.
+    **Three CI jobs are red on every PR** (seen on this one):
+    - *Lint + Type Check* — the `Analytics.astro` error above.
+    - *Dependency Review* — the job has no `actions/checkout`, so `.github/dependency-review-config.yml`
+      is not on disk (`ENOENT`).
+    - *Secret Scanning* — `trufflehog@main` now passes `--fail` itself; our `extra_args: --only-verified --fail`
+      repeats it → `flag 'fail' cannot be repeated`. (Pinning would have prevented this.)
 12. **Repo noise**: `blog-detail.png` / `blog-list.png` (~470 KB) at root; README says `cd astro-cloudflare`
     (repo is `astro-cloudflare-starter`).
 
@@ -225,6 +231,8 @@ Each phase = one commit. After each: `pnpm build && pnpm lint && pnpm test` (and
   **test** (vitest) → **build** (uploads `dist`) → **e2e** (Playwright on the built `dist`, `--trace off`, retry with trace on failure)
   → **lighthouse** (`@lhci/cli` against `dist`, `lighthouserc.json` budgets: perf ≥ 0.95, a11y = 1.0, SEO = 1.0, best-practices ≥ 0.95, on `/`, `/blog/`, `/docs/`).
 - Pin every third-party action to a commit SHA (with `# vX.Y.Z` comment); `trufflehog` off `@main`.
+- Fix the two broken jobs: add `actions/checkout` before `dependency-review-action`; drop the duplicate
+  `--fail` from trufflehog `extra_args`. (These are small enough to land first, ahead of the other phases, if you prefer.)
 - Replace `.github/dependabot.yml` with `renovate.json`: weekly schedule, groups (astro + integrations,
   tailwind, lint, test, types, cloudflare), automerge patch for devDeps, `pinDigests` for actions,
   a rule to retry TS 7 for tooling (if fallback taken). Keep `dependency-review` job.
