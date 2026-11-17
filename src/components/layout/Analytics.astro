@@ -15,7 +15,7 @@ const umamiId = settings?.data.umamiId;
         is:inline
         async
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-      />
+      ></script>
       <script
         is:inline
         set:html={`
@@ -24,7 +24,7 @@ const umamiId = settings?.data.umamiId;
       gtag("js", new Date());
       gtag("config", "${gaId}");
     `}
-      />
+      ></script>
     </>
   )
 }
@@ -36,20 +36,20 @@ const umamiId = settings?.data.umamiId;
         is:inline
         async
         src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
-      />
+      ></script>
       <script
         is:inline
         set:html={`
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
     `}
-      />
+      ></script>
     </>
   )
 }
 
 {
   umamiUrl && umamiId && (
-    <script is:inline async defer src={umamiUrl} data-website-id={umamiId} />
+    <script is:inline async defer src={umamiUrl} data-website-id={umamiId}></script>
   )
 }

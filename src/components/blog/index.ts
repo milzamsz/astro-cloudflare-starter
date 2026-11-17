@@ -5,3 +5,4 @@ export { default as ShareButtons } from "./ShareButtons.astro";
 export { default as RelatedPosts } from "./RelatedPosts.astro";
 export { default as TagList } from "./TagList.astro";
 export { default as BlogImageSVG } from "./BlogImageSVG.astro";
+export { default as BlogListing } from "./BlogListing.astro";
