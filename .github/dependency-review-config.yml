@@ -1,29 +1,36 @@
 # Dependency Review Configuration
 # https://github.com/actions/dependency-review-action#configuration-options
+#
+# Note: `allow-licenses` and `deny-licenses` are mutually exclusive. An allow
+# list implicitly denies everything else (GPL/AGPL/SSPL, …).
 
-# Severity thresholds for failing the build
-# Options: low, moderate, high, critical
+# Severity threshold for failing the build: low | moderate | high | critical
 fail-on-severity: moderate
 
-# Allow licenses (SPDX identifiers)
-# Using OSI-approved permissive licenses + CC0
+# Permissive / attribution licenses found in the Astro + Tailwind toolchain.
 allow-licenses:
   - MIT
+  - MIT-0
   - Apache-2.0
   - BSD-2-Clause
   - BSD-3-Clause
+  - 0BSD
   - ISC
   - CC0-1.0
-  - Unicode-DFS-2015
+  - CC-BY-4.0 # caniuse-lite
+  - BlueOak-1.0.0
+  - Python-2.0 # argparse
+  - MPL-2.0 # lightningcss (file-level copyleft, fine for unmodified use)
   - Unicode-DFS-2016
+  - Unicode-3.0
 
-# Deny specific licenses
-deny-licenses:
-  - AGPL-3.0
-  - GPL-3.0
-  - LGPL-3.0
-  - SSPL-1.0
-
-# Allow scopes for exceptions (use sparingly)
-# allow-scopes:
-#   - "development"
+# Prebuilt libvips binaries used by sharp are LGPL-3.0-or-later (dynamically
+# linked, unmodified) — allowed explicitly instead of allowing LGPL globally.
+allow-dependencies-licenses:
+  - pkg:npm/%40img/sharp-libvips-linux-x64
+  - pkg:npm/%40img/sharp-libvips-linuxmusl-x64
+  - pkg:npm/%40img/sharp-libvips-linux-arm64
+  - pkg:npm/%40img/sharp-libvips-linuxmusl-arm64
+  - pkg:npm/%40img/sharp-libvips-darwin-arm64
+  - pkg:npm/%40img/sharp-libvips-darwin-x64
+  - pkg:npm/%40img/sharp-wasm32

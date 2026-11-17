@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft — awaiting review (no code changes until approved) |
+| **Status** | Approved — in progress |
 | **Date** | 2026-11-17 |
 | **Branch** | `claude/charming-cerf-pn50o6` |
 | **Delivery** | One PR, one commit per phase, each phase green on `pnpm build` · `pnpm lint` · `pnpm test` |
@@ -289,10 +289,15 @@ Each phase = one commit. After each: `pnpm build && pnpm lint && pnpm test` (and
 
 ---
 
-## 9. Open points for your review
+## 9. Decisions on the open points (approved)
 
-1. **`skills-verification.yml`** — delete, or keep as a real check (e.g. validate `.agents/skills/*`)?
-2. **Cleanup scheduling** — is the opt-in GitHub Actions cron acceptable, or drop scheduling entirely?
-3. **Lighthouse thresholds** — are perf ≥ 0.95 / a11y 1.0 / SEO 1.0 the right bar for a starter?
-4. **Renovate automerge** — allow automerge of patch-level devDependency updates, or always manual?
-5. **Screenshots** — keep them in the repo under `docs/assets/`, or delete and rely on the live demo?
+1. **`skills-verification.yml`** — **delete**. It always passes (the lock file doesn't exist) and runs twice per PR;
+   `check:kpis` + `validate-registry` run in the full lint job instead.
+2. **Cleanup scheduling** — **opt-in GitHub Actions schedule**, off unless repo variable `CLEANUP_ENABLED == 'true'`;
+   endpoint stays `dry-run` unless `CLEANUP_MODE` is changed.
+3. **Lighthouse** — **a11y = 1.0 and SEO = 1.0 are errors**; perf ≥ 0.95 and best-practices ≥ 0.95 are warnings;
+   median of 3 runs.
+4. **Renovate automerge** — **only patch updates of dev tooling** (lint/format/types/test) when CI is green;
+   runtime deps, minors/majors and action digests are manual.
+5. **Screenshots** — **move to `docs/assets/` as WebP** and reference them from the README.
+6. **Ordering** — the two broken CI jobs (Dependency Review checkout, trufflehog `--fail`) are fixed first.
