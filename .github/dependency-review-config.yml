@@ -28,18 +28,38 @@ allow-licenses:
   - CC0-1.0
   - CC-BY-4.0 # caniuse-lite
   - BlueOak-1.0.0
-  - Python-2.0 # argparse
+  - Python-2.0 # argparse 1.x
+  - PSF-2.0 # argparse 3.x
+  - BSD-2-Clause-Views # uri-js
   - MPL-2.0 # lightningcss (file-level copyleft, fine for unmodified use)
+  - OFL-1.1 # @fontsource-variable/* web fonts
   - Unicode-DFS-2016
   - Unicode-3.0
 
-# Prebuilt libvips binaries used by sharp are LGPL-3.0-or-later (dynamically
-# linked, unmodified) — allowed explicitly instead of allowing LGPL globally.
+# Per-package exceptions (instead of allowing these licenses globally):
 allow-dependencies-licenses:
+  # sharp's prebuilt libvips binaries are LGPL-3.0-or-later (dynamically
+  # linked, unmodified); the win32 packages bundle them.
   - pkg:npm/%40img/sharp-libvips-linux-x64
   - pkg:npm/%40img/sharp-libvips-linuxmusl-x64
   - pkg:npm/%40img/sharp-libvips-linux-arm64
   - pkg:npm/%40img/sharp-libvips-linuxmusl-arm64
+  - pkg:npm/%40img/sharp-libvips-linux-arm
+  - pkg:npm/%40img/sharp-libvips-linux-ppc64
+  - pkg:npm/%40img/sharp-libvips-linux-riscv64
+  - pkg:npm/%40img/sharp-libvips-linux-s390x
   - pkg:npm/%40img/sharp-libvips-darwin-arm64
   - pkg:npm/%40img/sharp-libvips-darwin-x64
+  - pkg:npm/%40img/sharp-win32-arm64
+  - pkg:npm/%40img/sharp-win32-ia32
+  - pkg:npm/%40img/sharp-win32-x64
   - pkg:npm/%40img/sharp-wasm32
+  - pkg:npm/%40img/sharp-freebsd-wasm32
+  - pkg:npm/%40img/sharp-webcontainers-wasm32
+  # Dev-only: MDN docs data (CC-BY-SA-2.5) inside the language services used by
+  # `astro check`.
+  - pkg:npm/vscode-css-languageservice
+  - pkg:npm/vscode-html-languageservice
+  # Dev-only: Sentry CLI (FSL-1.1-Apache-2.0, source-available) pulled in by
+  # Lighthouse via @lhci/cli; never shipped.
+  - pkg:npm/sentry
