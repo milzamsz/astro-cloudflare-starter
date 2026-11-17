@@ -8,6 +8,7 @@
  */
 
 /* ── Accent color (monochrome, matches the frontend) ─────────────────── */
+
 /* Dark theme is the :root default in Starlight; light is data-theme='light'.
    Accent = the foreground tone so active items / links read near-black on
    light and near-white on dark, exactly like the marketing site. */
@@ -36,7 +37,7 @@
   --sl-line-height-headings: 1.2;
 }
 
-@media (min-width: 50rem) {
+@media (width >= 50rem) {
   :root {
     --sl-text-h1: 2.25rem;
     --sl-text-h2: 1.625rem;
@@ -50,6 +51,7 @@
 }
 
 /* ── Spacing (reduce the big gaps) ───────────────────────────────────── */
+
 /* Bring the page title closer to the top of the column. */
 .content-panel {
   padding-block: 1rem;
@@ -140,6 +142,7 @@
 }
 
 /* ── Small polish ────────────────────────────────────────────────────── */
+
 /* Accent-tinted links and inline code in body content. */
 .sl-markdown-content a:not(:where(.not-content *)) {
   color: var(--sl-color-text-accent);

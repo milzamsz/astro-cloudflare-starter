@@ -74,7 +74,7 @@
       "name": "Pagination",
       "tier": "component",
       "path": "src/components/ui/data-display/Pagination/Pagination.astro",
-      "props": ["currentPage", "totalPages", "basePath", "query", "locale"],
+      "props": ["currentPage", "totalPages", "basePath", "locale"],
       "i18nAware": true
     },
     {
@@ -181,6 +181,13 @@
       "path": "src/components/blog/BlogImageSVG.astro",
       "props": ["slug", "title"],
       "i18nAware": false
+    },
+    {
+      "name": "BlogListing",
+      "tier": "component",
+      "path": "src/components/blog/BlogListing.astro",
+      "props": ["locale", "posts", "featured", "totalCount", "currentPage", "totalPages", "tags", "currentTag"],
+      "i18nAware": true
     },
     {
       "name": "TagList",
@@ -319,6 +326,9 @@
     { "name": "Pricing", "path": "src/pages/pricing.astro", "locales": ["en"] },
     { "name": "Contact", "path": "src/pages/contact.astro", "locales": ["en"] },
     { "name": "Blog", "path": "src/pages/blog.astro", "locales": ["en"] },
+    { "name": "Blog (paginated)", "path": "src/pages/blog/page/[page].astro", "locales": ["en"] },
+    { "name": "Blog tag", "path": "src/pages/blog/tag/[tag].astro", "locales": ["en"] },
+    { "name": "Blog tag (paginated)", "path": "src/pages/blog/tag/[tag]/page/[page].astro", "locales": ["en"] },
     { "name": "Sections showcase", "path": "src/pages/sections.astro", "locales": ["en"] },
     { "name": "Pages overview", "path": "src/pages/pages.astro", "locales": ["en"] }
   ]

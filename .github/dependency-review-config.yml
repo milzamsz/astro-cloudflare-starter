@@ -17,12 +17,9 @@ allow-licenses:
   - Unicode-DFS-2015
   - Unicode-DFS-2016
 
-# Deny specific licenses
-deny-licenses:
-  - AGPL-3.0
-  - GPL-3.0
-  - LGPL-3.0
-  - SSPL-1.0
+# deny-licenses cannot be combined with allow-licenses (the action errors out).
+# The allow-list above already rejects everything else, including
+# AGPL-3.0, GPL-3.0, LGPL-3.0 and SSPL-1.0.
 
 # Allow scopes for exceptions (use sparingly)
 # allow-scopes:
