@@ -9,9 +9,13 @@
 # The header below only carries directives a <meta> tag cannot set
 # (frame-ancestors) plus a few hardening defaults. Browsers enforce both
 # policies, so the header must not add script-src/style-src restrictions.
+#
+# HSTS: one year, without includeSubDomains/preload so a fork's custom domain
+# can't accidentally lock subdomains to HTTPS. Add them once you're sure.
 
 /*
   Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+  Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin

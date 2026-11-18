@@ -95,7 +95,8 @@ Cloudflare R2. Reference assets via their public R2 URL.
 
 `POST /api/cleanup` (`functions/api/cleanup.ts`) prunes R2 objects that the
 build's media manifest no longer references. It's guarded by a bearer token —
-set `CLEANUP_SECRET` as a Cloudflare Pages secret and send
+set `CLEANUP_SECRET` (at least 32 characters, e.g. `openssl rand -hex 32`) as a
+Cloudflare Pages secret and send
 `Authorization: Bearer <secret>`. It stays in `dry-run` unless you set
 `CLEANUP_MODE=quarantine` or `delete`, and aborts if the manifest is missing.
 

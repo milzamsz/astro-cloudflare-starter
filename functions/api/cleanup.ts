@@ -14,7 +14,9 @@
  *   quarantine        — move eligible objects to quarantine/YYYY-MM-DD/
  *   delete            — permanently remove eligible objects
  *
- * Auth: `Authorization: Bearer <CLEANUP_SECRET>` (set as an encrypted secret).
+ * Auth: `Authorization: Bearer <CLEANUP_SECRET>` (set as an encrypted secret,
+ * at least 32 characters — e.g. `openssl rand -hex 32`; shorter secrets are
+ * rejected because the endpoint isn't rate limited).
  * Safety: the run aborts if the manifest can't be loaded, so an empty or
  * missing manifest never makes every object eligible.
  */
@@ -31,6 +33,8 @@ interface CleanupEnv {
 type Mode = "dry-run" | "quarantine" | "delete";
 
 const MANIFEST_PATH = "/media-manifest.json";
+/** The endpoint has no rate limiting, so require a secret that can't be guessed. */
+const MIN_SECRET_LENGTH = 32;
 const PROTECTED_PREFIXES = ["og/", "logos/", "favicon/", "uploads/", "quarantine/", "reports/"];
 
 interface CleanupReport {
@@ -55,7 +59,7 @@ const json = (body: unknown, status = 200) =>
 
 /** Constant-time comparison of the bearer token and the configured secret. */
 function isAuthorized(request: Request, secret: string | undefined): boolean {
-  if (!secret) return false;
+  if (!secret || secret.length < MIN_SECRET_LENGTH) return false;
   const provided = request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ?? "";
   const encoder = new TextEncoder();
   const a = encoder.encode(provided);

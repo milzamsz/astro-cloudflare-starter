@@ -121,7 +121,7 @@ Astro.csp?.insertScriptHash(themeBootstrap.hash);
       <slot />
     </main>
 
-    {Astro.slots.has("analytics") ? <slot name="analytics" /> : <Analytics />}
+    {Astro.slots.has("analytics") ? <slot name="analytics" /> : <Analytics locale={locale} />}
 
     {showFooter && <Footer currentLocale={locale} />}
   </body>

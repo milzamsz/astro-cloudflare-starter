@@ -12,7 +12,7 @@ beforeAll(() => {
 });
 
 const DAY = 24 * 60 * 60 * 1000;
-const SECRET = "test-secret";
+const SECRET = "test-secret-0123456789abcdef0123456789";
 
 /** Minimal in-memory stand-in for an R2 bucket. */
 function memoryBucket(objects: Record<string, number>) {
@@ -75,6 +75,18 @@ function run(options: {
 }
 
 describe("POST /api/cleanup", () => {
+  it("refuses to run when the configured secret is too short to be safe", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await (onRequestPost as any)({
+      env: { CLEANUP_SECRET: "short", R2_MEDIA: memoryBucket({}), ASSETS: { fetch: async () => Response.json([]) } },
+      request: new Request("https://example.com/api/cleanup", {
+        method: "POST",
+        headers: { Authorization: "Bearer short" },
+      }),
+    });
+    expect(res.status).toBe(401);
+  });
+
   it("rejects missing or wrong secrets", async () => {
     expect((await run({ auth: null }).response).status).toBe(401);
     expect((await run({ auth: "wrong" }).response).status).toBe(401);

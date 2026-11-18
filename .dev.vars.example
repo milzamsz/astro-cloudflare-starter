@@ -2,7 +2,8 @@
 # Copy to .dev.vars (gitignored). Only the R2 cleanup function needs a secret.
 
 # Required to invoke the R2 cleanup endpoint locally.
-# Any local value; send it as `Authorization: Bearer <value>`.
+# At least 32 characters (e.g. `openssl rand -hex 32`); send it as
+# `Authorization: Bearer <value>`.
 CLEANUP_SECRET=
 
 # Optional cleanup tuning

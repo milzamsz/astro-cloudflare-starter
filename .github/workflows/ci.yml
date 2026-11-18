@@ -129,6 +129,8 @@ jobs:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           extra_args: --only-verified
+          # The action otherwise pulls the scanner image as :latest.
+          version: 3.99.9
 
   dependency-review:
     name: Dependency Review
