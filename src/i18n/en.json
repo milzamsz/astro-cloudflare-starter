@@ -74,5 +74,9 @@
   "pagination.of": "of",
   "notFound.title": "Page not found",
   "notFound.description": "This page doesn't exist or has moved. Try the search, or head back to the homepage.",
-  "notFound.home": "Back to homepage"
+  "notFound.home": "Back to homepage",
+  "consent.label": "Cookie consent",
+  "consent.message": "We use analytics cookies to understand how the site is used. They only load if you accept.",
+  "consent.accept": "Accept",
+  "consent.decline": "Decline"
 }

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Security
+
+- `PUBLIC_CONSENT_ENABLED=true` now actually gates analytics: a consent banner is
+  shown and GA/GTM/Umami load only after the visitor accepts (previously the flag
+  did nothing and analytics always loaded).
+- JSON-LD is serialized with `<`, `>`, `&` escaped so content can't break out of
+  its `<script>` element.
+- `Strict-Transport-Security: max-age=31536000` header.
+- The R2 cleanup endpoint rejects secrets shorter than 32 characters (it isn't
+  rate limited).
+- trufflehog's scanner image is pinned instead of `:latest`.
+- Removed the unused `src/lib/analytics` module (inline-script loader that the CSP
+  would block) and the unused `src/config/consent.config.ts`.
+
+## [2.0.0] — 2026-11-18
+
+
 ### Breaking
 
 - Requires **Node.js 26 LTS** and **pnpm 12** (`corepack enable`). pnpm settings

@@ -29,7 +29,8 @@ Pages Functions secrets (only the R2 cleanup function) go in `.dev.vars`, which
 `pnpm cf:dev` loads:
 
 ```ini
-# Any local value; send it as `Authorization: Bearer <value>`.
+# At least 32 characters (e.g. `openssl rand -hex 32`); send it as
+# `Authorization: Bearer <value>`.
 CLEANUP_SECRET=
 CLEANUP_MODE=dry-run
 ```

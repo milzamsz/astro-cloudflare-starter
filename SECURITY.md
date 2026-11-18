@@ -30,17 +30,25 @@ This is a static site, so the attack surface is small.
   may frame Google Maps
 - Inline style *attributes* are allowed (`style-src-attr`) because Starlight and
   code highlighting set CSS variables that way
-- `public/_headers` adds the header-only `frame-ancestors 'none'` (clickjacking),
+- JSON-LD is serialized with `<`, `>` and `&` escaped, so content can't close the
+  `<script type="application/ld+json">` element
+- `public/_headers` adds HSTS (1 year), the header-only `frame-ancestors 'none'` (clickjacking),
   `object-src 'none'`, `base-uri`, `form-action` and other hardening headers
 - Playwright fails CI on any CSP violation
 
 ### R2 cleanup function
 - The only Pages Function (`functions/api/cleanup.ts`) can modify R2 objects
-- `POST` only, guarded by a bearer token (`CLEANUP_SECRET`, constant-time compare);
+- `POST` only, guarded by a bearer token (`CLEANUP_SECRET`, at least 32 characters,
+  constant-time compare — there is no rate limiting, so shorter secrets are rejected);
   returns 401 without it and 405 for other methods
 - Defaults to `dry-run`, and aborts without changes if the build's media manifest
   can't be loaded
 - Remove it entirely if you don't use R2
+
+### Privacy
+- Analytics (GA4, GTM, Umami) only load when configured
+- With `PUBLIC_CONSENT_ENABLED=true`, nothing loads until the visitor accepts the
+  consent banner; the choice is stored in `localStorage` (`analytics-consent`)
 
 ### Secrets
 - All secrets via Cloudflare Pages secrets or `.dev.vars` (gitignored)
