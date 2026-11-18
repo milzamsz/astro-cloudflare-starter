@@ -2,26 +2,36 @@
 
 ## Prerequisites
 
-- Node.js 24+
-- pnpm 8.15+ (`corepack enable && corepack prepare pnpm@8.15.0 --activate`)
+- Node.js 26 LTS (pinned in `.node-version`; fnm/nvm/mise pick it up)
+- pnpm 12 — run `corepack enable`; the exact version comes from `packageManager` in `package.json`
 - A Cloudflare account (free tier works) — only needed to deploy
 
 ## Local development
 
 ```bash
+corepack enable
 pnpm install
 cp .env.example .env   # optional; set SITE_URL for correct prod URLs
 pnpm dev
 ```
 
-Visit http://localhost:4321. Default locale is at `/` and `/id/`, English at `/en/`.
+Visit http://localhost:4321. English (the default locale) is served at `/`.
+Locales are configured in `src/config/i18n.config.ts`.
 
-## Build
+## Build & check
 
 ```bash
-pnpm build     # outputs static site to dist/
-pnpm preview   # serve the production build locally
+pnpm build       # outputs static site to dist/
+pnpm preview     # serve the production build locally
+pnpm lint        # all static checks (what CI runs)
+pnpm test        # unit tests
+pnpm test:e2e    # Playwright e2e + CSP tests against dist/
+pnpm lighthouse  # Lighthouse budgets against dist/
 ```
+
+Playwright needs a browser: `pnpm exec playwright install chromium` (or point
+`PW_CHROMIUM_PATH` at an existing Chromium). Lighthouse uses your local Chrome
+(`CHROME_PATH` to override).
 
 ## Deploy to Cloudflare Pages
 
@@ -32,33 +42,76 @@ pnpm preview   # serve the production build locally
 3. Build settings:
    - Build command: `pnpm build`
    - Output directory: `dist`
-4. Add environment variables (Settings → Environment variables):
+4. Environment variables: because the repo has a `wrangler.jsonc`, Pages manages
+   plain variables from its `vars` (the dashboard only accepts secrets).
+   `vars.PNPM_VERSION` = `12.21.0` is **required** — the build image otherwise uses
+   an older pnpm that can't read the pnpm 12 lockfile. Add other build-time values
+   there too:
    - `SITE_URL` = your production URL
    - Optional analytics: `PUBLIC_GA_MEASUREMENT_ID`, `PUBLIC_GTM_ID`
+     (the CSP automatically allows Google's origins when these are set)
 5. Every push to `main` deploys to production; pull requests get preview URLs.
+
+The build image reads the Node version from `.node-version` and the pnpm version
+from `vars.PNPM_VERSION` (it ignores `packageManager`). Pages applies the
+**production branch's** `wrangler.jsonc`, so a `PNPM_VERSION` change takes effect
+for all builds once it's merged to `main`. Renovate keeps it in sync with
+`packageManager`.
+
+#### Troubleshooting: every Git build fails right after a pnpm upgrade
+
+Pages applies the Wrangler config (including `vars.PNPM_VERSION`) from the **last
+successful deployment**, for all preview builds. If that deployment carried an
+old `PNPM_VERSION`, Git builds install with the old pnpm, fail at install, and so
+never deploy the new value — a deadlock. Break it once with a direct upload, which
+deploys a locally built `dist/` together with the current `wrangler.jsonc`:
+
+```bash
+pnpm install && pnpm build
+pnpm exec wrangler login
+pnpm exec wrangler pages deploy dist --project-name=astro-cloudflare-starter --branch=<your-branch>
+```
+
+Then retry the failed Git deployment in the dashboard. Use `--branch=main` to
+update the production config (this also publishes that build to production).
 
 ### Option B — Wrangler CLI
 
 ```bash
 pnpm build
-npx wrangler pages deploy dist --project-name=astro-cloudflare --branch=main
+pnpm cf:deploy --project-name=astro-cloudflare-starter --branch=main
 ```
+
+### Option C — Tag releases from GitHub Actions
+
+`release.yml` runs lint, tests and a build on `v*` tags and deploys with wrangler.
+It needs the `CF_API_TOKEN` and `CF_ACCOUNT_ID` secrets and, optionally, the
+`CF_PAGES_PROJECT` and `SITE_URL` repository variables.
 
 ## R2 media (optional)
 
 `wrangler.jsonc` defines an `R2_MEDIA` binding for storing larger media in
 Cloudflare R2. Reference assets via their public R2 URL.
 
-The `functions/api/cleanup.ts` worker can prune orphaned R2 objects. It is
-guarded by a bearer token — set `CLEANUP_SECRET` as a Cloudflare Pages secret and
-send `Authorization: Bearer <secret>` when invoking it.
+`POST /api/cleanup` (`functions/api/cleanup.ts`) prunes R2 objects that the
+build's media manifest no longer references. It's guarded by a bearer token —
+set `CLEANUP_SECRET` as a Cloudflare Pages secret and send
+`Authorization: Bearer <secret>`. It stays in `dry-run` unless you set
+`CLEANUP_MODE=quarantine` or `delete`, and aborts if the manifest is missing.
+
+Pages Functions have no cron trigger; enable the weekly
+`.github/workflows/cleanup.yml` by setting the `CLEANUP_ENABLED=true` repository
+variable (plus `SITE_URL` and the `CLEANUP_SECRET` secret).
 
 If you don't need R2, remove the `r2_buckets` binding from `wrangler.jsonc`,
-delete `functions/api/cleanup.ts`, and drop the media-manifest postbuild step from
-`package.json`.
+delete `functions/api/cleanup.ts` and `.github/workflows/cleanup.yml`, and drop
+the media-manifest `postbuild` step from `package.json`.
 
 ## CI
 
-`.github/workflows/ci.yml` runs lint, type-check, i18n validation, secret
-scanning, dependency review, and a build on every PR. `release.yml` deploys on
-version tags.
+`.github/workflows/ci.yml` runs on every pull request: `pnpm lint`, unit tests,
+build, Playwright e2e (including zero-CSP-violation checks), Lighthouse budgets
+(accessibility and SEO must be 100), secret scanning and dependency review.
+Renovate (`renovate.json`) opens grouped dependency updates every Monday — install
+the [Renovate GitHub app](https://github.com/apps/renovate) on the repository to
+enable it.

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { i18nConfig } from "../config/i18n.config";
 
 test.describe("navigation chrome", () => {
   test("homepage loads with nav links", async ({ page }) => {
@@ -16,15 +17,16 @@ test.describe("navigation chrome", () => {
     });
   });
 
-  test("language switcher is present and links to the other locale", async ({
-    page,
-  }) => {
-    test.setTimeout(60_000);
+  test("language switcher matches the configured locales", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    const switcher = page.locator(".language-switcher").first();
-    await expect(switcher).toBeVisible({ timeout: 30_000 });
-    const href = await switcher.getAttribute("href");
-    expect(href).toBeTruthy();
+    const switcher = page.locator(".language-switcher");
+    if (i18nConfig.locales.length < 2) {
+      // Single-locale sites render no switcher at all.
+      await expect(switcher).toHaveCount(0);
+      return;
+    }
+    await expect(switcher.first()).toBeVisible();
+    expect(await switcher.first().getAttribute("href")).toBeTruthy();
   });
 
   test("dark mode toggle flips the html dark class", async ({ page }) => {

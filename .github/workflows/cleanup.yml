@@ -1,0 +1,36 @@
+# Scheduled R2 media cleanup (opt-in).
+#
+# Cloudflare Pages Functions have no cron trigger, so this workflow calls
+# POST /api/cleanup on a schedule. It does nothing until you set:
+#   - repository variable CLEANUP_ENABLED = true
+#   - repository variable SITE_URL        = https://your-site.example
+#   - repository secret   CLEANUP_SECRET  (same value as the Pages secret)
+# The endpoint stays in dry-run unless CLEANUP_MODE is changed in Cloudflare.
+name: R2 Media Cleanup
+
+on:
+  schedule:
+    - cron: "17 3 * * 1" # Mondays 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Run cleanup
+    runs-on: ubuntu-latest
+    if: vars.CLEANUP_ENABLED == 'true'
+    steps:
+      - name: Call cleanup endpoint
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CLEANUP_SECRET: ${{ secrets.CLEANUP_SECRET }}
+        run: |
+          set -euo pipefail
+          status=$(curl -sS -o report.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${CLEANUP_SECRET}" \
+            "${SITE_URL%/}/api/cleanup")
+          echo "HTTP ${status}"
+          cat report.json
+          test "${status}" = "200"

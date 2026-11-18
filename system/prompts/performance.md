@@ -3,8 +3,9 @@
 Read `system/globals/imagery.md` and `effects.md`. Target Lighthouse ≥ 95 (aim 100).
 
 Check:
-- React islands are minimal and hydrated with the narrowest directive
-  (`client:visible`/`client:idle` over `client:load`); static Astro elsewhere.
+- No UI-framework runtime by default: interactivity is a bundled `<script>` or
+  custom element. If a framework island is added, it uses the narrowest directive
+  (`client:visible`/`client:idle` over `client:load`).
 - Images use Astro `Image`/`Picture` with explicit dimensions; below-the-fold lazy;
   modern formats; no raw content `<img>`.
 - Fonts self-hosted with metric-adjusted fallbacks (no CLS); no render-blocking CDNs.

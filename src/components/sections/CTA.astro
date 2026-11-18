@@ -1,7 +1,7 @@
 ---
-import type { Locale } from "../lib/site-config";
-import { resolveRoute } from "../i18n/routes";
-import CTA from "./ui/marketing/CTA/CTA.astro";
+import type { Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+import CTA from "../ui/marketing/CTA/CTA.astro";
 
 export interface Props {
   eyebrow?: string;
@@ -11,7 +11,8 @@ export interface Props {
   ctaHref?: string;
   secondaryText?: string;
   secondaryHref?: string;
-  locale: Locale;
+  /** Hrefs are localized with resolveRoute (default locale: no prefix). */
+  locale?: Locale;
 }
 
 const {
@@ -22,8 +23,8 @@ const {
   ctaHref,
   secondaryText,
   secondaryHref,
-  locale,
-} = Astro.props;
+  locale = "en",
+} = Astro.props as Props;
 ---
 
 <CTA

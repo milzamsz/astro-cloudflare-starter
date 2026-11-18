@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { t } from "../i18n/ui";
 import { siteConfig } from "../config/site.config";
-import Hero from "../components/Hero.astro";
+import Hero from "../components/sections/Hero.astro";
 import { Button, Icon } from "../components/ui/index";
 
 const locale = (Astro.currentLocale || "en") as "en";
@@ -146,7 +146,7 @@ const methods = (featuresSection?.items || []).map((item) => ({
   </section>
 </BaseLayout>
 
-<script is:inline>
+<script>
   // Swap the static facade for the real Google Maps iframe only on first click,
   // keeping third-party JS off the critical path.
   document.querySelectorAll("[data-map-embed]").forEach((btn) => {

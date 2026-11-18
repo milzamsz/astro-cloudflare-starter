@@ -1,33 +1,35 @@
-/* eslint.config.mjs — Flat Config for ESLint v9+ */
+/**
+ * ESLint — only for `.astro` files.
+ *
+ * JS/TS linting is done by Oxlint (`.oxlintrc.json`), which is much faster.
+ * ESLint stays for the Astro-specific rules (eslint-plugin-astro), and
+ * eslint-plugin-oxlint turns off every rule Oxlint already checks so the two
+ * never report the same problem twice.
+ */
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
-import eslintPluginAstro from "eslint-plugin-astro";
+import { configs as astroConfigs } from "eslint-plugin-astro";
+import oxlint from "eslint-plugin-oxlint";
 import globals from "globals";
 import prettier from "eslint-config-prettier";
 
 export default [
-  { ignores: ["dist/", ".astro/", ".wrangler/", "functions/", "scripts/", "**/*.d.ts", "**/*.cjs"] },
-
+  { ignores: ["dist/", ".astro/", ".wrangler/", "node_modules/"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  ...eslintPluginAstro.configs.recommended,
-  prettier,
-
+  ...astroConfigs.recommended,
   {
+    files: ["**/*.astro"],
     languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
+      globals: { ...globals.browser, ...globals.node },
     },
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-      "@typescript-eslint/no-unused-expressions": "off",
-      "no-unused-vars": "warn",
       "no-console": "warn",
       "prefer-const": "error",
     },
   },
+  ...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json"),
+  prettier,
 ];

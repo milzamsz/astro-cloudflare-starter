@@ -1,0 +1,141 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    "helpers:pinGitHubActionDigestsToSemver"
+  ],
+  "timezone": "UTC",
+  "schedule": [
+    "before 9am on monday"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "rangeStrategy": "bump",
+  "prConcurrentLimit": 10,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 9am on the first day of the month"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Node: LTS (even) majors only",
+      "matchDepNames": [
+        "node"
+      ],
+      "allowedVersions": "/^\\d*[02468](\\.|$)/"
+    },
+    {
+      "groupName": "astro",
+      "matchPackageNames": [
+        "astro",
+        "@astrojs/**",
+        "astro-icon"
+      ]
+    },
+    {
+      "groupName": "tailwind",
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/**",
+        "tailwind-merge",
+        "prettier-plugin-tailwindcss"
+      ]
+    },
+    {
+      "groupName": "typescript",
+      "description": "typescript = @typescript/typescript6 (tooling API), typescript-native = TypeScript 7",
+      "matchPackageNames": [
+        "typescript",
+        "typescript-native",
+        "@typescript/typescript6",
+        "@types/node"
+      ]
+    },
+    {
+      "groupName": "lint and format",
+      "matchPackageNames": [
+        "oxlint",
+        "eslint",
+        "eslint-*",
+        "@eslint/**",
+        "typescript-eslint",
+        "astro-eslint-parser",
+        "globals",
+        "stylelint",
+        "stylelint-*",
+        "prettier",
+        "prettier-plugin-astro"
+      ]
+    },
+    {
+      "groupName": "test tooling",
+      "matchPackageNames": [
+        "vitest",
+        "@vitest/**",
+        "@playwright/test",
+        "@lhci/cli"
+      ]
+    },
+    {
+      "groupName": "cloudflare",
+      "matchPackageNames": [
+        "wrangler"
+      ]
+    },
+    {
+      "groupName": "github actions",
+      "matchManagers": [
+        "github-actions"
+      ]
+    },
+    {
+      "description": "Automerge patch updates of dev tooling once CI is green; runtime deps, minors/majors and action digests stay manual",
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "matchPackageNames": [
+        "oxlint",
+        "eslint",
+        "eslint-*",
+        "@eslint/**",
+        "typescript-eslint",
+        "astro-eslint-parser",
+        "globals",
+        "stylelint",
+        "stylelint-*",
+        "prettier",
+        "prettier-plugin-*",
+        "@types/**",
+        "vitest",
+        "@vitest/**",
+        "@playwright/test",
+        "@lhci/cli"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Keep the Cloudflare Pages build pnpm version in sync with packageManager",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^wrangler\\.jsonc$/"
+      ],
+      "matchStrings": [
+        "\"PNPM_VERSION\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
+    }
+  ]
+}

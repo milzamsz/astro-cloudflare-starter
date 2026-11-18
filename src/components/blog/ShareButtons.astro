@@ -56,6 +56,8 @@ const encodedUrl = encodeURIComponent(url);
     class="share-buttons__btn"
     data-share-copy
     data-url={url}
+    data-copied-text={t(locale, "blog.copied")}
+    data-copy-prompt={t(locale, "blog.copyPrompt")}
     aria-label={t(locale, "blog.copyLink")}
   >
     <Icon name="lucide:copy" class="share-buttons__icon-copy" />
@@ -65,7 +67,6 @@ const encodedUrl = encodeURIComponent(url);
 </div>
 
 <script>
-  const copiedText = "Copied!";
 
   document.querySelectorAll<HTMLButtonElement>("[data-share-native]").forEach(
     (btn) => {
@@ -94,17 +95,13 @@ const encodedUrl = encodeURIComponent(url);
         try {
           await navigator.clipboard.writeText(url);
         } catch {
-          const ta = document.createElement("textarea");
-          ta.value = url;
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          ta.remove();
+          // Clipboard blocked (permissions / insecure context): let the
+          // reader copy the link manually.
+          window.prompt(btn.dataset.copyPrompt ?? "", url);
+          return;
         }
         btn.classList.add("is-copied");
-        if (label) label.textContent = copiedText;
+        if (label) label.textContent = btn.dataset.copiedText ?? "";
         window.clearTimeout(timer);
         timer = window.setTimeout(() => {
           btn.classList.remove("is-copied");

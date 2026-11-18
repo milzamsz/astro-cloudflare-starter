@@ -47,6 +47,7 @@
   "blog.shareVia": "Share via",
   "blog.copyLink": "Copy link",
   "blog.copied": "Copied!",
+  "blog.copyPrompt": "Copy this link:",
   "blog.tags": "Tags",
   "blog.toc": "Table of contents",
   "blog.relatedPosts": "Related posts",
@@ -70,5 +71,8 @@
   "pagination.prev": "Previous",
   "pagination.next": "Next",
   "pagination.page": "Page",
-  "pagination.of": "of"
+  "pagination.of": "of",
+  "notFound.title": "Page not found",
+  "notFound.description": "This page doesn't exist or has moved. Try the search, or head back to the homepage.",
+  "notFound.home": "Back to homepage"
 }

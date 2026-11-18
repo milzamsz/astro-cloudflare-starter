@@ -6,6 +6,7 @@ import SEO from "../components/seo/SEO.astro";
 import Analytics from "../components/layout/Analytics.astro";
 import { SITE_CONFIG, type Locale } from "../lib/site-config";
 import { t } from "../i18n/ui";
+import { themeBootstrap } from "../lib/theme-bootstrap";
 import "../styles/global.css";
 // Preload the Latin subset of the heading + body variable fonts so the real
 // fonts are ready before first paint — eliminates the swap reflow (CLS).
@@ -49,6 +50,9 @@ function defaultOgImage(routePath: string) {
     return `/og/service/${locale}/${routePath.replace(/^\/services\//, "")}`;
   return `/og/page/${locale}${routePath}`;
 }
+
+// Must run before <head> renders so the hash lands in the CSP <meta> tag.
+Astro.csp?.insertScriptHash(themeBootstrap.hash);
 ---
 
 <!doctype html>
@@ -74,31 +78,8 @@ function defaultOgImage(routePath: string) {
       crossorigin="anonymous"
     />
 
-    <!-- Dark mode bootstrap (prevents FOUC) -->
-    <script is:inline>
-      function applyTheme() {
-        try {
-          // Honor the main-site key first, then Starlight's key (so a choice made
-          // in the /docs section carries over), then the OS preference.
-          const stored =
-            localStorage.getItem("theme") ||
-            localStorage.getItem("starlight-theme");
-          if (stored === "dark") {
-            document.documentElement.classList.add("dark");
-            return;
-          }
-          if (
-            (!stored || stored === "auto") &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-          ) {
-            document.documentElement.classList.add("dark");
-          }
-        } catch (e) {
-          console.warn("dark mode:", e);
-        }
-      }
-      applyTheme();
-    </script>
+    <!-- Dark mode bootstrap (prevents FOUC); hash registered for the CSP -->
+    <script is:inline set:html={themeBootstrap.code}></script>
 
     {
       Astro.slots.has("seo") ? (

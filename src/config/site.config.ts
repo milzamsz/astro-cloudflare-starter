@@ -4,6 +4,8 @@
  * It mirrors current SITE_CONFIG but with additional fields for future enhancements
  */
 
+import { i18nConfig, type I18nConfig } from "./i18n.config";
+
 /** Site configuration interface */
 export interface SiteConfig {
   /* Core site metadata */
@@ -79,13 +81,8 @@ export interface SiteConfig {
     favicon: string;
   };
 
-  /* i18n configuration */
-  i18n: {
-    enabled: boolean;
-    locales: string[];
-    defaultLocale: string;
-    routing: { prefixDefaultLocale: boolean };
-  };
+  /* i18n configuration (re-exported from i18n.config.ts) */
+  i18n: I18nConfig;
 }
 
 export const siteConfig: SiteConfig = {
@@ -173,13 +170,8 @@ export const siteConfig: SiteConfig = {
     favicon: "/favicon.svg",
   },
 
-  /* i18n configuration (matches i18n.config.ts) */
-  i18n: {
-    enabled: true,
-    locales: ["en"],
-    defaultLocale: "en",
-    routing: { prefixDefaultLocale: false },
-  },
-} as const;
+  /* i18n configuration — edit src/config/i18n.config.ts */
+  i18n: i18nConfig,
+};
 
 export default siteConfig;

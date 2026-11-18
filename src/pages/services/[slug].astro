@@ -2,7 +2,7 @@
 import ServiceLayout from "../../layouts/ServiceLayout.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import CTA from "../../components/CTA.astro";
+import CTA from "../../components/sections/CTA.astro";
 
 export async function getStaticPaths() {
   const allServices: CollectionEntry<"services">[] =

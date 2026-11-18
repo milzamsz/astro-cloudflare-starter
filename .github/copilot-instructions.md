@@ -18,12 +18,17 @@ do not improvise design or architecture.
   `var(--muted-foreground)`). Palette is monochrome OKLCH.
 - **Dark mode** uses the `.dark` class; never hand-invert colors.
 - **Three tiers:** Components → Sections (`src/components/sections`) → Pages.
-- **i18n:** English default + Indonesian `/id/`; add every route in both
-  `src/pages/x.astro` and `src/pages/[locale]/x.astro`.
+- **i18n:** English default at `/`; locales live only in
+  `src/config/i18n.config.ts`. Use `t(locale, key)` / `resolveRoute(locale, path)`.
+  With a second locale, every route also needs `src/pages/[locale]/x.astro`.
+- **No UI-framework runtime;** interactivity is a bundled `<script>` or custom
+  element. **CSP is hash-based:** no inline handlers, third-party origins only in
+  `src/config/csp.config.ts`.
 - **Preserve:** Git-based Markdown content, Cloudflare Pages, SEO/OG/RSS/
   sitemap/llms.txt, Pagefind, Starlight docs.
 
 ## Verify
 
-Run `pnpm lint` (includes `pnpm check:kpis`) and `pnpm build` before finishing.
+Run `pnpm lint` (includes `pnpm check:kpis`), `pnpm test` and `pnpm build` before
+finishing (`pnpm test:e2e` for UI changes).
 `check:kpis` is the source of truth and fails on off-system edits.

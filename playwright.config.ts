@@ -11,16 +11,24 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4399",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    video: process.env.CI ? "retain-on-failure" : "off",
   },
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Optional: reuse a pre-installed Chromium (containers, CI images).
+        launchOptions: process.env.PW_CHROMIUM_PATH
+          ? { executablePath: process.env.PW_CHROMIUM_PATH }
+          : {},
+      },
     },
   ],
   webServer: {
-    command: "pnpm exec astro preview --port 4399 --host 127.0.0.1",
+    // --ignore-lock: a one-off foreground server (Astro 7.4 otherwise
+    // auto-backgrounds `astro preview` when it detects an AI agent).
+    command: "pnpm exec astro preview --port 4399 --host 127.0.0.1 --ignore-lock",
     url: "http://127.0.0.1:4399",
     reuseExistingServer: false,
     timeout: 120_000,
