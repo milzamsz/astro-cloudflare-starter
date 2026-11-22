@@ -1,6 +1,8 @@
 ---
 title: Cloudflare Pages
 description: Deploying to Cloudflare Pages and managing your live site.
+intro: "Deploying to Cloudflare Pages and managing your live site."
+type: how-to
 sidebar:
   order: 1
 ---

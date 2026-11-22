@@ -66,7 +66,7 @@ After clicking **Use this template**, update these:
 | [SECURITY.md](SECURITY.md) | Security model and reporting vulnerabilities |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes |
 | [AGENTS.md](AGENTS.md) | Rules for AI coding agents |
-| `/docs` (Starlight) | In-app guides: getting started, content, i18n, deployment |
+| `/docs` (Starlight) | In-app guides: getting started, content, i18n, deployment. Layout and groups: `src/config/docs.config.ts` |
 
 ## Scripts
 

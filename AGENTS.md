@@ -18,6 +18,12 @@ This repo is built to be operated by AI coding agents. Stay **on-system**.
 (`src/pages/**`). Build pages by composing sections; build sections from components.
 Register new components/sections in `src/registry.json`.
 
+**Docs (`/docs`):** layout, tabs, groups, sidebar links and UI strings come from
+`src/config/docs.config.ts`; components are in `src/components/docs/`, brand hooks
+(`--docs-accent`, `--sl-font`) in `src/styles/starlight.css`. Each group is a folder in
+`src/content/docs/docs/<id>/` with an `index.mdx`; every article needs `intro` and
+`type`. `pnpm validate:docs` enforces this.
+
 **Stack:** Astro 7 (static output), Tailwind CSS v4, Starlight docs, Node 26 LTS,
 pnpm 12, TypeScript 7 (`typescript-native`) with the TS 6 compat API for tooling,
 Oxlint + ESLint (`.astro` only), Vitest 5, Playwright, Cloudflare Pages.

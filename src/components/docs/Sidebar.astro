@@ -1,0 +1,128 @@
+---
+/**
+ * Starlight Sidebar override: logo + search on top, only the current tab's
+ * sections in the middle, language / links / theme at the bottom.
+ */
+import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
+import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
+import Search from "virtual:starlight/components/Search";
+import SiteTitle from "virtual:starlight/components/SiteTitle";
+import { Icon } from "astro-icon/components";
+import LanguageMenu from "./LanguageMenu.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import { docsConfig } from "../../config/docs.config";
+import { docsLocaleOf, l, tabOfPath } from "../../lib/docs";
+
+const route = Astro.locals.starlightRoute;
+const locale = docsLocaleOf(Astro.url.pathname);
+const tab = tabOfPath(Astro.url.pathname);
+
+// Top-level sidebar entries follow the order of docsConfig.groups (see astro.config.ts).
+const sections = route.sidebar.filter((_, i) => tab.groups.includes(docsConfig.groups[i]?.id ?? ""));
+// A tab with a single group shows that group's entries directly, without a heading.
+route.sidebar = sections.length === 1 && sections[0].type === "group" ? sections[0].entries : sections;
+---
+
+<div class="side-top">
+  <div class="brand"><SiteTitle /></div>
+  <Search />
+</div>
+
+<div class="nav-scroll">
+  <SidebarPersister><SidebarSublist sublist={route.sidebar} /></SidebarPersister>
+</div>
+{/* Runs before first paint: keep the menu scroll position and show the current page, so the list does not jump. */}
+<script is:inline>
+  (() => {
+    const nav = document.querySelector(".nav-scroll");
+    if (!nav) return;
+    try {
+      const y = sessionStorage.getItem("docs-nav-scroll");
+      if (y !== null) nav.scrollTop = Number(y);
+    } catch {
+      /* storage blocked */
+    }
+    const cur = nav.querySelector('[aria-current="page"]');
+    if (cur) {
+      const r = cur.getBoundingClientRect();
+      const n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    nav.addEventListener(
+      "scroll",
+      () => {
+        try {
+          sessionStorage.setItem("docs-nav-scroll", String(nav.scrollTop));
+        } catch {
+          /* storage blocked */
+        }
+      },
+      { passive: true },
+    );
+  })();
+</script>
+
+<div class="side-bottom">
+  <LanguageMenu />
+  <div class="row">
+    <div class="links">
+      {
+        docsConfig.links.map((link) => (
+          <a href={link.href} title={l(locale, link.label)} aria-label={l(locale, link.label)}>
+            <Icon name={`lucide:${link.icon}`} size={18} aria-hidden="true" />
+          </a>
+        ))
+      }
+    </div>
+    <ThemeToggle />
+  </div>
+</div>
+
+<style>
+  .side-top {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .brand {
+    display: none;
+  }
+  .nav-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .side-bottom {
+    margin-top: auto;
+    padding-block: 0.75rem;
+    display: grid;
+    gap: 0.5rem;
+    background: var(--sl-color-bg-sidebar);
+    border-top: 1px solid var(--sl-color-hairline);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .links {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .links a {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--sl-color-gray-2);
+  }
+  .links a:hover {
+    color: var(--docs-accent-text);
+  }
+  @media (min-width: 50rem) {
+    .brand {
+      display: flex;
+      align-items: center;
+      padding-top: 0.25rem;
+    }
+  }
+</style>

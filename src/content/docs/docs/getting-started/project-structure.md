@@ -1,6 +1,8 @@
 ---
 title: Project Structure
 description: How the project is organised and where to find key files.
+intro: "How the project is organised and where to find key files."
+type: reference
 sidebar:
   order: 3
 ---

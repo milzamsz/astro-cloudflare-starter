@@ -1,6 +1,8 @@
 ---
 title: Environment Variables
 description: Environment configuration for local dev and production.
+intro: "Environment configuration for local dev and production."
+type: reference
 sidebar:
   order: 2
 ---

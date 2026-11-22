@@ -1,6 +1,8 @@
 ---
 title: AI-assisted development
 description: How this starter is wired for AI coding agents — config files, the design knowledge base, and ready-to-paste prompts.
+intro: "How this starter is wired for AI coding agents — config files, the design knowledge base, and ready-to-paste prompts."
+type: how-to
 sidebar:
   order: 4
 ---

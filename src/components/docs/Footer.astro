@@ -1,0 +1,11 @@
+---
+import Default from "@astrojs/starlight/components/Footer.astro";
+import Feedback from "./Feedback.astro";
+import { stripLocale } from "../../lib/docs";
+
+// No feedback widget on the docs home.
+const showFeedback = stripLocale(Astro.url.pathname) !== "/docs/";
+---
+
+{showFeedback && <Feedback />}
+<Default />

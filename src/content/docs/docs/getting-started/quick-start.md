@@ -1,6 +1,8 @@
 ---
 title: Quick Start
 description: Get the project running locally in minutes.
+intro: "Get the project running locally in minutes."
+type: quickstart
 sidebar:
   order: 2
 ---

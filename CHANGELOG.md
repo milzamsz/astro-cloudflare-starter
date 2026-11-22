@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- New docs design (Tebar / GitHub Docs style) as the Starlight base: top tab bar,
+  sidebar with logo, search, sections, language menu (opens upward), icon links and
+  a light/dark toggle, breadcrumbs, content types, a card-grid docs home, group
+  landing pages with a type filter, and a "Was this helpful?" widget. Layout, groups,
+  tabs, links and UI strings live in `src/config/docs.config.ts`.
+- `functions/api/feedback.ts` (Resend) for the feedback widget; needs
+  `RESEND_API_KEY` + `FEEDBACK_TO`.
+- `pnpm validate:docs` (part of `pnpm lint`): every article needs `intro` and `type`,
+  lives in a configured group, every group has an `index.mdx`, internal links resolve.
+- Docs articles take `intro` and `type` frontmatter (overview, quickstart, how-to,
+  tutorial, reference).
+
+### Changed
+
+- The CSP hook now also hashes inline `<style>` elements on docs pages (MDX-rendered
+  components kept one unhashed) and covers `/<locale>/docs/` paths.
+- Docs typography follows GitHub Docs' scale (32/24/20/16, weight 600, 1.5 line height).
+
 ### Security
 
 - `PUBLIC_CONSENT_ENABLED=true` now actually gates analytics: a consent banner is

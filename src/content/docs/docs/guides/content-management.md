@@ -1,6 +1,8 @@
 ---
 title: Content Management
 description: How to manage content with Git and Markdown.
+intro: "How to manage content with Git and Markdown."
+type: how-to
 sidebar:
   order: 1
 ---

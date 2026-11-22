@@ -1,0 +1,131 @@
+---
+/**
+ * Article cards for a docs group landing page, with a content-type filter
+ * (GitHub Docs style). Reads the group's articles from the docs collection.
+ */
+import { getCollection } from "astro:content";
+import { i18nConfig } from "../../config/i18n.config";
+import { docsLocaleOf, docsUi } from "../../lib/docs";
+
+interface Props {
+  group: string;
+}
+
+const { group } = Astro.props;
+const locale = docsLocaleOf(Astro.url.pathname);
+const t = docsUi(locale);
+// The group's index page has id "[<locale>/]docs/<group>", so the prefix excludes it.
+const prefix = `${locale === i18nConfig.defaultLocale ? "" : `${locale}/`}docs/${group}/`;
+const items = (await getCollection("docs", ({ id }) => id.startsWith(prefix))).sort(
+  (a, b) => (a.data.sidebar.order ?? 999) - (b.data.sidebar.order ?? 999),
+);
+const types = [...new Set(items.map((i) => i.data.type).filter(Boolean))] as (keyof typeof t.types)[];
+---
+
+<div class="cards not-content" data-article-cards>
+  {
+    types.length > 1 && (
+      <div class="filter" role="group" aria-label={t.filterBy}>
+        <button type="button" data-type="" aria-pressed="true">{t.all}</button>
+        {types.map((type) => (
+          <button type="button" data-type={type} aria-pressed="false">
+            {t.types[type]}
+          </button>
+        ))}
+      </div>
+    )
+  }
+  <ul>
+    {
+      items.map((i) => (
+        <li data-type={i.data.type}>
+          <a href={`/${i.id}/`}>
+            <span class="type">{i.data.type ? t.types[i.data.type] : t.article}</span>
+            <strong>{i.data.title}</strong>
+            <span class="intro">{i.data.intro ?? i.data.description}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-article-cards]").forEach((root) => {
+    const buttons = root.querySelectorAll<HTMLButtonElement>(".filter button");
+    buttons.forEach((btn) =>
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        root.querySelectorAll<HTMLElement>("li").forEach((li) => {
+          li.hidden = !!btn.dataset.type && li.dataset.type !== btn.dataset.type;
+        });
+      }),
+    );
+  });
+</script>
+
+<style>
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .filter button {
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--sl-color-gray-2);
+    cursor: pointer;
+  }
+  .filter button[aria-pressed="true"] {
+    background: var(--sl-color-text-accent);
+    border-color: var(--sl-color-text-accent);
+    color: var(--sl-color-bg);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  }
+  li[hidden] {
+    display: none;
+  }
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--sl-color-white);
+    transition: border-color 0.15s ease;
+  }
+  a:hover {
+    border-color: var(--sl-color-accent);
+  }
+  .type {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .intro {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+  }
+</style>

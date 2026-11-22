@@ -8,6 +8,7 @@ import { siteConfig } from "./src/config/site.config";
 import { i18nConfig } from "./src/config/i18n.config";
 import { cspSources } from "./src/config/csp.config";
 import cspInlineScriptHashes from "./src/integrations/csp-inline-script-hashes";
+import { docsConfig } from "./src/config/docs.config";
 
 export default defineConfig({
   site: siteConfig.url,
@@ -30,6 +31,10 @@ export default defineConfig({
       customCss: ["./src/styles/starlight.css"],
       components: {
         SiteTitle: "./src/components/docs/SiteTitle.astro",
+        Header: "./src/components/docs/Header.astro",
+        PageTitle: "./src/components/docs/PageTitle.astro",
+        Sidebar: "./src/components/docs/Sidebar.astro",
+        Footer: "./src/components/docs/Footer.astro",
       },
       editLink: {
         baseUrl: "https://github.com/milzamsz/astro-cloudflare-starter/edit/main",
@@ -37,32 +42,14 @@ export default defineConfig({
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/milzamsz/astro-cloudflare-starter" },
       ],
-      sidebar: [
-        {
-          label: "Getting Started",
-          items: [
-            { label: "Overview", slug: "docs/getting-started/overview" },
-            { label: "Quick Start", slug: "docs/getting-started/quick-start" },
-            { label: "Project Structure", slug: "docs/getting-started/project-structure" },
-          ],
-        },
-        {
-          label: "Guides",
-          items: [
-            { label: "Content Management", slug: "docs/guides/content-management" },
-            { label: "Internationalization", slug: "docs/guides/internationalization" },
-            { label: "Customization", slug: "docs/guides/customization" },
-            { label: "AI-assisted development", slug: "docs/guides/ai-assisted-development" },
-          ],
-        },
-        {
-          label: "Deployment",
-          items: [
-            { label: "Cloudflare Pages", slug: "docs/deployment/cloudflare-pages" },
-            { label: "Environment Variables", slug: "docs/deployment/environment-variables" },
-          ],
-        },
-      ],
+      // One section per docs group (src/config/docs.config.ts); the Sidebar override
+      // shows only the current tab's sections. Entries come from each group's folder.
+      sidebar: docsConfig.groups.map((g) => ({
+        label: g.title[i18nConfig.defaultLocale],
+        collapsed: false,
+        translations: Object.fromEntries(Object.entries(g.title).filter(([code]) => code !== i18nConfig.defaultLocale)),
+        items: [{ autogenerate: { directory: `docs/${g.id}` } }],
+      })),
     }),
     mdx(),
     sitemap({
@@ -73,7 +60,9 @@ export default defineConfig({
     }),
     icon(),
     // Starlight renders a few is:inline bootstraps that Astro's CSP doesn't hash.
-    cspInlineScriptHashes({ paths: ["/docs/"] }),
+    cspInlineScriptHashes({
+      paths: ["/docs/", ...i18nConfig.locales.filter((code) => code !== i18nConfig.defaultLocale).map((code) => `/${code}/docs/`)],
+    }),
   ],
   env: {
     schema: {
