@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Cloudflare Pages Git builds failed before installing dependencies: the builder
+  runs asdf for any `.tool-versions` file and has no pnpm plugin
+  (`pnpm plugin is not installed`). Removed `.tool-versions`; Node comes from
+  `.node-version` and pnpm from `vars.PNPM_VERSION`.
+
 ### Added
 
 - New docs design (Tebar / GitHub Docs style) as the Starlight base: top tab bar,
