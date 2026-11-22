@@ -9,7 +9,7 @@ export async function GET() {
       (post: CollectionEntry<"blog">) =>
         post.data.locale === siteConfig.i18n.defaultLocale && !post.data.draft,
     )
-    .sort(
+    .toSorted(
       (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
         new Date(b.data.publishDate).getTime() -
         new Date(a.data.publishDate).getTime(),

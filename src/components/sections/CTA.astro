@@ -1,0 +1,39 @@
+---
+import type { Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+import CTA from "../ui/marketing/CTA/CTA.astro";
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  content?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  secondaryText?: string;
+  secondaryHref?: string;
+  /** Hrefs are localized with resolveRoute (default locale: no prefix). */
+  locale?: Locale;
+}
+
+const {
+  eyebrow,
+  title,
+  content,
+  ctaText,
+  ctaHref,
+  secondaryText,
+  secondaryHref,
+  locale = "en",
+} = Astro.props as Props;
+---
+
+<CTA
+  eyebrow={eyebrow}
+  title={title}
+  content={content}
+  primaryText={ctaText}
+  primaryHref={ctaHref ? resolveRoute(locale, ctaHref) : undefined}
+  secondaryText={secondaryText}
+  secondaryHref={secondaryHref ? resolveRoute(locale, secondaryHref) : undefined}
+  centered={true}
+/>

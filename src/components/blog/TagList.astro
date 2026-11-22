@@ -1,6 +1,7 @@
 ---
 import type { Locale } from "../../lib/site-config";
 import { resolveRoute } from "../../i18n/routes";
+import { t } from "../../i18n/ui";
 import { slugifyTag } from "../../lib/tags";
 import { Badge } from "../ui/index";
 
@@ -20,7 +21,7 @@ const tagHref = (tag: string) =>
   tags.length > 0 && (
     <div
       class="blog-tags"
-      aria-label="Post tags"
+      aria-label={t(locale, "blog.tags")}
     >
       {tags.map((tag) => (
         <a href={tagHref(tag)}>

@@ -1,4 +1,6 @@
 ---
+import { serializeJsonLd } from "../../lib/json-ld";
+
 export interface Props {
   schema: Record<string, unknown> | Array<Record<string, unknown>>;
 }
@@ -9,6 +11,6 @@ const schemas = Array.isArray(schema) ? schema : [schema];
 
 {
   schemas.map((entry) => (
-    <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+    <script type="application/ld+json" set:html={serializeJsonLd(entry)} />
   ))
 }

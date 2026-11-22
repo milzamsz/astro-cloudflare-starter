@@ -51,3 +51,20 @@ describe("filterByTag", () => {
     expect(filterByTag(entries, "nonexistent")).toHaveLength(0);
   });
 });
+
+describe("content-collection entries", () => {
+  // Real blog/service entries keep tags under `data.tags`.
+  const collectionEntries = [
+    { id: "a", data: { tags: ["Astro", "Cloudflare"] } },
+    { id: "b", data: { tags: ["astro"] } },
+    { id: "c", data: { tags: [] } },
+  ];
+
+  it("counts tags from entry.data.tags", () => {
+    expect(countTags(collectionEntries)).toEqual({ Astro: 1, astro: 1, Cloudflare: 1 });
+  });
+
+  it("filters entries by entry.data.tags", () => {
+    expect(filterByTag(collectionEntries, "astro").map((e) => e.id)).toEqual(["a", "b"]);
+  });
+});

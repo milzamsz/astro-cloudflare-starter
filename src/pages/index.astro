@@ -1,8 +1,8 @@
 ---
 import MarketingLayout from "../layouts/MarketingLayout.astro";
-import Hero from "../components/Hero.astro";
-import FAQ from "../components/FAQ.astro";
-import CTA from "../components/CTA.astro";
+import Hero from "../components/sections/Hero.astro";
+import FAQ from "../components/sections/FAQ.astro";
+import CTA from "../components/sections/CTA.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import {
   FeatureTabs,
@@ -13,7 +13,7 @@ import {
 import { t } from "../i18n/ui";
 
 const stackEntries = (await getCollection("stack"))
-  .sort(
+  .toSorted(
     (a: CollectionEntry<"stack">, b: CollectionEntry<"stack">) =>
       a.data.order - b.data.order,
   )
@@ -89,7 +89,7 @@ const tabs = [
         Everything you need to ship a fast marketing site.
       </p>
     </header>
-    <FeatureTabs client:visible tabs={tabs} />
+    <FeatureTabs tabs={tabs} label="Why this starter" />
   </section>
 
   <section class="container py-10">

@@ -1,6 +1,8 @@
 ---
 title: Environment Variables
 description: Environment configuration for local dev and production.
+intro: "Environment configuration for local dev and production."
+type: reference
 sidebar:
   order: 2
 ---
@@ -21,16 +23,28 @@ PUBLIC_GA_MEASUREMENT_ID=
 PUBLIC_GTM_ID=
 ```
 
-Pages Functions secrets (only the R2 cleanup worker) go in `.dev.vars`:
+Analytics IDs are read at **build time**: when set, the generated Content
+Security Policy also allows Google's script and collection origins
+(`src/config/csp.config.ts`). Rebuild after changing them.
+
+Pages Functions secrets (only the R2 cleanup function) go in `.dev.vars`, which
+`pnpm cf:dev` loads:
 
 ```ini
-CLEANUP_SECRET=dev-cleanup-secret-change-me
+# At least 32 characters (e.g. `openssl rand -hex 32`); send it as
+# `Authorization: Bearer <value>`.
+CLEANUP_SECRET=
+CLEANUP_MODE=dry-run
 ```
 
 ## Production
 
 Configure variables via **Cloudflare Dashboard > Pages > your-project >
 Settings > Environment variables**. Add `CLEANUP_SECRET` as an encrypted secret.
+
+GitHub Actions use repository **variables** (`SITE_URL`, `CF_PAGES_PROJECT`,
+`CLEANUP_ENABLED`) and **secrets** (`CF_API_TOKEN`, `CF_ACCOUNT_ID`,
+`CLEANUP_SECRET`) — see [Cloudflare Pages](/docs/deployment/cloudflare-pages/).
 
 ## Secrets Validation
 

@@ -1,0 +1,131 @@
+---
+/** "Was this helpful?" widget; posts to the /api/feedback Pages Function. */
+import { docsConfig } from "../../config/docs.config";
+import { docsHref, docsLocaleOf, docsUi } from "../../lib/docs";
+
+const locale = docsLocaleOf(Astro.url.pathname);
+const t = docsUi(locale);
+---
+
+<section
+  class="feedback not-content"
+  data-feedback
+  data-thanks={t.thanks}
+  data-failed={t.failed}
+  aria-label={t.helpful}
+>
+  <p class="title">{t.helpful}</p>
+  <div class="row">
+    <button type="button" data-vote="yes">{t.yes}</button>
+    <button type="button" data-vote="no">{t.no}</button>
+    <a href={docsHref(locale, docsConfig.helpHref)}>{t.needHelp}</a>
+  </div>
+  <form hidden>
+    <label>
+      {t.missing}
+      <textarea name="comment" maxlength="1000" rows="3"></textarea>
+    </label>
+    <button type="submit">{t.send}</button>
+  </form>
+  <p class="status" role="status" hidden></p>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-feedback]");
+  if (root) {
+    const form = root.querySelector("form")!;
+    const status = root.querySelector<HTMLElement>(".status")!;
+    const row = root.querySelector<HTMLElement>(".row")!;
+    const send = async (helpful: boolean, comment = "") => {
+      try {
+        const res = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: location.pathname, helpful, comment }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        status.textContent = root.dataset.thanks ?? "";
+        form.hidden = true;
+        row.hidden = true;
+      } catch {
+        status.textContent = root.dataset.failed ?? "";
+      }
+      status.hidden = false;
+    };
+    root.querySelectorAll<HTMLButtonElement>("[data-vote]").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (b.dataset.vote === "yes") void send(true);
+        else form.hidden = false;
+      }),
+    );
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      void send(false, new FormData(form).get("comment")?.toString() ?? "");
+    });
+  }
+</script>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+  .feedback {
+    margin-top: 3rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+  }
+  .title {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .row a {
+    margin-left: auto;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  button {
+    font: inherit;
+    padding: 0.25rem 1rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--sl-color-white);
+    cursor: pointer;
+  }
+  button:hover {
+    border-color: var(--sl-color-accent);
+  }
+  form {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+  }
+  label {
+    display: grid;
+    gap: 0.25rem;
+    width: 100%;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  textarea {
+    font: inherit;
+    padding: 0.5rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.375rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+  }
+  .status {
+    margin-top: 0.5rem;
+    color: var(--sl-color-gray-2);
+  }
+</style>

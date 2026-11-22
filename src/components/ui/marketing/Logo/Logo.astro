@@ -3,31 +3,58 @@ import { siteConfig } from "../../../../config/site.config";
 
 export interface Props {
   href?: string;
+  /** Show the site name next to the monogram (hidden below 26rem). */
+  showName?: boolean;
 }
 
-const { href = "/" } = Astro.props as Props;
+const { href = "/", showName = true } = Astro.props as Props;
 ---
 
-<a href={href} class="ui-logo" aria-label={siteConfig.name}>
-  <span class="ui-logo__mark">{siteConfig.name.charAt(0)}</span>
+<a href={href} class="logo" aria-label={siteConfig.name}>
+  <span class="logo__mark" aria-hidden="true">{siteConfig.name.charAt(0)}</span>
+  {showName && <span class="logo__name">{siteConfig.name}</span>}
 </a>
 
 <style>
-  .ui-logo {
+  .logo {
     display: inline-flex;
     align-items: center;
+    gap: 0.6rem;
     text-decoration: none;
-    color: inherit;
+    color: var(--color-text-primary);
+    border-radius: var(--radius-md);
   }
 
-  .ui-logo__mark {
+  .logo:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  .logo__mark {
     display: inline-grid;
     place-items: center;
     width: 2rem;
     height: 2rem;
-    border-radius: 9999px;
+    border-radius: var(--radius-lg);
     background: var(--color-brand-primary);
-    color: white;
+    color: var(--primary-foreground);
     font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .logo__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* Keep the brand compact on small screens — monogram remains. */
+  @media (width <= 26rem) {
+    .logo__name {
+      display: none;
+    }
   }
 </style>

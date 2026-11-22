@@ -61,15 +61,18 @@ const { variant, dismissible = false, class: className } = Astro.props as Props;
     color: var(--foreground);
   }
   .ui-alert--success {
-    background: #ecfdf5;
-    color: #047857;
+    /* Tinted surface + text mixed toward the foreground for contrast in both themes. */
+    background: color-mix(in oklch, var(--success) 12%, var(--background));
+    color: color-mix(in oklch, var(--success) 65%, var(--foreground));
   }
   .ui-alert--warning {
-    background: #fffbeb;
-    color: #b45309;
+    /* Tinted surface + text mixed toward the foreground for contrast in both themes. */
+    background: color-mix(in oklch, var(--warning) 12%, var(--background));
+    color: color-mix(in oklch, var(--warning) 65%, var(--foreground));
   }
   .ui-alert--error {
-    background: #fef2f2;
-    color: #b91c1c;
+    /* Tinted surface + text mixed toward the foreground for contrast in both themes. */
+    background: color-mix(in oklch, var(--destructive) 12%, var(--background));
+    color: color-mix(in oklch, var(--destructive) 65%, var(--foreground));
   }
 </style>

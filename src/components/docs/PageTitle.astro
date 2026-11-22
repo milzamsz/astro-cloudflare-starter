@@ -1,0 +1,151 @@
+---
+/**
+ * Starlight PageTitle override: breadcrumbs, title, intro and content-type label.
+ * On /docs/ itself it renders the home hero + search button.
+ */
+import { docsHref, docsLocaleOf, docsUi, groupById, groupIdOfPath, l, stripLocale } from "../../lib/docs";
+
+const { entry } = Astro.locals.starlightRoute;
+const locale = docsLocaleOf(Astro.url.pathname);
+const t = docsUi(locale);
+const data = entry.data as { title: string; description?: string; intro?: string; type?: keyof typeof t.types };
+const segments = stripLocale(Astro.url.pathname).split("/").filter(Boolean); // ["docs", group, ...]
+const isHome = segments.length === 1;
+const group = groupById(groupIdOfPath(Astro.url.pathname));
+const crumbs = [
+  { label: t.docs, href: docsHref(locale, "/docs/") },
+  ...(group && segments.length > 2 ? [{ label: l(locale, group.title), href: docsHref(locale, `/docs/${group.id}/`) }] : []),
+];
+const intro = data.intro ?? data.description;
+const showType = data.type && data.type !== "overview";
+---
+
+{
+  isHome ? (
+    <div class="hero">
+      <h1 id="_top">{t.homeTitle}</h1>
+      <p>{t.homeTagline}</p>
+      <button type="button" class="search" data-open-search>
+        {t.search}
+        <kbd>/</kbd>
+      </button>
+    </div>
+  ) : (
+    <>
+      {segments.length > 2 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            {crumbs.map((c) => (
+              <li>
+                <a href={c.href}>{c.label}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      <h1 id="_top">{data.title}</h1>
+      {showType && <span class="type">{t.types[data.type!]}</span>}
+      {intro && <p class="intro">{intro}</p>}
+    </>
+  )
+}
+
+<script>
+  const open = () =>
+    document.querySelector<HTMLButtonElement>("site-search button[data-open-modal]")?.click();
+  document.querySelector("[data-open-search]")?.addEventListener("click", open);
+  document.addEventListener("keydown", (e) => {
+    const t = e.target as HTMLElement;
+    if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && !t.isContentEditable) {
+      e.preventDefault();
+      open();
+    }
+  });
+</script>
+
+<style>
+  h1 {
+    margin-top: 0.5rem;
+    font-size: var(--sl-text-h1);
+    line-height: var(--sl-line-height-headings);
+    font-weight: 650;
+    color: var(--sl-color-white);
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+  .crumbs li + li::before {
+    content: "/";
+    margin-right: 0.25rem;
+  }
+  .crumbs a {
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--sl-color-white);
+    text-decoration: underline;
+  }
+  .type {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.1rem 0.6rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-2);
+  }
+  .intro {
+    margin-top: 0.75rem;
+    font-size: var(--sl-text-lg);
+    color: var(--sl-color-gray-2);
+    max-width: 48rem;
+  }
+  .hero {
+    padding-block: 2rem 1rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .hero p {
+    margin-top: 0.75rem;
+    font-size: var(--sl-text-lg);
+    color: var(--sl-color-gray-2);
+  }
+  .search {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    width: min(100%, 32rem);
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    font: inherit;
+    color: var(--sl-color-gray-2);
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+  .search:hover {
+    border-color: var(--sl-color-accent);
+  }
+  kbd {
+    font-family: inherit;
+    font-size: var(--sl-text-xs);
+    padding: 0 0.4rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.25rem;
+  }
+</style>

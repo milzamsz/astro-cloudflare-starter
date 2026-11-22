@@ -50,7 +50,8 @@ instead of one-off styling.
 | Textarea | `ui/form/Textarea/Textarea.astro` | `id`, `name`, `rows`, `label`, `required` | Labelled multiline field. |
 | Checkbox | `ui/form/Checkbox/Checkbox.astro` | `id`, `name`, `label`, `checked` | — |
 | Switch | `ui/form/Switch/Switch.astro` | `id`, `name`, `label`, `checked` | Toggle. |
-| Logo (marketing) | `ui/marketing/Logo/Logo.astro` | `href` | Wordmark/monogram from `site.config`. |
+| Logo | `ui/marketing/Logo/Logo.astro` | `href`, `showName` | Brand monogram + site name from `site.config` (header, footer). |
+| CTAPanel | `ui/marketing/CTA/CTA.astro` | `eyebrow`, `title`, `content`, `primaryText`/`primaryHref`, `secondaryText`/`secondaryHref`, `centered` | Presentational CTA block; pages use the CTA **section**. |
 
 ## Sections (`src/components/sections` barrel)
 
@@ -58,11 +59,11 @@ Page-level blocks. Most are `i18nAware` (accept/derive `locale`).
 
 | Section | Path | Props |
 | --- | --- | --- |
-| Hero | `hero/Hero.astro` | `variant`, `size`, `eyebrow`, `headline`/`title`, `subheadline`/`content`, `primaryCta`, `secondaryCta`, `locale`; `image` slot |
-| FeatureTabs (React) | `landing/FeatureTabs.tsx` | `tabs[]` (`id`, `icon`, `heading`, `description`, `points?`, `visual`) |
-| FeatureGrid | `FeatureGrid.astro` | `title`, `features[]`, `columns` (2\|3\|4) |
-| FAQ | `FAQ.astro` | `title`, `items` |
-| CTA | `ui/marketing/CTA/CTA.astro` | `eyebrow`, `title`, `content`, `primaryText`/`primaryHref`, `secondaryText`/`secondaryHref`, `centered` |
+| Hero | `sections/Hero.astro` | `variant`, `size`, `eyebrow`, `headline`/`title`, `subheadline`/`content`, `primaryCta`, `secondaryCta`, `locale`; `image` slot |
+| FeatureTabs | `landing/FeatureTabs.astro` | `tabs[]` (`id`, `icon` (lucide name), `heading`, `description`, `points?`, `visual`), `label` |
+| FeatureGrid | `sections/FeatureGrid.astro` | `title`, `features[]`, `columns` (2\|3\|4) |
+| FAQ | `sections/FAQ.astro` | `title`, `items` |
+| CTA | `sections/CTA.astro` | `eyebrow`, `title`, `content`, `ctaText`/`ctaHref`, `secondaryText`/`secondaryHref`, `locale` (hrefs localized) |
 | SocialProof | `ui/marketing/SocialProof/SocialProof.astro` | `title`, `items` |
 | Pricing | `sections/Pricing.astro` | `title`, `description`, `plans` |
 | Newsletter | `sections/Newsletter.astro` | `title`, `description`, `placeholder`, `buttonLabel`, `action` |
@@ -98,8 +99,10 @@ Collection-bound blocks. Compose primitives + the patterns in `patterns.md`.
   `Grid` rather than re-implementing them. New shared UI goes in `ui/**` and the
   barrel.
 - **Class merging via `cn`.** Every primitive accepts `class` and merges it.
-- **Keep islands minimal.** Only `FeatureTabs` is a React island; prefer `.astro`
-  unless interactivity requires a client framework.
+- **No client framework by default.** The site ships zero framework runtime.
+  Add interactivity with a bundled `<script>` / custom element (see
+  `landing/FeatureTabs.astro`). Only add a UI-framework integration when a
+  feature genuinely needs one, and hydrate with the narrowest directive.
 - **Decorative layers** (textures, glows, grids) are `aria-hidden` and
   `pointer-events: none`.
 - **Keep `src/registry.json` in sync** when you add/rename a component or change

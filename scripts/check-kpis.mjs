@@ -130,11 +130,15 @@ function checkFile(full) {
     }
   }
 
-  // 4. Inline style= attributes (WARN).
+  // 4. Inline style= attributes (WARN). Setting only CSS custom properties is
+  // allowed (`style={{ "--x": value }}`) — the actual styling stays in <style>.
   if (!allowed && (ext === ".astro" || ext === ".tsx")) {
     const re = /\sstyle=("|'|\{)/g;
+    const customPropsOnly = /^\{\s*(?:\w+\s*\?\s*)?\{\s*["']--[\w-]+["']\s*:/;
     let m;
     while ((m = re.exec(content))) {
+      const rest = content.slice(m.index + m[0].length - 1, m.index + 200);
+      if (customPropsOnly.test(rest)) continue;
       warnings.push({
         rel: relPath,
         line: lineOf(content, m.index),

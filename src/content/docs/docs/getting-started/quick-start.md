@@ -1,21 +1,23 @@
 ---
 title: Quick Start
 description: Get the project running locally in minutes.
+intro: "Get the project running locally in minutes."
+type: quickstart
 sidebar:
   order: 2
 ---
 
 ## Prerequisites
 
-- **Node.js 24+** (use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm))
-- **pnpm 8.15+** (`corepack enable && corepack prepare pnpm@8.15.0 --activate`)
+- **Node.js 26 LTS** (the repo pins it in `.node-version`; [fnm](https://github.com/Schniz/fnm) and [nvm](https://github.com/nvm-sh/nvm) pick it up)
+- **pnpm 12** (`corepack enable` — the version comes from `packageManager` in `package.json`)
 - **Cloudflare Account** (free tier works)
 
 ## Clone & Install
 
 ```bash
 git clone https://github.com/milzamsz/astro-cloudflare-starter.git
-cd astro-cloudflare
+cd astro-cloudflare-starter
 pnpm install
 ```
 
@@ -44,3 +46,12 @@ pnpm build
 ```
 
 The output is in `dist/` — ready for Cloudflare Pages deployment.
+
+## Check your work
+
+```bash
+pnpm lint       # oxlint, eslint (.astro), stylelint, type-check (TS 7 + astro check), design KPIs
+pnpm test       # unit tests (Vitest)
+pnpm test:e2e   # end-to-end + CSP tests (Playwright, runs against the built site)
+pnpm lighthouse # Lighthouse budgets against dist/
+```

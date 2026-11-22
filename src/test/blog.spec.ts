@@ -22,7 +22,9 @@ test.describe("blog listing + detail", () => {
     test.setTimeout(60_000);
     await page.goto("/blog/welcome", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator(".share-buttons button").first()).toBeVisible({
+    // The native-share button stays hidden where navigator.share is missing
+    // (e.g. headless Chromium); the copy-link button is always shown.
+    await expect(page.locator(".share-buttons [data-share-copy]")).toBeVisible({
       timeout: 30_000,
     });
   });

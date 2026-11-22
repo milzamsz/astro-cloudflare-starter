@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "ignorePatterns": ["dist/**", ".astro/**", ".wrangler/**", "node_modules/**", "**/*.d.ts"],
+  "rules": {
+    "no-console": "warn",
+    "prefer-const": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/consistent-type-definitions": ["error", "interface"],
+    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }]
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**", "functions/**", ".cursor/**", "src/test/**", "src/integrations/**", "astro.config.ts", "playwright.config.ts"],
+      "rules": { "no-console": "off" }
+    }
+  ]
+}

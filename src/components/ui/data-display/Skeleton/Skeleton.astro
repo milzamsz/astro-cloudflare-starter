@@ -14,10 +14,12 @@ const {
 
 <span
   class={`ui-skeleton${rounded ? " ui-skeleton--rounded" : ""}`}
-  style={`width:${width};height:${height};`}></span>
+  style={{ "--skeleton-width": width, "--skeleton-height": height }}></span>
 
 <style>
   .ui-skeleton {
+    width: var(--skeleton-width);
+    height: var(--skeleton-height);
     display: inline-block;
     background: linear-gradient(
       90deg,

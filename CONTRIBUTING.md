@@ -10,7 +10,7 @@ Be respectful, constructive, and inclusive. We follow the [Contributor Covenant]
 
 1. **Fork** the repository
 2. **Clone** your fork
-3. **Install** dependencies: `pnpm install`
+3. **Install** dependencies: `corepack enable && pnpm install` (Node 26 LTS, pnpm 12)
 4. **Run** the dev server: `pnpm dev`
 
 ## Development Workflow
@@ -30,9 +30,10 @@ Be respectful, constructive, and inclusive. We follow the [Contributor Covenant]
 2. Make your changes
 3. Run validation locally:
    ```bash
-   pnpm run lint        # ESLint + Stylelint + type-check + validations
-   pnpm run validate:i18n  # Translation consistency
-   pnpm run build       # Production build
+   pnpm lint        # oxlint + eslint (.astro) + stylelint + type-check + KPI/i18n/registry/secret checks
+   pnpm test        # unit tests (Vitest)
+   pnpm build       # production build
+   pnpm test:e2e    # Playwright e2e + CSP tests (for UI changes)
    ```
 4. Commit using conventional commits (see below)
 5. Push and open a PR against `main`
@@ -54,7 +55,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### PR Requirements
 
-- ✅ All CI checks pass (lint, type-check, build, validation)
+- ✅ All CI checks pass (lint, type-check, unit tests, build, e2e, Lighthouse)
 - ✅ At least one reviewer has approved
 - ✅ No security vulnerabilities introduced
 - ✅ No secrets committed

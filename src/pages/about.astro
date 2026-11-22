@@ -3,9 +3,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { t } from "../i18n/ui";
-import Hero from "../components/Hero.astro";
-import FeatureGrid from "../components/FeatureGrid.astro";
-import CTA from "../components/CTA.astro";
+import Hero from "../components/sections/Hero.astro";
+import FeatureGrid from "../components/sections/FeatureGrid.astro";
+import CTA from "../components/sections/CTA.astro";
 
 const locale = (Astro.currentLocale || "en") as "en";
 

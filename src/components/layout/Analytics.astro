@@ -1,55 +1,203 @@
 ---
+/**
+ * Optional analytics loaders. Nothing renders unless the matching env var /
+ * setting is present:
+ *   PUBLIC_GA_MEASUREMENT_ID → Google Analytics 4 (gtag.js)
+ *   PUBLIC_GTM_ID            → Google Tag Manager
+ *   settings.yml umamiUrl + umamiId → Umami
+ *
+ * With PUBLIC_CONSENT_ENABLED=true nothing loads until the visitor accepts the
+ * consent banner (src/lib/consent.ts). Scripts are injected by a processed
+ * module (hashed by Astro's CSP); third-party hosts are allowed in
+ * src/config/csp.config.ts only when configured.
+ */
 import { getEntry } from "astro:content";
+import { PUBLIC_CONSENT_ENABLED, PUBLIC_PRIVACY_POLICY_URL } from "astro:env/client";
+import type { Locale } from "../../lib/site-config";
+import { resolveRoute } from "../../i18n/routes";
+import { t } from "../../i18n/ui";
 
+export interface Props {
+  locale?: Locale;
+}
+
+const { locale = "en" } = Astro.props as Props;
 const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined;
 const gtmId = import.meta.env.PUBLIC_GTM_ID as string | undefined;
 const settings = await getEntry("settings", "settings");
-const umamiUrl = settings?.data.umamiUrl;
-const umamiId = settings?.data.umamiId;
+const umamiUrl = settings?.data.umamiUrl || undefined;
+const umamiId = settings?.data.umamiId || undefined;
+
+const enabled = Boolean(gaId || gtmId || (umamiUrl && umamiId));
+const consentRequired = Boolean(PUBLIC_CONSENT_ENABLED);
+const privacyHref = PUBLIC_PRIVACY_POLICY_URL || resolveRoute(locale, "/privacy");
 ---
 
 {
-  gaId && (
-    <>
-      <script
-        is:inline
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-      ></script>
-      <script
-        is:inline
-        set:html={`
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { window.dataLayer.push(arguments); }
-      gtag("js", new Date());
-      gtag("config", "${gaId}");
-    `}
-      ></script>
-    </>
+  enabled && (
+    <div
+      hidden
+      data-analytics
+      data-ga={gaId}
+      data-gtm={gtmId}
+      data-umami-url={umamiUrl}
+      data-umami-id={umamiId}
+      data-consent-required={consentRequired ? "true" : "false"}
+    />
   )
 }
 
 {
-  gtmId && (
-    <>
-      <script
-        is:inline
-        async
-        src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
-      ></script>
-      <script
-        is:inline
-        set:html={`
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-    `}
-      ></script>
-    </>
+  enabled && consentRequired && (
+    <section class="consent-banner" data-consent-banner hidden aria-label={t(locale, "consent.label")}>
+      <p class="consent-banner__text">
+        {t(locale, "consent.message")}{" "}
+        <a href={privacyHref}>{t(locale, "footer.privacy")}</a>
+      </p>
+      <div class="consent-banner__actions">
+        <button type="button" class="consent-banner__btn" data-consent="denied">
+          {t(locale, "consent.decline")}
+        </button>
+        <button
+          type="button"
+          class="consent-banner__btn consent-banner__btn--primary"
+          data-consent="granted"
+        >
+          {t(locale, "consent.accept")}
+        </button>
+      </div>
+    </section>
   )
 }
 
 {
-  umamiUrl && umamiId && (
-    <script is:inline async defer src={umamiUrl} data-website-id={umamiId}></script>
+  enabled && (
+    <script>
+      import { CONSENT_STORAGE_KEY, consentAction, parseConsent, type ConsentChoice } from "../../lib/consent";
+
+      const config = document.querySelector<HTMLElement>("[data-analytics]")?.dataset ?? {};
+      const banner = document.querySelector<HTMLElement>("[data-consent-banner]");
+
+      // gtag.js only accepts the real `arguments` object, not an array.
+      function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer!.push(arguments);
+      }
+
+      const addScript = (src: string, attrs: Record<string, string> = {}) => {
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = src;
+        for (const [name, value] of Object.entries(attrs)) script.setAttribute(name, value);
+        document.head.appendChild(script);
+      };
+
+      const loadAnalytics = () => {
+        if (config.ga) {
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = gtag;
+          window.gtag("js", new Date());
+          window.gtag("config", config.ga);
+          addScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(config.ga)}`);
+        }
+        if (config.gtm) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+          addScript(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.gtm)}`);
+        }
+        if (config.umamiUrl && config.umamiId) {
+          addScript(config.umamiUrl, { "data-website-id": config.umamiId });
+        }
+      };
+
+      const readStored = () => {
+        try {
+          return parseConsent(localStorage.getItem(CONSENT_STORAGE_KEY));
+        } catch {
+          return null;
+        }
+      };
+
+      const action = consentAction(config.consentRequired === "true", readStored());
+      if (action === "load") loadAnalytics();
+      if (action === "ask" && banner) {
+        banner.hidden = false;
+        banner.querySelectorAll<HTMLButtonElement>("[data-consent]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const choice = parseConsent(button.dataset.consent) as ConsentChoice;
+            try {
+              localStorage.setItem(CONSENT_STORAGE_KEY, choice);
+            } catch {
+              // Storage blocked: honour the choice for this page view only.
+            }
+            banner.hidden = true;
+            if (choice === "granted") loadAnalytics();
+          });
+        });
+      }
+    </script>
   )
 }
+
+<style>
+  .consent-banner {
+    position: fixed;
+    inset-inline: var(--space-md);
+    inset-block-end: var(--space-md);
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: space-between;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    color: var(--card-foreground);
+    box-shadow: var(--shadow-md);
+  }
+
+  .consent-banner[hidden] {
+    display: none;
+  }
+
+  .consent-banner__text {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .consent-banner__text a {
+    color: var(--foreground);
+    text-decoration: underline;
+  }
+
+  .consent-banner__actions {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .consent-banner__btn {
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--foreground);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .consent-banner__btn--primary {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .consent-banner__btn:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+</style>

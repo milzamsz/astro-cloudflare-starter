@@ -124,7 +124,7 @@ function main() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
-  const manifest = Array.from(allReferences).sort();
+  const manifest = Array.from(allReferences).toSorted();
   const outputPath = path.join(OUTPUT_DIR, MANIFEST_FILE);
   fs.writeFileSync(outputPath, JSON.stringify(manifest, null, 2));
 

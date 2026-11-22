@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/ui/form/Button/Button.astro";
+import { t } from "../i18n/ui";
+
+const locale = (Astro.currentLocale || "en") as "en";
+---
+
+<BaseLayout
+  title={t(locale, "notFound.title")}
+  description={t(locale, "notFound.description")}
+  locale={locale}
+  path="/404"
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <section class="not-found container">
+    <p class="not-found__code" aria-hidden="true">404</p>
+    <h1>{t(locale, "notFound.title")}</h1>
+    <p class="not-found__text">{t(locale, "notFound.description")}</p>
+    <div class="not-found__actions">
+      <Button href="/" variant="primary">{t(locale, "notFound.home")}</Button>
+      <Button href="/docs/" variant="secondary">{t(locale, "nav.docs")}</Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-md);
+    padding-block: var(--space-3xl);
+    text-align: center;
+  }
+
+  .not-found__code {
+    font-family: var(--font-mono);
+    font-size: var(--text-5xl);
+    color: var(--muted-foreground);
+  }
+
+  .not-found__text {
+    max-width: 36rem;
+    color: var(--muted-foreground);
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+</style>

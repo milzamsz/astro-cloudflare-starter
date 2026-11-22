@@ -1,0 +1,82 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Icon } from "astro-icon/components";
+import type { Locale } from "../../config/i18n.config";
+import { docsConfig } from "../../config/docs.config";
+import { docsHref, docsUi, l } from "../../lib/docs";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = docsUi(locale);
+---
+
+<StarlightPage
+  frontmatter={{ title: t.homeTitle, description: t.homeTagline, tableOfContents: false }}
+>
+  <div class="grid not-content">
+    {
+      docsConfig.groups.map((g) => (
+        <section class="card">
+          <h2>
+            <Icon name={`lucide:${g.icon}`} size={20} aria-hidden="true" />
+            <a href={docsHref(locale, `/docs/${g.id}/`)}>{l(locale, g.title)}</a>
+          </h2>
+          <p>{l(locale, g.description)}</p>
+          <ul>
+            {g.popular.map((link) => (
+              <li>
+                <a href={docsHref(locale, link.href)}>{l(locale, link.label)}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</StarlightPage>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  }
+  .card {
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+  }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--sl-text-h4);
+    font-weight: 650;
+  }
+  h2 a {
+    color: var(--sl-color-white);
+    text-decoration: none;
+  }
+  h2 a:hover {
+    text-decoration: underline;
+  }
+  p {
+    margin-top: 0.5rem;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  ul {
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.25rem;
+    font-size: var(--sl-text-sm);
+  }
+  ul a {
+    color: var(--sl-color-text-accent);
+  }
+</style>
