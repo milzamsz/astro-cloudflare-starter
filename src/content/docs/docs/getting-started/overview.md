@@ -1,6 +1,8 @@
 ---
 title: Overview
 description: What this starter template provides and how it's built.
+intro: "What this starter template provides and how it's built."
+type: overview
 sidebar:
   order: 1
 ---

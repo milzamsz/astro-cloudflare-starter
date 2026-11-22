@@ -1,6 +1,8 @@
 ---
 title: Customization
 description: Tailoring the starter to your needs.
+intro: "Tailoring the starter to your needs."
+type: how-to
 sidebar:
   order: 3
 ---

@@ -18,6 +18,7 @@ const PAGES = [
   "/pages/",
   "/docs/",
   "/docs/getting-started/quick-start/",
+  "/docs/guides/",
   "/404.html",
 ];
 

@@ -4,6 +4,7 @@ import { docsLoader, i18nLoader } from "@astrojs/starlight/loaders";
 import { docsSchema, i18nSchema } from "@astrojs/starlight/schema";
 import { glob } from "astro/loaders";
 import { i18nConfig } from "./config/i18n.config";
+import { docTypes } from "./config/docs.config";
 
 // Locale codes come from src/config/i18n.config.ts.
 const localeSchema = z.enum(i18nConfig.locales);
@@ -40,7 +41,13 @@ const blog = defineCollection({
 
 const docs = defineCollection({
   loader: docsLoader(),
-  schema: docsSchema(),
+  schema: docsSchema({
+    extend: z.object({
+      /** One-sentence summary shown under the title and on article cards. */
+      intro: z.string().optional(),
+      type: z.enum(docTypes).optional(),
+    }),
+  }),
 });
 
 // Starlight UI string overrides (src/content/i18n/<lang>.json).

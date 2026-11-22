@@ -1,5 +1,5 @@
 # Local dev secrets for Cloudflare Pages Functions (wrangler).
-# Copy to .dev.vars (gitignored). Only the R2 cleanup function needs a secret.
+# Copy to .dev.vars (gitignored). The R2 cleanup function and the docs feedback widget need secrets.
 
 # Required to invoke the R2 cleanup endpoint locally.
 # At least 32 characters (e.g. `openssl rand -hex 32`); send it as
@@ -9,3 +9,8 @@ CLEANUP_SECRET=
 # Optional cleanup tuning
 # CLEANUP_MODE=dry-run
 # CLEANUP_GRACE_DAYS=30
+
+# Docs feedback widget (functions/api/feedback.ts) emails "Was this helpful?" votes via Resend.
+# RESEND_API_KEY=
+# FEEDBACK_TO=docs@example.com
+# FEEDBACK_FROM="Docs feedback <noreply@your-verified-domain.com>"

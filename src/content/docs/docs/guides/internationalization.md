@@ -1,6 +1,8 @@
 ---
 title: Internationalization
 description: Multilanguage-ready i18n engine and how to add new locales.
+intro: "Multilanguage-ready i18n engine and how to add new locales."
+type: how-to
 sidebar:
   order: 2
 ---

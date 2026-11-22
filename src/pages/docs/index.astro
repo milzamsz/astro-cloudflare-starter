@@ -1,0 +1,7 @@
+---
+import DocsHome from "../../components/docs/DocsHome.astro";
+import { defaultLocale } from "../../config/i18n.config";
+---
+
+<!-- Add src/pages/<locale>/docs/index.astro with <DocsHome locale="<locale>" /> for each extra language. -->
+<DocsHome locale={defaultLocale} />

@@ -1,0 +1,57 @@
+---
+/** Sun / moon pill (like docs.tebar.app). Uses Starlight's `starlight-theme` storage key. */
+import { Icon } from "astro-icon/components";
+---
+
+<div class="toggle" role="group" aria-label="Theme">
+  <button type="button" data-theme-set="light" aria-label="Light theme">
+    <Icon name="lucide:sun" size={14} aria-hidden="true" />
+  </button>
+  <button type="button" data-theme-set="dark" aria-label="Dark theme">
+    <Icon name="lucide:moon" size={14} aria-hidden="true" />
+  </button>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-set]");
+  const sync = () =>
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === root.dataset.theme)));
+  buttons.forEach((b) =>
+    b.addEventListener("click", () => {
+      root.dataset.theme = b.dataset.themeSet;
+      try {
+        localStorage.setItem("starlight-theme", b.dataset.themeSet ?? "dark");
+      } catch {
+        /* storage blocked: the choice just lasts for this page */
+      }
+      sync();
+    }),
+  );
+  sync();
+</script>
+
+<style>
+  .toggle {
+    display: inline-flex;
+    gap: 0.125rem;
+    padding: 0.125rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 999px;
+  }
+  button {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+  }
+  button[aria-pressed="true"] {
+    background: var(--docs-accent);
+    color: #0a0c08;
+  }
+</style>

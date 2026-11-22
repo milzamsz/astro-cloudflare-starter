@@ -1,11 +1,21 @@
 /**
- * Starlight (docs) theme overrides.
+ * Starlight (docs) theme: layout like docs.tebar.app / docs.github.com.
  *
- * The docs match the marketing site's monochrome OKLCH system (see
- * system/globals/colors.md): neutral black/white accent, no hue. This file also
- * tightens the type scale and spacing so headings don't feel oversized and the
- * vertical gaps are calmer.
+ * Brand hooks (change these first):
+ *   --docs-accent        accent for lines, tab underline, active item bar
+ *   --docs-accent-text   accent used for TEXT (must keep 4.5:1 contrast; darker in light mode)
+ *   --sl-font / --sl-font-mono   typefaces
+ * Everything else follows Starlight's tokens.
  */
+
+/* ── Typeface (self-hosted via fontsource; same families as the site tokens) ── */
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/jetbrains-mono";
+
+:root {
+  --sl-font: "Manrope Variable", ui-sans-serif, system-ui, -apple-system, blinkmacsystemfont, sans-serif;
+  --sl-font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+}
 
 /* ── Accent color (monochrome, matches the frontend) ─────────────────── */
 
@@ -26,28 +36,25 @@
   --sl-color-text-accent: #171717;
 }
 
-/* ── Type scale (smaller, tighter headings) ──────────────────────────── */
+/* ── Type scale (GitHub Docs scale: 32/24/20/16, weight 600, 1.5 line) ── */
 :root {
   --sl-text-h1: 2rem;
   --sl-text-h2: 1.5rem;
   --sl-text-h3: 1.25rem;
-  --sl-text-h4: 1.0625rem;
-  --sl-text-h5: 1rem;
-  --sl-line-height: 1.65;
-  --sl-line-height-headings: 1.2;
-}
-
-@media (width >= 50rem) {
-  :root {
-    --sl-text-h1: 2.25rem;
-    --sl-text-h2: 1.625rem;
-    --sl-text-h3: 1.3125rem;
-  }
+  --sl-text-h4: 1rem;
+  --sl-text-h5: 0.875rem;
+  --sl-line-height: 1.5;
+  --sl-line-height-headings: 1.25;
 }
 
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
-  letter-spacing: -0.015em;
-  font-weight: 650;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
+/* Inline code is slightly smaller than body text, as on GitHub. */
+.sl-markdown-content :not(pre) > code {
+  font-size: 0.85em;
 }
 
 /* ── Spacing (reduce the big gaps) ───────────────────────────────────── */
@@ -151,4 +158,145 @@
 
 .sl-markdown-content a:hover:not(:where(.not-content *)) {
   color: var(--sl-color-accent-high);
+}
+
+/* ── GitHub Docs chrome: green accents, light sidebar, narrow "On this page" ── */
+:root {
+  --docs-accent: #74bf1f; /* brand accent: replace with your brand color */
+  --docs-accent-text: #74bf1f;
+  --docs-toc-width: 16rem;
+  --sl-content-width: 48rem;
+}
+
+:root[data-theme="light"] {
+  --docs-accent: #5ea500;
+  --docs-accent-text: #2f6200; /* AA contrast on white and on the green tint */
+}
+
+/* Layout like docs.tebar.app: slim tab bar on top, sidebar full height with logo + search. */
+:root {
+  --sl-nav-height: 5.75rem;
+}
+
+@media (width >= 50rem) {
+  :root {
+    --sl-nav-height: 3.25rem;
+  }
+
+  :root[data-has-sidebar] header.header {
+    inset-inline-start: var(--sl-sidebar-width);
+    width: calc(100% - var(--sl-sidebar-width));
+  }
+
+  :root[data-has-sidebar] .sidebar-pane {
+    inset-block-start: 0;
+  }
+}
+
+header.header {
+  padding: 0;
+  border-bottom: 1px solid var(--docs-accent);
+}
+
+/* Fixed-height sidebar: only the section list scrolls, so the footer never overlaps links. */
+.sidebar-pane {
+  overflow-y: hidden;
+}
+
+.sidebar-content {
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar-content::after {
+  display: none;
+}
+
+.sidebar-content site-search,
+.sidebar-content site-search > button {
+  width: 100%;
+}
+
+/* Sidebar: regular weight everywhere, current page = soft fill + green bar. */
+.sidebar-content a,
+.sidebar-content summary,
+.sidebar-content .large {
+  font-weight: 400;
+}
+
+.sidebar-content .large {
+  font-size: var(--sl-text-base);
+}
+
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover,
+.sidebar-content a[aria-current="page"]:focus {
+  font-weight: 400;
+  color: var(--docs-accent-text);
+  background-color: color-mix(in srgb, var(--docs-accent) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--docs-accent);
+}
+
+/* Section headings in the sidebar: small and muted, like Tebar. */
+.sidebar-content .large {
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-2);
+}
+
+/* Right "On this page": fixed narrow column, GitHub-style small caps title. */
+@media (width >= 72rem) {
+  .right-sidebar-container {
+    width: var(--docs-toc-width);
+  }
+
+  :root[data-has-sidebar][data-has-toc] .main-pane {
+    --sl-content-margin-inline: auto;
+
+    width: calc(100% - var(--docs-toc-width));
+  }
+
+  :root[data-has-toc] {
+    --__toc-width: var(--docs-toc-width);
+  }
+}
+
+.right-sidebar .sl-container {
+  width: 100%;
+}
+
+.right-sidebar-panel h2 {
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  color: var(--sl-color-white);
+}
+
+/* Current section in the TOC gets the green marker too. */
+.right-sidebar-panel a[aria-current="true"] {
+  color: var(--docs-accent-text);
+  box-shadow: inset 2px 0 0 var(--docs-accent);
+}
+
+/* Mobile menu button centres in the top header row, not the taller two-row header. */
+.sl-menu-button {
+  top: calc((3rem - var(--sl-menu-button-size)) / 2);
+}
+
+/* Mobile menu: Starlight shrinks the search button to an icon; keep the full-width bar. */
+.sidebar-content site-search > button {
+  justify-content: flex-start;
+  width: 100%;
+  height: 2.5rem;
+  padding-inline: 0.75rem;
+  gap: 0.5rem;
+  font-size: var(--sl-text-sm);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.5rem;
+}
+
+.sidebar-content site-search > button > span {
+  display: inline;
+}
+
+.sidebar-content site-search > button > kbd {
+  margin-inline-start: auto;
 }

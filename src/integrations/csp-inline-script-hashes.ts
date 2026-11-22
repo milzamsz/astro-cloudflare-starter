@@ -15,6 +15,7 @@ import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const INLINE_SCRIPT = /<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g;
+const INLINE_STYLE = /<style([^>]*)>([\s\S]*?)<\/style>/g;
 const CSP_META = /(<meta http-equiv="content-security-policy" content=")([^"]*)(")/;
 const NON_EXECUTABLE = /type="(?:application\/(?:ld\+)?json|text\/template)"/;
 
@@ -42,13 +43,31 @@ export function addInlineScriptHashes(html: string): { html: string; added: numb
     const hash = sha256(code);
     if (!policy.includes(hash)) missing.add(hash);
   }
-  if (missing.size === 0) return { html, added: 0 };
+  // Components rendered from MDX (e.g. docs article cards) keep their scoped <style>
+  // inline without a hash from Astro, so hash those into style-src-elem too.
+  const missingStyles = new Set<string>();
+  for (const [, , css] of html.matchAll(INLINE_STYLE)) {
+    if (!css.trim()) continue;
+    const hash = sha256(css);
+    if (!policy.includes(hash)) missingStyles.add(hash);
+  }
+  if (missing.size === 0 && missingStyles.size === 0) return { html, added: 0 };
 
-  const extra = [...missing].join(" ");
-  const updated = /(^|;\s*)script-src /.test(policy)
-    ? policy.replace(/((?:^|;\s*)script-src [^;]*)/, `$1 ${extra}`)
-    : `${policy};script-src 'self' ${extra}`;
-  return { html: html.replace(CSP_META, `$1${updated}$3`), added: missing.size };
+  let updated = policy;
+  if (missing.size > 0) {
+    const extra = [...missing].join(" ");
+    updated = /(^|;\s*)script-src /.test(updated)
+      ? updated.replace(/((?:^|;\s*)script-src [^;]*)/, `$1 ${extra}`)
+      : `${updated};script-src 'self' ${extra}`;
+  }
+  if (missingStyles.size > 0) {
+    const extra = [...missingStyles].join(" ");
+    updated = /(^|;\s*)style-src-elem /.test(updated)
+      ? updated.replace(/((?:^|;\s*)style-src-elem [^;]*)/, `$1 ${extra}`)
+      : `${updated};style-src-elem 'self' ${extra}`;
+  }
+  const added = missing.size + missingStyles.size;
+  return { html: html.replace(CSP_META, `$1${updated}$3`), added };
 }
 
 export default function cspInlineScriptHashes(options: { paths: string[] }): AstroIntegration {

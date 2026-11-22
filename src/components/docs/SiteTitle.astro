@@ -1,19 +1,22 @@
 ---
 /**
- * Starlight SiteTitle override — mirrors the marketing header brand
- * (monogram mark + site name) so the docs and site share one identity.
- * Reads the name from src/config/site.config.ts and stays monochrome via
- * Starlight's own theme tokens (works in light + dark).
+ * Starlight SiteTitle override — monogram mark + site name + a small "Docs" badge.
+ * Links to the docs home (not the marketing site). Reads the name from
+ * src/config/site.config.ts and the badge from src/config/docs.config.ts.
  */
 import { siteConfig } from "../../config/site.config";
+import { docsConfig } from "../../config/docs.config";
+import { docsHref, docsLocaleOf } from "../../lib/docs";
 
 const name = siteConfig.name;
 const initial = name.trim().charAt(0).toUpperCase();
+const home = docsHref(docsLocaleOf(Astro.url.pathname), "/docs/");
 ---
 
-<a href="/" class="site-brand" aria-label={name}>
+<a href={home} class="site-brand" aria-label={name}>
   <span class="site-brand__mark" aria-hidden="true">{initial}</span>
   <span class="site-brand__name">{name}</span>
+  <span class="site-brand__badge">{docsConfig.badge}</span>
 </a>
 
 <style>
@@ -38,24 +41,26 @@ const initial = name.trim().charAt(0).toUpperCase();
     width: 1.85rem;
     height: 1.85rem;
     border-radius: 0.5rem;
-    background: var(--sl-color-white);
-    color: var(--sl-color-bg);
-    font-weight: 800;
-    font-size: 0.95rem;
-    flex-shrink: 0;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-text-invert);
+    font-weight: 700;
+    font-size: 1rem;
   }
 
   .site-brand__name {
-    font-weight: 700;
-    font-size: 1.05rem;
+    font-weight: 650;
     letter-spacing: -0.01em;
-    white-space: nowrap;
+    font-size: 1.05rem;
   }
 
-  /* Keep just the monogram on very small screens, like the marketing header. */
-  @media (max-width: 30rem) {
-    .site-brand__name {
-      display: none;
-    }
+  .site-brand__badge {
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--docs-accent);
+    border-radius: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--docs-accent-text);
   }
 </style>
