@@ -40,7 +40,7 @@ instead of one-off styling.
 | AvatarGroup | `ui/data-display/AvatarGroup/AvatarGroup.astro` | `items`, `max` | Overlapping stack with `+N` overflow. |
 | Table | `ui/data-display/Table/Table.astro` | `class` | Slot wrapper for responsive tables. |
 | Skeleton | `ui/data-display/Skeleton/Skeleton.astro` | `width`, `height`, `rounded` | Loading placeholder. |
-| Pagination | `ui/data-display/Pagination/Pagination.astro` | `currentPage`, `totalPages`, `basePath`, `query`, `locale` | i18n-aware route building. |
+| Pagination | `ui/data-display/Pagination/Pagination.astro` | `currentPage`, `totalPages`, `basePath`, `locale` | Static routes: page 1 = `basePath`, page N = `${basePath}/page/N` (no query strings — the site is prerendered). |
 | Prose | `ui/content/Prose/Prose.astro` | `as`, `size` (sm\|md\|lg) | Long-form rich-text wrapper. |
 | Container | `ui/layout/Container/Container.astro` | `size` (sm\|md\|lg\|xl\|full) | Max-width wrapper. |
 | Section | `ui/layout/Section/Section.astro` | `spacing` (sm\|md\|lg\|xl) | Vertical rhythm wrapper. |
@@ -86,7 +86,8 @@ Collection-bound blocks. Compose primitives + the patterns in `patterns.md`.
 | RelatedPosts | `blog/RelatedPosts.astro` | `currentPost`, `allPosts`, `limit`, `locale` | Grid of BlogCards. |
 | ShareButtons | `blog/ShareButtons.astro` | `url`, `title`, `locale` | Native share + copy-link feedback + socials. |
 | BlogImageSVG | `blog/BlogImageSVG.astro` | `slug`, `title` | Deterministic monochrome cover (no inline color). |
-| TagList | `blog/TagList.astro` | `tags`, `basePath`, `locale` | Tag pills. |
+| TagList | `blog/TagList.astro` | `tags`, `basePath`, `locale` | Tag pills linking to `/blog/tag/<slug>`. |
+| BlogListing | `blog/BlogListing.astro` | `locale`, `posts`, `featured`, `totalCount`, `currentPage`, `totalPages`, `tags`, `currentTag` | Blog index body (tag bar, featured, grid, pagination) shared by `/blog`, `/blog/page/N`, `/blog/tag/<slug>`. |
 | TableOfContents | `blog/TableOfContents.astro` | `headings`, `layout` (inline\|sidebar), `maxDepth`, `minHeadings` | — |
 | ServiceCard | `services/ServiceCard.astro` | `service`, `locale`, `headingLevel` | Icon badge + price pill + checklist. |
 

@@ -1,0 +1,254 @@
+---
+/**
+ * BlogListing — the blog index body shared by every static listing route:
+ *   /blog, /blog/page/[page], /blog/tag/[tag], /blog/tag/[tag]/page/[page].
+ * Pages do the data work in getStaticPaths and pass the slice to render.
+ */
+import type { CollectionEntry } from "astro:content";
+import type { Locale } from "../../lib/site-config";
+import { t } from "../../i18n/ui";
+import { blogListPath } from "../../lib/blog";
+import { slugifyTag } from "../../lib/tags";
+import BlogCard from "./BlogCard.astro";
+import Pagination from "../ui/data-display/Pagination/Pagination.astro";
+
+export interface Props {
+  locale: Locale;
+  /** Posts for the grid on this page. */
+  posts: CollectionEntry<"blog">[];
+  /** Hero post; only passed on page 1. */
+  featured?: CollectionEntry<"blog">;
+  /** Total posts in this listing (all pages, including the featured one). */
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  /** Tag labels for the filter bar. */
+  tags: string[];
+  /** Slug of the active tag, if this is a tag listing. */
+  currentTag?: string;
+}
+
+const {
+  locale,
+  posts,
+  featured,
+  totalCount,
+  currentPage,
+  totalPages,
+  tags,
+  currentTag,
+} = Astro.props as Props;
+const currentTagLabel =
+  tags.find((tag) => slugifyTag(tag) === currentTag) ?? currentTag;
+const allHref = blogListPath(locale);
+---
+
+<main class="blog-list container py-12">
+  <header class="blog-list__hero">
+    <h1>{t(locale, "nav.blog")}</h1>
+    <p class="blog-list__lead">
+      Articles about web development and the modern stack.
+    </p>
+    <p class="blog-list__count">
+      {totalCount}
+      {totalCount === 1 ? " article" : " articles"}
+      {currentTag && <> tagged <strong>#{currentTagLabel}</strong></>}
+    </p>
+  </header>
+
+  {
+    tags.length > 0 && (
+      <nav class="blog-list__tags" aria-label={t(locale, "blog.filterByTag")}>
+        <a
+          href={allHref}
+          class={`blog-chip${currentTag ? "" : " blog-chip--active"}`}
+          aria-current={currentTag ? undefined : "page"}
+        >
+          All
+        </a>
+        {tags.map((tag) => {
+          const active = currentTag === slugifyTag(tag);
+          return (
+            <a
+              href={active ? allHref : blogListPath(locale, { tag })}
+              class={`blog-chip${active ? " blog-chip--active" : ""}`}
+              aria-current={active ? "page" : undefined}
+            >
+              {tag}
+            </a>
+          );
+        })}
+      </nav>
+    )
+  }
+
+  {
+    totalCount === 0 && (
+      <div class="blog-list__empty">
+        <p class="blog-list__empty-title">{t(locale, "blog.noResults")}</p>
+        <a class="blog-list__empty-cta" href={allHref}>
+          {t(locale, "blog.allPosts")}
+        </a>
+      </div>
+    )
+  }
+
+  {
+    featured && (
+      <section class="blog-list__featured" aria-label="Featured article">
+        <BlogCard
+          post={featured}
+          variant="list"
+          locale={locale}
+          headingLevel="h2"
+        />
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="blog-list__grid">
+        {posts.map((post) => (
+          <BlogCard
+            post={post}
+            variant="grid"
+            locale={locale}
+            headingLevel="h2"
+          />
+        ))}
+      </section>
+    )
+  }
+
+  {
+    totalPages > 1 && (
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath={blogListPath(locale, { tag: currentTag })}
+        locale={locale}
+      />
+    )
+  }
+</main>
+
+<style>
+  .blog-list {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .blog-list__hero {
+    max-width: 48rem;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .blog-list__hero h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .blog-list__lead {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .blog-list__count {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .blog-list__count strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  /* Filter bar */
+  .blog-list__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blog-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .blog-chip:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-text-secondary);
+  }
+
+  .blog-chip--active {
+    background: var(--color-text-primary);
+    border-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
+  }
+
+  .blog-chip--active:hover {
+    color: var(--color-bg-primary);
+  }
+
+  /* Empty state */
+  .blog-list__empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-md);
+    padding: var(--space-3xl) var(--space-lg);
+    text-align: center;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-2xl);
+  }
+
+  .blog-list__empty-title {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1.0625rem;
+  }
+
+  .blog-list__empty-cta {
+    color: var(--color-brand-primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .blog-list__empty-cta:hover {
+    text-decoration: underline;
+  }
+
+  .blog-list__grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-chip {
+      transition: none;
+    }
+  }
+</style>

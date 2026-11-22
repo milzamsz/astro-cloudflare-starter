@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { t } from "../../../i18n/ui";
+import { siteConfig } from "../../../config/site.config";
+import { BlogListing } from "../../../components/blog/index";
+import {
+  blogListPath,
+  getBlogListing,
+  type BlogPost,
+} from "../../../lib/blog";
+import { SITE_CONFIG, type Locale } from "../../../lib/site-config";
+
+// /blog/page/2, /blog/page/3, … — page 1 is /blog itself.
+export const getStaticPaths = (async ({ paginate }) => {
+  const { posts, rest, tags } = await getBlogListing(SITE_CONFIG.defaultLocale);
+  return paginate(rest, {
+    pageSize: siteConfig.blog.postsPerPage,
+    props: { totalCount: posts.length, tags },
+  }).filter(({ props }) => props.page.currentPage > 1);
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<BlogPost>;
+  totalCount: number;
+  tags: string[];
+}
+
+const locale = (Astro.currentLocale || "en") as Locale;
+const { page, totalCount, tags } = Astro.props as Props;
+const title = `${t(locale, "nav.blog")} — ${t(locale, "pagination.page")} ${page.currentPage}`;
+---
+
+<BaseLayout
+  title={title}
+  description={title}
+  locale={locale}
+  path={blogListPath(locale, { page: page.currentPage })}
+  ogImage={`/og/blog-list/${locale}`}
+>
+  <BlogListing
+    locale={locale}
+    posts={page.data}
+    totalCount={totalCount}
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    tags={tags}
+  />
+</BaseLayout>

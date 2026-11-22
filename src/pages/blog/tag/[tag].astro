@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { t } from "../../../i18n/ui";
+import { siteConfig } from "../../../config/site.config";
+import { BlogListing } from "../../../components/blog/index";
+import {
+  blogListPath,
+  getBlogListing,
+  getTagSlugs,
+  paginate,
+} from "../../../lib/blog";
+import { SITE_CONFIG, type Locale } from "../../../lib/site-config";
+
+// Page 1 of each tag listing; later pages are /blog/tag/[tag]/page/[page].
+export const getStaticPaths = (async () => {
+  const tags = await getTagSlugs(SITE_CONFIG.defaultLocale);
+  return tags.map(({ slug, label }) => ({
+    params: { tag: slug },
+    props: { label },
+  }));
+}) satisfies GetStaticPaths;
+
+const locale = (Astro.currentLocale || "en") as Locale;
+const { tag } = Astro.params as { tag: string };
+const { label } = Astro.props as { label: string };
+const { posts, featured, rest, tags } = await getBlogListing(locale, tag);
+const page = paginate(rest, 1, siteConfig.blog.postsPerPage);
+const title = `${t(locale, "nav.blog")}: #${label}`;
+---
+
+<BaseLayout
+  title={title}
+  description={title}
+  locale={locale}
+  path={blogListPath(locale, { tag })}
+  ogImage={`/og/blog-list/${locale}`}
+>
+  <BlogListing
+    locale={locale}
+    posts={page.posts}
+    featured={featured}
+    totalCount={posts.length}
+    currentPage={1}
+    totalPages={page.totalPages}
+    tags={tags}
+    currentTag={tag}
+  />
+</BaseLayout>

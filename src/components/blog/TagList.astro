@@ -7,12 +7,14 @@ import { Badge } from "../ui/index";
 
 export interface Props {
   tags: string[];
+  /** Locale-less listing root; each tag links to `${basePath}/tag/<slug>`. */
   basePath?: string;
   locale?: Locale;
 }
 
 const { tags, basePath = "/blog", locale = "en" } = Astro.props as Props;
-const href = (tag: string) => `${resolveRoute(locale, basePath)}?tag=${slugifyTag(tag)}`;
+const tagHref = (tag: string) =>
+  resolveRoute(locale, `${basePath.replace(/\/+$/, "")}/tag/${slugifyTag(tag)}`);
 ---
 
 {
@@ -22,7 +24,7 @@ const href = (tag: string) => `${resolveRoute(locale, basePath)}?tag=${slugifyTa
       aria-label={t(locale, "blog.tags")}
     >
       {tags.map((tag) => (
-        <a href={href(tag)}>
+        <a href={tagHref(tag)}>
           <Badge variant="outline">{tag}</Badge>
         </a>
       ))}

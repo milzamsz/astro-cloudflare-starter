@@ -5,28 +5,22 @@ import { t } from "../../../../i18n/ui";
 export interface Props {
   currentPage: number;
   totalPages: number;
+  /**
+   * Localized URL of page 1 (e.g. `resolveRoute(locale, "/blog/tag/astro")`).
+   * Later pages are static routes at `${basePath}/page/N` — no query strings,
+   * since the site is fully prerendered and search params never reach the build.
+   */
   basePath: string;
-  query?: Record<string, string | undefined>;
   locale?: Locale;
 }
 
-const {
-  currentPage,
-  totalPages,
-  basePath,
-  query = {},
-  locale = "en",
-} = Astro.props as Props;
+const { currentPage, totalPages, basePath, locale = "en" } = Astro.props as Props;
 const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+const root = basePath.replace(/\/+$/, "") || "/";
 
 function pageHref(page: number) {
-  const params = new URLSearchParams();
-  Object.entries(query).forEach(([key, value]) => {
-    if (value) params.set(key, value);
-  });
-  if (page > 1) params.set("page", String(page));
-  const search = params.toString();
-  return search ? `${basePath}?${search}` : basePath;
+  if (page <= 1) return root;
+  return `${root === "/" ? "" : root}/page/${page}`;
 }
 ---
 

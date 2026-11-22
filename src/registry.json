@@ -120,7 +120,6 @@
         "currentPage",
         "totalPages",
         "basePath",
-        "query",
         "locale"
       ],
       "i18nAware": true
@@ -326,6 +325,22 @@
         "title"
       ],
       "i18nAware": false
+    },
+    {
+      "name": "BlogListing",
+      "tier": "component",
+      "path": "src/components/blog/BlogListing.astro",
+      "props": [
+        "locale",
+        "posts",
+        "featured",
+        "totalCount",
+        "currentPage",
+        "totalPages",
+        "tags",
+        "currentTag"
+      ],
+      "i18nAware": true
     },
     {
       "name": "TagList",
@@ -574,6 +589,27 @@
     {
       "name": "Blog",
       "path": "src/pages/blog.astro",
+      "locales": [
+        "en"
+      ]
+    },
+    {
+      "name": "Blog (paginated)",
+      "path": "src/pages/blog/page/[page].astro",
+      "locales": [
+        "en"
+      ]
+    },
+    {
+      "name": "Blog tag",
+      "path": "src/pages/blog/tag/[tag].astro",
+      "locales": [
+        "en"
+      ]
+    },
+    {
+      "name": "Blog tag (paginated)",
+      "path": "src/pages/blog/tag/[tag]/page/[page].astro",
       "locales": [
         "en"
       ]
