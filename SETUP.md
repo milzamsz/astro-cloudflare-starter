@@ -58,6 +58,11 @@ from `vars.PNPM_VERSION` (it ignores `packageManager`). Pages applies the
 for all builds once it's merged to `main`. Renovate keeps it in sync with
 `packageManager`.
 
+> **Don't add a `.tool-versions` file.** If it exists, the Pages builder installs
+> every tool in it through asdf and fails with `pnpm plugin is not installed` before
+> `pnpm install` even runs. `.node-version` (Node) plus `vars.PNPM_VERSION` (pnpm)
+> are all the build needs. asdf/mise users can set their own local versions.
+
 #### Troubleshooting: every Git build fails right after a pnpm upgrade
 
 Pages applies the Wrangler config (including `vars.PNPM_VERSION`) from the **last
